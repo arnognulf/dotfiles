@@ -1,6 +1,17 @@
+"To me, vi is Zen. 
+To use vi is to practice zen.
+Every command is a koan.
+Profound to the user,
+unintelligible to the uninitiated.
+You discover truth every time you use it."
+--reddy@lion.austin.com
+
 # Get output to buffer
 :r !ls
 
+sudo apt-get install exuberant-ctags
+
+<c-v> - blockwise selection
 
 CTRL+V (select line down)
 I (capital I)
@@ -26,10 +37,18 @@ find variable function definitions:
 
 cscope
 
-gf - goto file
 
+<c-w>gf - open in new tab
+gf - goto file
+gd - go to declaration
+K  - go to manual
 [I - use in include files
 [<TAB> - to jump there
+
+>>  Indent the highlighted code. (See the earlier section about efficient text selection. If no text is selected, the current line is indented.)
+<<  Like >>, but un-indents.
+
+]p  Just like p, but it automatically adjusts the indent level of the pasted code to match that of the code you paste into. Try it!
 
 # skriv funktion f;r att ta bort rader:
 map _cl:call CleanLint()<CR>
