@@ -32,7 +32,7 @@ hi FoldColumn	NONE
 hi Folded		NONE
 hi Identifier	NONE
 hi Ignore		NONE
-hi IncSearch	term=reverse
+hi IncSearch	term=reverse,bold,underline
 hi LineNr		NONE
 hi Menu			term=reverse
 " following only works when t_Co is > 8. boo!
@@ -43,7 +43,7 @@ hi Normal		NONE
 hi PreProc		NONE
 hi Question		NONE
 hi Scrollbar 	NONE
-hi Search		NONE
+hi Search		term=reverse
 hi SpecialKey	NONE
 hi Special		NONE
 hi Statement 	NONE

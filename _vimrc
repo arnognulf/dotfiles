@@ -9,6 +9,9 @@ set ruler
 set title
 set number
 set title
+set hlsearch
+" remove highlight from search
+nmap <SPACE> <SPACE>:noh<CR>
 set softtabstop=4 shiftwidth=4 expandtab
 hi Tab gui=underline guifg=blue ctermbg=blue term=reverse
 colorscheme monolicous

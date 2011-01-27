@@ -1,0 +1,57 @@
+# Get output to buffer
+:r !ls
+
+
+CTRL+V (select line down)
+I (capital I)
+write stuff (to insert before each line)
+ESC,ESC
+
+set hlsearch
+*
+CTRL-N autocomplete
+CTRL-O omni-completion (list of matches found)
+:NERDTree /foo/bar.baz
+<tab>
+
+find variable function definitions:
+:ctags -R .
+:tag init
+:tnext
+
+:grep "\<K_HOME>" **/*.h
+:cnext
+
+:copen
+
+cscope
+
+gf - goto file
+
+[I - use in include files
+[<TAB> - to jump there
+
+# skriv funktion f;r att ta bort rader:
+map _cl:call CleanLint()<CR>
+func CleanLint()
+    g/gtk_x11.c:.*enum/d
+    g/if_perl.*conversion to proto/d
+endfunc
+
+# afterwards use :cfile %
+# to turn it into an errorlist
+
+feedback at the end of the day, is there something I can improve?
+
+Step 1:
+Detect inefficency
+-find out what time is wasted on
+Step 2: find a quicker way
+Read the online help
+-read the quick reference, books etc.
+-ask friends/collegues
+-search the internets
+-do it yourself
+Step 3: Make it a habit.
+-do it
+-keep improving
