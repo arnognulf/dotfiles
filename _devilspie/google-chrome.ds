@@ -1,0 +1,17 @@
+(if
+ (is (window_class) "Chromium-browser")
+  (begin
+   (set_workspace 2)
+   (maximize)
+   (undecorate)
+  )
+)
+(if
+ (is (window_class) "Chrome")
+  (begin
+   (set_workspace 2)
+   (maximize)
+   (undecorate)
+  )
+)
+

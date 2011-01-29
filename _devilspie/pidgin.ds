@@ -1,0 +1,7 @@
+(if
+ (is (window_class) "Pidgin")
+  (begin
+   (set_workspace 4)
+  )
+)
+

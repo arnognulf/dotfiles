@@ -1,0 +1,7 @@
+(if
+ (is (window_class) "Nautilus")
+  (begin
+   (set_workspace 6)
+  )
+)
+

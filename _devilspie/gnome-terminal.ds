@@ -1,0 +1,9 @@
+(if
+ (is (window_class) "Gnome-terminal")
+  (begin
+   (set_workspace 1)
+   (maximize)
+   (undecorate)
+  )
+)
+

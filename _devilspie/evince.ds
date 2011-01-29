@@ -1,0 +1,9 @@
+(if
+ (is (window_class) "evince")
+  (begin
+   (set_workspace 3)
+   (maximize)
+   (undecorate)
+  )
+)
+

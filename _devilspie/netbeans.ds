@@ -1,0 +1,9 @@
+(if
+ (contains (application_name) "NetBeans IDE")
+  (begin
+   (set_workspace 6)
+   (undecorate)
+   (maximize)
+  )
+)
+

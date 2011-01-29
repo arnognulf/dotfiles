@@ -1,0 +1,9 @@
+(if
+ (is (window_class) "Rawstudio")
+  (begin
+   (set_workspace 6)
+   (maximize)
+   (undecorate)
+  )
+)
+

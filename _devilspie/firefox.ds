@@ -1,0 +1,9 @@
+(if
+ (is (window_class) "Firefox")
+  (begin
+   (set_workspace 2)
+   (maximize)
+   (undecorate)
+  )
+)
+
