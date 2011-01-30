@@ -31,3 +31,4 @@ if [ -t 0 -a "$OSTYPE" = linux-gnu ] ; then
     mkdir -m 0700 /dev/cgroup/cpu/user/$$
     echo $$ > /dev/cgroup/cpu/user/$$/tasks
 fi
+export EDITOR=vim
