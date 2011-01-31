@@ -1,6 +1,6 @@
 ! Thinkpad specific stuff
-! remap caps-lock to esc
-keycode 67 = Escape
+! remap F1 to esc
+keycode  67 = Escape XF86_Switch_VT_1 Escape XF86_Switch_VT_1
 ! those annoying browser keys by the arrow keys remapped to pgup/dn
-keycode 166 = Prior
-keycode 167 = Next
+keycode 166 = Left
+keycode 167 = Right
