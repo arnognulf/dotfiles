@@ -27,3 +27,11 @@ map <C-F9> 9gt
 map <C-F0> 10g
 
 colorscheme monolicous
+if has("autocmd")
+   " When editing a file, always jump to the last cursor position
+   autocmd BufReadPost *
+   \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+   \   exe "normal g'\"" |
+   \ endif
+endif
+

@@ -9,6 +9,9 @@ You discover truth every time you use it."
 # Get output to buffer
 :r !ls
 
+CTRL+e - scroll up
+CTRL+Y - scroll down
+
 sudo apt-get install exuberant-ctags
 
 <c-v> - blockwise selection
