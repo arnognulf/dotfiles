@@ -25,6 +25,7 @@ map <C-F7> 7gt
 map <C-F8> 8gt
 map <C-F9> 9gt
 map <C-F0> 10g
+source $HOME/.vimrc_local
 
 colorscheme monolicous
 if has("autocmd")

@@ -8,6 +8,9 @@ unset -f command_not_found_handle 1>/dev/null 2>/dev/null
 # add stuff to path
 export PATH=${HOME}/Unix/bin:/var/lib/gems/1.8/bin:$PATH:${HOME}/Unix/share/sunstudio12.1/bin
 
+# various aliases
+alias vim='vim -p'
+
 # handy for running old school vi
 TERMCAP="vt102|$TERM|dec vt102:"'\
         :do=^J:co#80:li#24:cl=50\E[;H\E[2J:\
