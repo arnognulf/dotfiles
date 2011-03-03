@@ -36,3 +36,7 @@ if has("autocmd")
    \ endif
 endif
 
+filetype on
+filetype plugin on
+filetype indent on
+
