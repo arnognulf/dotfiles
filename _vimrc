@@ -10,6 +10,8 @@ set title
 set number
 set title
 set hlsearch
+set wrap
+set backspace=indent,eol,start
 " remove highlight from search
 nmap <SPACE> <SPACE>:noh<CR>
 set softtabstop=4 shiftwidth=4 expandtab

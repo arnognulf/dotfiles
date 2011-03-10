@@ -6,6 +6,8 @@ unintelligible to the uninitiated.
 You discover truth every time you use it."
 --reddy@lion.austin.com
 
+:g/rm lines containing this string/d
+
 # Get output to buffer
 :r !ls
 
