@@ -11,6 +11,8 @@ You discover truth every time you use it."
 # Get output to buffer
 :r !ls
 
+w,b forward/backwards word
+
 CTRL+e - scroll up
 CTRL+Y - scroll down
 
