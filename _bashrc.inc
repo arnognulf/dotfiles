@@ -29,9 +29,4 @@ export GREP_COLORS="ms=01:mc=01:sl=:cx=:fn=01:ln=01:bn=01:se=01"
 export LS_COLORS='rs=0:di=01:ln=01:pi=01:so=01:do=01:bd=01:cd=01:or=01:su=01:sg=01:ca=01:tw=01:ow=01:st=01:ex=01:'
 #export LS_COLORS='rs=0:di=01:ln=01:hl=01:pi=01:so=01:do=01:bd=01:cd=01:or=01:su=01:sg=01:ca=01:tw=01:ow=01:st=01:ex=01:'
 
-# teh linux superpatch
-if [ -t 0 -a "$OSTYPE" = linux-gnu ] ; then 
-    mkdir -m 0700 /dev/cgroup/cpu/user/$$
-    echo $$ > /dev/cgroup/cpu/user/$$/tasks
-fi
 export EDITOR=vim

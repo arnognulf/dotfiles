@@ -43,47 +43,6 @@ autocmd BufReadPost *
 \   exe "normal g'\"" |
 \ endif
 endif
-    "See help statusline (I toggle between 12 helpful rulers -- more on that later)
-fu ShowTab()
-    let TabLevel = (indent('.') / &ts )
-    if TabLevel == 0
-    let TabLevel='*'
-    endif
-    return TabLevel
-    endf
-    "The ruler (statusline) shows a t* unless you are on col 1,5,9,13,...
-set laststatus=2
-    "This makes sure the ruler shows. See help laststatus
-set statusline=\ \ \ \ ┃╷╷╷╷╻╷╷╷╷1╷╷╷╷╻╷╷╷╷2╷╷╷╷╻╷╷╷╷3╷╷╷╷╻╷╷╷╷┃╷╷╷╷╻╷╷╷╷5╷╷╷╷╻╷╷╷╷6╷╷╷╷╻╷╷╷╷7╷╷╷╷╻╷╷╷╷┃╷╷╷╷╻╷╷╷╷9╷╷╷╷╻╷╷╷10╷╷╷╷╻╷╷╷11╷╷╷╷╻╷╷╷╷┃╷╷╷╷╻╷╷╷12╷╷╷╷╻╷╷╷13╷╷╷╷╻╷╷╷14╷╷╷╷╻╷╷╷╷┃\ \ 
-
-
-
-    map <F2> :call RulerStr()<NL>0P
-
-function! RulerStr()
-    let columns = &columns
-    let inc = 0
-    let str = ""
-while (inc < columns)
-    let inc10 = inc / 10 + 1
-    let buffer = "."
-if (inc10 > 9)
-    let buffer = ""
-    endif
-    let str = str . "....+..." . buffer . inc10
-    let inc = inc + 10
-    endwhile
-let str = strpart(str, 0, columns)
-    let @@ = str
-    endfunction
-
-
-    "set statusline=\ \ \ \ \|....:....\|....:....\|....:....\|....:....\|....:....\|....:....\|....:....\|....:....\|....:....\|....:....\|....:....\|....:....\|....:....\|....:....\|....:....\|....:....\|..
-
-    "....+....|
-    " ....+....|....+....|....+....|....+....|....+....|....+....|....+....|
-    "\ %{ShowTab()}
-    " %f\ ---------\ My\ Ruler\ ----------\ r%l,c%c,t%{ShowTab()}
 
 filetype on
 filetype plugin on
