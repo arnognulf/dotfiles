@@ -32,8 +32,8 @@ set backspace=indent,eol,start
 " remove highlight from search
 nmap <SPACE> <SPACE>:noh<CR>
 imap jj <ESC>
-map <F1> <ESC>
 imap <F1> <ESC>
+vmap <F1> <ESC>
 set softtabstop=4 shiftwidth=4 expandtab
 hi Tab gui=underline guifg=blue ctermbg=blue term=reverse
 
@@ -50,18 +50,21 @@ endif
 filetype on
 filetype plugin on
 filetype indent on
+" don't enable in vsvim
 if v:version > 700
-     noremap  <Up> ""
-     noremap! <Up> <Esc>
-     noremap  <Down> ""
-     noremap! <Down> <Esc>
-     noremap  <Left> ""
-     noremap! <Left> <Esc>
-     noremap  <Right> ""
-     noremap! <Right> <Esc>
+    " still want to use arrow keys in command mode
+     noremap  <Up> <NOP>
+     noremap  <Down> <NOP>
+     noremap  <Left> <NOP>
+     noremap  <Right> <NOP>
+     inoremap  <Up> <NOP>
+     inoremap  <Down> <NOP>
+     inoremap  <Left> <NOP>
+     inoremap  <Right> <NOP>
+     inoremap  <Esc> <NOP>
 endif
+noremap <Insert> ""
 noremap  <PageUp> ""
 noremap  <PageDown> ""
 noremap  <End> ""
 noremap  <Home> ""
-
