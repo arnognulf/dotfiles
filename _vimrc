@@ -12,7 +12,7 @@ map 0 :tabn 10<CR>
 set listchars=tab:>-,eol:$,trail:.,extends:#
 " toggle show newlines, blanks and tabs
 map <F4> :set list! list?<CR>
-
+set foldmethod=syntax
 set nocompatible
 set autoindent
 set smartindent
@@ -31,6 +31,9 @@ set wrap
 set backspace=indent,eol,start
 " remove highlight from search
 nmap <SPACE> <SPACE>:noh<CR>
+imap jj <ESC>
+map <F1> <ESC>
+imap <F1> <ESC>
 set softtabstop=4 shiftwidth=4 expandtab
 hi Tab gui=underline guifg=blue ctermbg=blue term=reverse
 
@@ -47,4 +50,18 @@ endif
 filetype on
 filetype plugin on
 filetype indent on
+if v:version > 700
+     noremap  <Up> ""
+     noremap! <Up> <Esc>
+     noremap  <Down> ""
+     noremap! <Down> <Esc>
+     noremap  <Left> ""
+     noremap! <Left> <Esc>
+     noremap  <Right> ""
+     noremap! <Right> <Esc>
+endif
+noremap  <PageUp> ""
+noremap  <PageDown> ""
+noremap  <End> ""
+noremap  <Home> ""
 
