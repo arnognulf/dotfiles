@@ -4,5 +4,3 @@ keycode  67 = Escape XF86_Switch_VT_1 Escape XF86_Switch_VT_1
 ! those annoying browser keys by the arrow keys remapped to pgup/dn
 keycode 166 = Left
 keycode 167 = Right
-! ADM 3A had it's Escape key at Tab position, this is the Kosher position:
-keycode 23 = Escape XF86_Switch_VT_1 Escape XF86_Switch_VT_1
