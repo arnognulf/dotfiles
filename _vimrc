@@ -61,8 +61,11 @@ if v:version > 700
      inoremap  <Down> <NOP>
      inoremap  <Left> <NOP>
      inoremap  <Right> <NOP>
-     inoremap  <Esc> <NOP>
 endif
+" delete w/o putting text in buffer
+vnoremap x "_x
+vnoremap X "_X
+
 noremap <Insert> ""
 noremap  <PageUp> ""
 noremap  <PageDown> ""
