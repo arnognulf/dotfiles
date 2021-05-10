@@ -1,0 +1,9 @@
+ERMAHGERD
+=========
+An 'rm' replacement that puts files in your trash instead of deleting them (if possible).
+Supports all GNU rm options - but will fall back to GNU rm if given exotic arguments.
+BERKS
+
+DOH
+===
+Restore the most recently deleted file/directory 
