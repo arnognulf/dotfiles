@@ -41,7 +41,7 @@ function _EDITOR
     do
         case "${FILE,,}" in
         -*) :;;
-        *.kt|*.java) type -P studio.sh &>/dev/null && o studio.sh "${PWD}/${FILE}" ; return
+        *.kt|*.java) type -P studio.sh &>/dev/null && _CAN_OPENER studio.sh "${PWD}/${FILE}" ; return
         esac
     done
     $(type -P "${EDITOR}"||type -P "vim" ||type -P "vi") "${@}"
@@ -56,7 +56,8 @@ alias octave=octave-cli
 alias excel='o localc'
 alias word='o lowriter'
 alias chrome='o google-chrome'
-alias code=_EDITOR
+alias code-insiders='o code-insiders'
+alias code='o code-insiders'
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
@@ -142,10 +143,9 @@ alias rud='repo upload -d'
 alias vim=_EDITOR
 alias vi=_EDITOR
 alias v=_EDITOR
-alias cd='c'
 alias keepass='o keepassxc'
 alias kp=keepassxc
-alias ls='_MOAR ls -C --color=always'
+alias ls='_MOAR_ls -C --color=always'
 alias ll='ls -al --color=always'
 alias l='ls -C --color=always'
 alias task_flash='task "⚡ FLASH ⚡"'
@@ -311,7 +311,7 @@ eval "function $FILE { echo \"C-comment paste detected. Press CTRL+C to continue
 break;
 done
 
-function cp
+true || function cp
 {
     if [ -t 1 ] && [ -t 2 ] && [ -z "${_SOURCED}" ]
     then

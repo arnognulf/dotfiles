@@ -37,6 +37,21 @@ function _MOAR_DECODE_DOC
             command batcat -pp --color always "${1}" || command cat "${1}"
             return 0
         fi
+        ;;
+    *.mk)
+        if [ "${_MOAR_STDOUT}" = 1 ]
+        then
+            command batcat -pp --color always -l Makefile "${1}" || command cat "${1}"
+            return 0
+        fi
+    ;;
+    android.bp)
+        if [ "${_MOAR_STDOUT}" = 1 ]
+        then
+            command batcat -pp --color always -l json "${1}" || command cat "${1}"
+            return 0
+        fi
+
     esac
 
     case $(command file -L "${1}") in #case2
@@ -351,7 +366,7 @@ function _MOAR
             _MOAR_DECODE "${@}"
         fi
         ;;
-    cat)
+    d)
         if [ "${#@}" = 1 ]
         then
             command cat
@@ -491,6 +506,8 @@ then
     eval "alias ${BASECMD}=_MOAR_${BASECMD}"
 fi
 done
+eval "function _MOAR_d { _MOAR \"\${FUNCNAME/_MOAR_/}\" \"\$@\";}"
+eval "alias d=_MOAR_d"
 }
 _MOAR_DEFINE
 unset -f _MOAR_DEFINE
