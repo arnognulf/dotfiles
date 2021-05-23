@@ -45,7 +45,7 @@ function _MOAR_DECODE_DOC
             return 0
         fi
     ;;
-    android.bp)
+    *.bp)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
             command batcat -pp --color always -l json "${1}" || command cat "${1}"
