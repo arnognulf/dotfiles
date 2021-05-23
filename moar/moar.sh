@@ -486,8 +486,6 @@ iconv \
 xargs \
 rg \
 fd \
-VirtualBox \
-VirtualBoxVM \
 fdfind \
 declare \
 set \

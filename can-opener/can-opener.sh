@@ -336,6 +336,8 @@ xclipboard \
 xconsole \
 xditvie \
 xedit \
+VirtualBox \
+VirtualBoxVM \
 xeyes \
 xgc \
 xlogo \

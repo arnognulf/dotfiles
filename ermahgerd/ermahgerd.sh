@@ -83,25 +83,26 @@ function _DOH
     local SOURCE
     local DEST
     local DIR=~/.local/share/Trash/files
-    SOURCE=$(_ERMAHGERD_LATEST ${DIR}/*)
-    DEST=$(cat ${DIR}/../info/${SOURCE}.trashinfo|grep ^Path=)
-    DEST=${DEST##*/}
-    echo "Restored ${DEST}"
-    command mv "${DIR}/${SOURCE}" "${DEST}"
-}
-
-_ERMAHGERD_LATEST ()
-{
     local NEWEST_FILE
+    local SECOND_NEWEST_FILE
     local FILE
     NEWEST_FILE=
-    for FILE in "${@}"
+    for FILE in ${DIR}/*
     do
-        [[ -z ${NEWEST_FILE} || ${FILE} -nt ${NEWEST_FILE} ]] \
-            && NEWEST_FILE=${FILE}
+        if [[ -z ${NEWEST_FILE} || ${FILE} -nt ${NEWEST_FILE} ]]
+        then
+            SECOND_NEWEST_FILE="${NEWEST_FILE}"
+            NEWEST_FILE=${FILE}
+        fi
     done
-    echo "${NEWEST_FILE##*/}"
-    return 0
+
+    test -f "${NEWEST_FILE}" || test -d "${NEWEST_FILE}" || { echo "no files to restore"; return 1; }
+
+    DEST=$(command cat ${DIR}/../info/${NEWEST_FILE##*/}.trashinfo|command grep ^Path=)
+    DEST=${DEST##*/}
+    echo -e "Restored ${DEST}"
+    test -n "${SECOND_NEWEST_FILE}" && echo -e "\nNext: ${SECOND_NEWEST_FILE##*/}"
+    command mv "${DIR}/${NEWEST_FILE##*/}" "${DEST}"
 }
 
 alias doh=_DOH
