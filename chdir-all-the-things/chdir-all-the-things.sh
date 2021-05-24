@@ -296,7 +296,7 @@ function _CHDIR_ALL_THE_THINGS ()
         type -p unar &>/dev/null || { command echo "missing unar" 2>&1| command tee 1>/dev/null;}
         type -p 7z &>/dev/null || { command echo "missing 7z" 2>&1| command tee 1>/dev/null;}
         command tar xf "${ORIG_FILE}" &>/dev/null || unzip -o "${ORIG_FILE}" &>/dev/null || 7z x -pDUMMY_PASSWORD -y "${ORIG_FILE}" &>/dev/null || unar -force-rename -no-directory -password DUMMY_PASSWORD "${ORIG_FILE}" &>/dev/null || { command simg2img "${ORIG_FILE}" "${ORIG_FILE}.nonsparse" &>/dev/null && command 7z x "${ORIG_FILE}.nonsparse" &>/dev/null;}  || SUCCESS=0;
-        if [ -f "${ORIG_FILE}.nonsparse" ]; then command rm -f "${ORIG_FILE}.nonsparse"  &>/dev/null; true;else false; fi
+        [ -f "${ORIG_FILE}.nonsparse" ] && command rm -f "${ORIG_FILE}.nonsparse"  &>/dev/null
         # shellcheck disable=SC2046
         kill -9 $(<"${SPINNER_PID_FILE}") &>/dev/null
         command echo -e "\\e[D "
