@@ -197,7 +197,7 @@ alias google-chrome=chrome-polisher
 alias chrome=chrome-polisher
 alias dos="bash ${DOTFILESDIR}/dos/sh-dos.sh"
 
-function scp
+function _SCP
 {
 local ARG
 local SERVER
@@ -215,6 +215,7 @@ done
 test -z "${SERVER}" && { echo "missing server argument"; return; }
 /usr/bin/scp "${@}"
 }
+alias scp=_SCP
 
 function c ()
 {
