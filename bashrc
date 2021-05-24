@@ -51,7 +51,7 @@ function _EDITOR
 alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 alias ghidra='~/.local/share/ghidra/ghidraRun'
 alias dd='dd status=progress'
-alias m=_UBER_FOR_MV
+alias dl=_UBER_FOR_MV
 alias octave=octave-cli
 alias excel='o localc'
 alias word='o lowriter'
@@ -61,7 +61,8 @@ alias code='o code-insiders'
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
-function g
+type -P fdfind &>/dev/null && alias fd='fdfind'
+function _GREP
 {
     if [ "${#@}" = 0 ]
     then
@@ -70,6 +71,8 @@ function g
         egrep "$@"
     fi
 }
+alias g=_GREP
+alias gv="grep -v"
 
 function repo
 {
