@@ -39,7 +39,10 @@ function _CAN_OPENER_ALL ()
 }
 function _CAN_OPENER ()
 {
-    if [ -d "$1" ] && [ "${1/\//}" != "${1}" ]
+    if [ -f "$*" ]
+    then
+        _CAN_OPENER_ALL "$*"
+    elif [ -d "$1" ] && [ "${1/\//}" != "${1}" ]
     then
         _CAN_OPENER_ALL "$@"
     elif [ ! -d "${1}" ] && [ -x "$1" ]
@@ -348,6 +351,9 @@ xevil \
 xoscope \
 OpenHantek \
 musescore \
+microsoft-edge \
+microsoft-edge-beta \
+pulseview \
 slack
 do
 if type -P "${CMD}" &>/dev/null

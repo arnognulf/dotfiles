@@ -152,11 +152,15 @@ function _MOAR_DECODE_DOC
         fi
         ;;
     *)
-        command unoconv --stdout -f docx "${TEMP}" > "${TEMP}.docx"
-        command pandoc -s --to=man "${TEMP}.docx" > "${TEMP}.man"
+        command unoconv --stdout -f docx "${TEMP}" > "${TEMP}.docx" 2>/dev/null && command pandoc -s --to=man "${TEMP}.docx" > "${TEMP}.man"
     esac
-    command nroff ${_MOAR_COLOROPT} -man "${TEMP}.man" | command sed 's/()//g'
-    command rm -f "${TEMP}" "${TEMP}.man" "${TEMP}.docx"
+    if [ -s "${TEMP}.man" ]
+    then
+        command nroff ${_MOAR_COLOROPT} -man "${TEMP}.man" | command sed 's/()//g'
+        command rm -f "${TEMP}" "${TEMP}.man" "${TEMP}.docx"
+    else
+        command strings "${TEMP}"
+    fi
 }
 
 function _MOAR_DECODE
@@ -179,7 +183,7 @@ function _MOAR_DECODE
             } | command sqlite3 "${FILE}" |command sed -e s/\"\'//g -e s/\'\"//g
             done
             ;;
-            *" "font/*)
+            *" "font/*|*" "application/vnd.ms-opentype)
                 local TEMP=$(mktemp -u /tmp/.MOAR.XXXXXXXXXXXX.jpg)
                 command convert -background white -fill black -font "${FILE}" -pointsize 300 label:"Abc" "${TEMP}"
                 [ -f "${TEMP}" ] && command jp2a --term-width --colors --fill "${TEMP}"
@@ -211,7 +215,7 @@ function _MOAR_DECODE
                 :
             done
             [ -f "${IMAGEFILE}" ] && [ "${_MOAR_STDOUT}" = 1 ] && command jp2a --term-width --colors --fill "${IMAGEFILE}"
-            command tesseract "${IMAGEFILE}" -
+            command tesseract "${IMAGEFILE}" - 2>/dev/null
             command rm -f ${TEMP%.*}*".jpg"
             ;;
             *" text/"*|*" "application/vnd.apple.keynote|*" "application/vnd.wordperfect|*" "application/rtf|*" "application/vnd.oasis.opendocument.text|*" "application/vnd.openxmlformats-officedocument.wordprocessingml.document|*" "application/vnd.openxmlformats-officedocument.presentationml.presentation|*" "application/doc|*" "application/ms-doc|*" "application/msword)
@@ -223,7 +227,7 @@ function _MOAR_DECODE
                 arm-linux-gnueabi-objdump -d "${FILE}"
                 return 0
                 ;;
-                *"ELF 64-bit LSB pie executable, x86-64,"*)
+                *"ELF 64-bit LSB pie executable, x86-64,"*|*"ELF 64-bit LSB executable, x86-64,"*)
                 x86_64-linux-gnu-objdump -d "${FILE}"
                 return 0
                 ;;
@@ -363,7 +367,7 @@ function _MOAR
             command "$@"
         else
             shift
-            _MOAR_DECODE "${@}"
+            command cat "${@}"
         fi
         ;;
     d)
@@ -479,6 +483,7 @@ lspgpot \
 lsscsi \
 lsusb \
 netstat \
+strings \
 nmap \
 ps \
 curl \
