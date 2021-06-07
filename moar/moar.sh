@@ -156,7 +156,7 @@ function _MOAR_DECODE_DOC
     esac
     if [ -s "${TEMP}.man" ]
     then
-        command nroff ${_MOAR_COLOROPT} -man "${TEMP}.man" | command sed 's/()//g'
+        command nroff ${_MOAR_COLOROPT} -man "${TEMP}.man" 2>/dev/null | command sed 's/()//g'
         command rm -f "${TEMP}" "${TEMP}.man" "${TEMP}.docx"
     else
         command strings "${TEMP}"
