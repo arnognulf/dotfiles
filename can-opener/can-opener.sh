@@ -92,7 +92,11 @@ function _CAN_OPENER ()
         fi
     elif [ -n "$1" ]
     then
-    case "$1" in
+    case "${1,,}" in
+    *".txt"|*".pdf"|*".docx"|*".cpp"|*".h"|*".c"|*".kt"|*".java")
+        echo "COMPUTER SAYS NO" 1>&2 | tee /dev/null 1>/dev/null
+        return 1
+        ;;
     *"://"*|*"."*)
         ( exec x-www-browser "$1" &>/dev/null & )
         ;;

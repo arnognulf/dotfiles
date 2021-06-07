@@ -287,6 +287,9 @@ function _MOAR_DECODE
                 command cat "${FILE}"
             esac
             }
+        elif [ -d "${FILE}" ]
+        then
+        continue
         else
             case "${FILE}" in
             "https://www.youtube.com/"*)
@@ -373,7 +376,8 @@ function _MOAR
     d)
         if [ "${#@}" = 1 ]
         then
-            command cat
+            shift
+            _MOAR_DECODE * | command less -R -X -F -K
             return $?
         fi
         TTY=$(tty) 2>/dev/null
@@ -500,6 +504,7 @@ nm \
 /usr/bin/*-nm \
 file \
 /usr/bin/*sum \
+grafx2 \
 ip
 do
 if type -P ${CMD##*/} &>/dev/null 
