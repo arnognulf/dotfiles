@@ -149,6 +149,7 @@ function _MOAR_DECODE_DOC
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
             command batcat -pp --color always "${1}" || command cat "${1}"
+            return 0
         else
             command cat "${1}"
         fi
