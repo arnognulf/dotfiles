@@ -182,12 +182,15 @@ _TIMER_STARTED=0
 
 function _PROMPT_LINE ()
 {
+  (
+    set +x
 local LINE=""
 while [ ${#LINE} -lt ${COLUMNS} ]
 do
 LINE="${LINE} "
 done
 command echo -n "${LINE}"
+  )
 }
 function _PROMPT_PWD_BASENAME ()
 {
@@ -208,7 +211,7 @@ _PROMPT ()
   then
   #if [ "$1" = 0 ]
   #then
-  TITLE="⭕ Completed \"${_TIMER_CMD}\""
+  TITLE="✅ Completed \"${_TIMER_CMD}\""
   #else
   #TITLE="🛑 ERROR: \"${_TIMER_CMD}\""
   #fi
@@ -280,7 +283,7 @@ function _PROMPT_BUCKLE_RESPAWN ()
 
 pidof buckle &>/dev/null || o buckle -f -s 0 &>/dev/null
 PROMPT_COMMAND="_PROMPT_BUCKLE_RESPAWN;_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
-PS1="\[\e]0;"'${TITLE}'"\a\e[4m"'$([ $(id -u) = 0 ] && command echo -e "\e[31;4m")\]$(_PROMPT_LINE)'"
+PS1="\[\e[0m\e]0;"'${TITLE}'"\a\e[4m"'$([ $(id -u) = 0 ] && command echo -e "\e[31;4m")\]$(_PROMPT_LINE)'"
 \[\e(1\e[0;7m"'$([ $(id -u) = 0 ] && command echo -e "\e[31m")'"\] "'$(_PROMPT_PWD_BASENAME)'""'${_PROMPT_GIT_PS1}'" "'$([ $(id -u) = 0 ] && echo "# ")'"\[\e[0m\] "
 
 function name ()

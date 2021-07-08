@@ -170,7 +170,11 @@ function _MOAR_DECODE
     local FILE
     for FILE in "$@"
     do
-        if [ -f "${FILE}" ]
+        local TEMP=$(mktemp -u /tmp/.MOAR.XXXXXXXXXXXX)
+        if [ ! -s "${FILE}" ] && command cat "${FILE}" &>"${TEMP}" && [ ! -s "${TEMP}" ]
+        then
+            printf "\e[91m<EMPTY>\e[0m" 1>&2 | tee 1>/dev/null
+        elif [ -f "${FILE}" ]
         then
             {
             local _MOAR_MIME=$(command file -L --mime-type "${FILE}")
@@ -186,9 +190,9 @@ function _MOAR_DECODE
             done
             ;;
             *" "font/*|*" "application/vnd.ms-opentype)
-                local TEMP=$(mktemp -u /tmp/.MOAR.XXXXXXXXXXXX.jpg)
-                command convert -background white -fill black -font "${FILE}" -pointsize 300 label:"Abc" "${TEMP}"
-                [ -f "${TEMP}" ] && command jp2a --term-width --colors --fill "${TEMP}"
+                local TEMP_JPG=${TEMP}.jpg
+                command convert -background white -fill black -font "${FILE}" -pointsize 300 label:"Abc" "${TEMP_JPG}"
+                [ -f "${TEMP_JPG}" ] && command jp2a --term-width --colors --fill "${TEMP_JPG}"
             ;;
             *" "video/*|*" "audio/*)
             DISPLAY="" command mplayer -really-quiet -vo caca -framedrop -monitorpixelaspect 0.5 "${FILE}" 1>${TTY}
@@ -199,20 +203,20 @@ function _MOAR_DECODE
             command tesseract "${FILE}" -
             ;;
             *" "image/svg*)
-            local TEMP=$(mktemp /tmp/.MOAR.XXXXXXXXXXXX.jpg)
-            command cairosvg "${FILE}" -f png | command convert - ${TEMP}
+            local TEMP_JPG=${TEMP}.jpg
+            command cairosvg "${FILE}" -f png | command convert - ${TEMP_JPG}
             if [ "${_MOAR_STDOUT}" = 1 ]
             then
-                command jp2a --term-width --colors --fill "${TEMP}"
+                command jp2a --term-width --colors --fill "${TEMP_JPG}"
             fi
-        command tesseract "${TEMP}" -
-            command rm -f "${TEMP}"
+            command tesseract "${TEMP_JPG}" -
+            command rm -f "${TEMP_JPG}"
             ;;
             *" "image/*)
-            local TEMP=$(mktemp -u /tmp/.MOAR.XXXXXXXXXXXX.jpg)
-            command convert "${FILE}" "${TEMP}"
+            local TEMP_JPG=${TEMP}.jpg
+            command convert "${FILE}" "${TEMP_JPG}"
             local IMAGEFILE
-            for IMAGEFILE in ${TEMP%.*}*".jpg"
+            for IMAGEFILE in ${TEMP_JPG%.*}*".jpg"
             do
                 :
             done
@@ -302,9 +306,9 @@ function _MOAR_DECODE
             ;;
             "http://"*|"https://"*|"ftp://"*)
             {
-            local TEMP=$(mktemp /tmp/.MOAR-XXXXXXXXXXX.html)
-            command curl -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' "${FILE}" >"${TEMP}"
-            _MOAR_DECODE_HTML "${TEMP}"
+            local TEMP_HTML=${TEMP_HTML}
+            command curl -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' "${FILE}" >"${TEMP_HTML}"
+            _MOAR_DECODE_HTML "${TEMP_HTML}"
             } 2>/dev/null
             ;;
             *)
