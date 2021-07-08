@@ -127,10 +127,12 @@ function _MOAR_DECODE_DOC
         command cp "${1}" "${TEMP}"  
     fi
 
+    case "${1,,}" in
+    *.htm|*.html) command elinks -dump -dump-width 80 "${TEMP}";return 0;;
+    esac
 
     case "${1,,}" in #case1
     *.wri) command unoconv --format=doc "${TEMP}" -o "${TEMP}.doc";command pandoc -s --from=html --to=man "${TEMP}.doc";;
-    *.htm|*.html) command pandoc -s --from=html --to=man "${TEMP}";;
     *.markdown|*.mdown|*.mkdn|*.md) command pandoc -s --from=gfm --to=man "${TEMP}";;
     *.textile) command pandoc -s --from=textile --to=man "${TEMP}";;
     *.mediawiki) command pandoc -s --from=mediawiki --to=man "${TEMP}";;
@@ -504,7 +506,7 @@ nm \
 /usr/bin/*-nm \
 file \
 /usr/bin/*sum \
-grafx2 \
+fastboot \
 ip
 do
 if type -P ${CMD##*/} &>/dev/null 

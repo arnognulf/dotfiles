@@ -358,11 +358,14 @@ musescore \
 microsoft-edge \
 microsoft-edge-beta \
 pulseview \
+grafx2 \
+file-roller \
+sqlitebrowser \
 slack
 do
 if type -P "${CMD}" &>/dev/null
 then
-eval function _CAN_OPENER_${CMD##*/} { if [ \"\${_SOURCED}\" = 1 ]\; then \"${CMD/_CAN_OPENER/}\" \"\${@}\"\; else o \"${CMD}\" \"\${@}\"\;fi\;}
+eval function _CAN_OPENER_${CMD##*/} { if [ \"\${_SOURCED}\" = 1 ]\; then \"${CMD/_CAN_OPENER/}\" \"\${@}\"\; else o \"${CMD##*/}\" \"\${@}\"\;fi\;}
 eval "alias ${CMD##*/}=_CAN_OPENER_${CMD##*/}"
 fi
 done
