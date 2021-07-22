@@ -24,8 +24,8 @@
 # * Invoke less if output is connected to stdout and is more than one screen
 # * Convert input if possible to text,csv, or ascii graphic in readable format
 #   videos will be played in ascii output, music will be played
-# * Pipes are not affected by more (except for conversion)
-# * Moar-ified commands can be disabled by prepending \ eg \grep
+# * Pipes are not affected by moar (except for conversion)
+# * Moar-ified commands can be disabled by prepending backslash: '\' : eg. \grep
 
 function _MOAR_DECODE_DOC
 {
@@ -512,6 +512,8 @@ nm \
 file \
 /usr/bin/*sum \
 fastboot \
+lsblk \
+lsattrib \
 ip
 do
 if type -P ${CMD##*/} &>/dev/null 

@@ -251,7 +251,6 @@ signal \
 synaptic \
 telegram \
 terminology \
-thunar \
 tme \
 totem \
 umbrello \
@@ -361,6 +360,16 @@ pulseview \
 grafx2 \
 file-roller \
 sqlitebrowser \
+netsurf \
+dillo \
+pycharm \
+mousepad \
+parole \
+catfish \
+thunar \
+xfconf \
+xfce4-appfinder \
+wbar \
 slack
 do
 if type -P "${CMD}" &>/dev/null
