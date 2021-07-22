@@ -240,7 +240,10 @@ function _CHDIR_ALL_THE_THINGS ()
                 DEST_DIR="${ORIG_FILE%.*}"
             ;;
         esac;
-        if mkdir "${DEST_DIR}" &> /dev/null; then
+        if [ ! -s "${ORIG_FILE}" ]
+        then
+            DEST_DIR="${ORIG_FILE%/*}"
+        elif mkdir "${DEST_DIR}" &> /dev/null; then
             :;
         elif DEST_DIR=$(mktemp -d "${DEST_DIR}.XXXXXXX" 2>/dev/null) &>/dev/null; then :
         elif DEST_DIR=$(mktemp -d "/tmp/${DEST_DIR}.XXXXXXX" 2>/dev/null) &>/dev/null; then :
