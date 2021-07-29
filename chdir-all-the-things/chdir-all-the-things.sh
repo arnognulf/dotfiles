@@ -145,7 +145,7 @@ _CATT_LASTLASTPWD="${_CATT_LASTPWD}"
 _CATT_LASTPWD="${PWD}"
 builtin cd "$1"
 RETURN_VALUE=$?
-[ ${COUNT} = 2 -a -w "${_CATT_LASTPWD}" ] && $(type -P rm) -d "${_CATT_LASTPWD}" &>/dev/null
+[ ${COUNT} = 2 -a -w "${_CATT_LASTPWD}" ] && rm -d "${_CATT_LASTPWD}" &>/dev/null
 else
 builtin cd
 RETURN_VALUE=$?
