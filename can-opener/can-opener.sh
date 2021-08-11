@@ -371,6 +371,21 @@ xfconf \
 xfce4-appfinder \
 wbar \
 seahorse \
+/usr/games/gnome-* \
+/usr/games/sol \
+/usr/games/darkplaces \
+/usr/games/five-or-more \
+darkplaces \
+five-or-more \
+four-in-a-row \
+hedgewars \
+hitori \
+iagno \
+lightsoff \
+mame \
+quadrapassel \
+swell-foop \
+tali \
 slack
 do
 if type -P "${CMD}" &>/dev/null

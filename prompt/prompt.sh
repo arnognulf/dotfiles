@@ -136,7 +136,8 @@ _TIMER_CMD="$1"
 case "${1}" in
 "c "*|"cd "*|".."*) :;;
 *)
-printf "\033]0;️⚙️  ${*}\007" 2>/dev/null
+#printf "\033]0;️⚙️  ${*}\007" 2>/dev/null
+printf "\033]0;️️>  ${*}\007" 2>/dev/null
 esac
 _TIMER_STARTED=1
 _START_SECONDS=$SECONDS
@@ -249,15 +250,18 @@ TITLE="🚧  ${PWD##*/}"
 else
 case "${_PROMPT_REALPWD}" in
 ${HOME}) TITLE="🏠  ${SHORT_HOSTNAME}";;
+*/etc|*/etc/*) TITLE="️🗂️  ${PWD##*/}";;
 */bin|*/sbin) TITLE="️⚙️  ${PWD##*/}";;
 */lib|*/lib64|*/lib32) TITLE="🔩  ${PWD##*/}";;
 */tmp|*/tmp/*|*/.cache|*/.cache/*) TITLE="🚽  ${PWD##*/}";;
 #${HOME}"/.local/share/Trash/files"*) PROMPT_REPO=""; ️TITLE="🗑️  ${PWD##*/}";;
-{HOME}"/.local/share/Trash/files"*) PROMPT_REPO=""; ️TITLE="♻️  ${PWD##*/}";;
-/) TITLE="💽  /";;
+${HOME}"/.local/share/Trash/files"*) TITLE="♻️  ${PWD##*/}";;
+/boot|/boot/*) TITLE="🥾  ${PWD##*/}";;
+/) TITLE="💻  /";;
 */.*) TITLE="📌  ${PWD##*/}";;
+/media/*) TITLE="💽  ${PWD##*/}";;
 /proc/*|/sys/*|/dev/*|/proc|/sys|/dev) TITLE="🤖  ${PWD##*/}";;
-/usr/*|/boot/*|/var/*|/srv/*|/usr|/var|/srv) TITLE="🗄️  ${PWD##*/}";;
+#/usr/*|/boot/*|/var/*|/srv/*|/usr|/var|/srv) TITLE="🗄️  ${PWD##*/}";;
 */Documents|*/Documents/*|*/doc|*/docs|*/doc/*|*/docs/*|${XDG_DOCUMENTS_DIR}|${XDG_DOCUMENTS_DIR}/*) TITLE="📄  ${PWD##*/}";;
 */out|*/out/*) TITLE="🚀  ${PWD##*/}";;
 */src|*/src/*|*/sources|*/sources/*) TITLE="🚧  ${PWD##*/}";;
