@@ -370,6 +370,7 @@ thunar \
 xfconf \
 xfce4-appfinder \
 wbar \
+seahorse \
 slack
 do
 if type -P "${CMD}" &>/dev/null

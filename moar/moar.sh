@@ -231,31 +231,35 @@ function _MOAR_DECODE
             *" "application/x-sharedlib|*" "application/x-pie-executable|*" "application/x-executable|*" application/x-dosexec")
             case $(command file -L "${FILE}") in
                 *"ELF 32-bit LSB executable, ARM,"*)
-                arm-linux-gnueabi-objdump -d "${FILE}"
+                command arm-linux-gnueabi-objdump -d "${FILE}"
                 return 0
                 ;;
                 *"ELF 64-bit LSB pie executable, x86-64,"*|*"ELF 64-bit LSB executable, x86-64,"*)
-                x86_64-linux-gnu-objdump -d "${FILE}"
+                command x86_64-linux-gnu-objdump -d "${FILE}"
                 return 0
                 ;;
                 *"ELF 32-bit LSB executable, Intel 80386,"*)
-                i686-linux-gnu-objdump -d "${FILE}"
+                command i686-linux-gnu-objdump -d "${FILE}"
                 return 0
                 ;;
                 *"PE32+ executable "*"("*") x86-64"*)
-                x86_64-w64-mingw32-objdump -d "${FILE}"
+                command x86_64-w64-mingw32-objdump -d "${FILE}"
                 return 0
                 ;;
                 *"PE32 executable "*"("*") Intel 80386"*)
-                i686-w64-mingw32-objdump -d "${FILE}"
+                command i686-w64-mingw32-objdump -d "${FILE}"
                 return 0
                 ;;
                 *"ELF 64-bit LSB shared object, ARM aarch64,"*)
-                aarch64-linux-gnu-objdump -d "${FILE}"
+                command aarch64-linux-gnu-objdump -d "${FILE}"
                 return 0
                 ;;
                 *"ELF 64-bit MSB executable, IBM S/390"*)
-                s390x-linux-gnu-objdump -d "${FILE}"
+                command s390x-linux-gnu-objdump -d "${FILE}"
+                return 0
+                ;;
+                *)
+                command hexdump -C "${FILE}"
                 return 0
             esac
             ;;
@@ -313,6 +317,7 @@ function _MOAR_DECODE
             } 2>/dev/null
             ;;
             *)
+            command printf "\e[91m<NONEXISTANT>\e[0m" 1>&2 | tee 1>/dev/null
             command cat "${FILE}"
             esac
         fi
