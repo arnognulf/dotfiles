@@ -172,7 +172,7 @@ DURATION=""
 [ ${DURATION_M} -gt 0 ] && DURATION="${DURATION}${DURATION_M}m "
 DURATION="${DURATION}${DURATION_S}s, finished at "$(date +%H:%M:%S).""
 command echo "${DURATION}"
-( exec notify-send -i terminal "Completed \"${_TIMER_CMD}\"" & )
+( exec notify-send -a "Completed \"${_TIMER_CMD}\"" -i terminal "Completed \"${_TIMER_CMD}\"" & )
 _PROMPT_ALERT
 _PROMPT_LONGRUNNING=1
 fi
@@ -259,7 +259,8 @@ ${HOME}"/.local/share/Trash/files"*) TITLE="♻️  ${PWD##*/}";;
 /boot|/boot/*) TITLE="🥾  ${PWD##*/}";;
 /) TITLE="💻  /";;
 */.*) TITLE="📌  ${PWD##*/}";;
-/media/*) TITLE="💽  ${PWD##*/}";;
+#/media/*) TITLE="💽  ${PWD##*/}";;
+/media/*) TITLE="💾  ${PWD##*/}";;
 /proc/*|/sys/*|/dev/*|/proc|/sys|/dev) TITLE="🤖  ${PWD##*/}";;
 #/usr/*|/boot/*|/var/*|/srv/*|/usr|/var|/srv) TITLE="🗄️  ${PWD##*/}";;
 */Documents|*/Documents/*|*/doc|*/docs|*/doc/*|*/docs/*|${XDG_DOCUMENTS_DIR}|${XDG_DOCUMENTS_DIR}/*) TITLE="📄  ${PWD##*/}";;

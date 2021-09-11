@@ -385,6 +385,7 @@ lightsoff \
 mame \
 quadrapassel \
 swell-foop \
+gnome-disks \
 tali \
 slack
 do
