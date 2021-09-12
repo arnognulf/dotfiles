@@ -223,7 +223,11 @@ function _CHDIR_ALL_THE_THINGS ()
         ;;
     esac
     esac
-    if [ -f "${ARG}" ]; then
+    if [ -L "${ARG}" ];then
+        local LINKARG=$(readlink "${ARG}")
+        _CHDIR_ALL_THE_THINGS "${LINKARG}"
+        return 0
+    elif [ -f "${ARG}" ]; then
         case "${ARG,,}" in 
             *.zip|*.7z|*.lzh|*.lha|*.arj|*.rar|*.exe)
             local RETRY=1;;
