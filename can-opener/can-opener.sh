@@ -386,6 +386,26 @@ mame \
 quadrapassel \
 swell-foop \
 gnome-disks \
+kolourpaint \
+pavucontrol \
+xwpick \
+xsysinfo \
+xosview \
+xpaint \
+moebius \
+gitk \
+clamtk \
+gnote \
+xfd \
+goattracker \
+tomboy \
+banshee \
+rhythmbox \
+fasttracker2 \
+ccutter \
+zytrax \
+protracker \
+qnnp \
 tali \
 slack
 do
