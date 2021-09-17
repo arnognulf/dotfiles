@@ -406,6 +406,10 @@ ccutter \
 zytrax \
 protracker \
 qnnp \
+magnus \
+xzoom \
+peek \
+deepin-screen-recorder \
 tali \
 slack
 do
