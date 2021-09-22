@@ -472,7 +472,6 @@ tr \
 comm \
 cat \
 tac \
-tee \
 grep \
 egrep \
 sort \
