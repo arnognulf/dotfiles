@@ -32,9 +32,24 @@
 function _CAN_OPENER_ALL ()
 {
     local FILE
+    local MIME
     for FILE in "$@"
     do
-        ( exec xdg-open "${FILE}" &>/dev/null & )
+        (
+            MIME=$(command file -L --mime-type "${FILE}")
+            case "${MIME##* }" in
+            application/x-pie-executable|application/x-sharedlib|application/x-executable|text/x-shellscript|text/x-perl|text/x-script.python|text/x-lisp|text/x-java|text/x-ruby)
+            if [ -x "${FILE}" ]
+            then
+                exec "${FILE}" &>/dev/null &
+            else
+                exec xdg-open "${FILE}" &>/dev/null &
+            fi
+            ;;
+            *)
+                exec xdg-open "${FILE}" &>/dev/null &
+            esac
+        )
     done
 }
 function _CAN_OPENER ()
@@ -411,6 +426,8 @@ xzoom \
 peek \
 deepin-screen-recorder \
 tali \
+klystrack \
+buzztrax-edit \
 slack
 do
 if type -P "${CMD}" &>/dev/null

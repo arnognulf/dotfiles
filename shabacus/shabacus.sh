@@ -511,12 +511,12 @@ ln ()
 {
 if [ -e "${1}" ]
 then
-"$(which ln)" "${@}"
+"$(type -P ln)" "${@}"
 else
 case "${*}" in
 e) _shabacus "l(e(1))";;
 e" "*|-[0-9]*|[0-9]*) _shabacus ln "${@}";;
-*) "$(which ln)" "${@}"
+*) "$(type -P ln)" "${@}"
 esac
 fi
 }
