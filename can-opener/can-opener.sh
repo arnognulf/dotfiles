@@ -428,6 +428,11 @@ deepin-screen-recorder \
 tali \
 klystrack \
 buzztrax-edit \
+xdaliclock \
+gnome-passwordsafe \
+dragon \
+unclutter \
+/usr/bin/unclutter* \
 slack
 do
 if type -P "${CMD}" &>/dev/null
