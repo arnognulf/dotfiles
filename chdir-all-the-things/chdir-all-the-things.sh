@@ -157,6 +157,15 @@ return ${RETURN_VALUE}
 function _CHDIR_ALL_THE_THINGS () 
 { 
     local _SOURCED=1
+    local _KEEP
+    if [ "$1" = '-k' ] || [ "$1" = '--keep' ]
+    then
+        _KEEP=1
+        shift
+    else
+        _KEEP=0
+    fi
+
     [ ${#@} -gt 1 ] && {
         local FILE
         local ALL_THE_FILES=1
@@ -379,7 +388,7 @@ function _CHDIR_ALL_THE_THINGS ()
                 command echo "COMPUTER SAYS NO" 1>&2 | command tee /dev/null 1>/dev/null
                 return 1
             fi
-        else
+        elif [ "${_KEEP}" = 0 ];then
             gio trash "${ORIG_FILE}" &>/dev/null
             gvfs-trash "${ORIG_FILE}" &>/dev/null
         fi

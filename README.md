@@ -1,7 +1,7 @@
 My dotfiles
 ===========
 
-You may not like it, but this is what peak dotfiles look
+You may not like it, but this is what peak dotfiles look like
 
 # link:
 ln -s ${PWD}/bashrc ~/.bashrc
@@ -44,10 +44,7 @@ fonts.conf - font substitutions
 [moar](moar/README.md) - less for the lazy
 
 
-[prompt](prompt/README.md) - there can be only one
-
-
-[roflcopy](roflcopy/README.md) - WIP scp emulator
+[prompt](prompt/README.md) - slightly overengineered but minimalistic prompt
 
 
 [shabacus](shabacus/README.md) - awesome shell calculator without the need to escape multiplication operator 
@@ -56,13 +53,16 @@ fonts.conf - font substitutions
 [stawkastic](stawkastic/README.md) - handy awk statistical functions
 
 
-thinking-machine
+[Uber but for mv(1)](uber-for-mv/README.md) - move latest file from Downloads to current directory: dl
 
 
-[Uber but for mv(1)](uber-for-mv/README.md) - move latest file from Downloads to current directory: m
+[thinking-machine](thinking-machine/README.md) - thinking machine CM demo in bash - slooooow!
 
 
-vim
+vim - vimrc, for the few times I fire up vim and not vscode
+
+
+[roflcopy](roflcopy/README.md) - WIP scp emulator
 
 
 [yankypanky](yanykpanky/README.md) - DEPRECATED - copy stuff

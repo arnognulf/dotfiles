@@ -164,6 +164,7 @@ alias tmp=_TMP_ALL_THE_THINGS
 #alias p=_PANKY
 alias grep="grep -a"
 alias willys="google-chrome-beta -user-data-dir=${HOME}/.config/willys --no-default-browser-check --no-first-run --app=https://willys.se"
+alias hbo="google-chrome-beta -user-data-dir=${HOME}/.config/hbo --no-default-browser-check --no-first-run --app=https://www.hbomax.com"
 alias dn="google-chrome-beta -user-data-dir=${HOME}/.config/dn --no-default-browser-check --no-first-run --app=https://dn.se"
 alias gmail="google-chrome-beta -user-data-dir=${HOME}/.config/gmail --no-default-browser-check --no-first-run --app=https://mail.google.com"
 alias facebook="google-chrome-beta -user-data-dir=${HOME}/.config/facebook --no-default-browser-check --no-first-run --app=https://facebook.com"
@@ -182,7 +183,7 @@ function chrome-polisher
     local DIR=/tmp/chrome-polisher-${USER}
     pidof chrome &>/dev/null || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
     command mkdir -p "${DIR}" &>/dev/null
-    _CAN_OPENER google-chrome-beta --disable-notifications --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
+    _CAN_OPENER google-chrome-beta --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
 }
 function chrome-polisher-tmp
 {

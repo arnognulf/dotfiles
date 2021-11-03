@@ -34,21 +34,21 @@ function _MOAR_DECODE_DOC
     *.cs|*.vala|*.java|*.js|*.c|*.xml|*.kt)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command batcat -pp --color always "${1}" || command cat "${1}"
+            command batcat --theme=GitHub -pp --color always "${1}" || command cat "${1}"
             return 0
         fi
         ;;
     *.mk)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command batcat -pp --color always -l Makefile "${1}" || command cat "${1}"
+            command batcat --theme=GitHub -pp --color always -l Makefile "${1}" || command cat "${1}"
             return 0
         fi
     ;;
     *.bp)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command batcat -pp --color always -l json "${1}" || command cat "${1}"
+            command batcat --theme=GitHub -pp --color always -l json "${1}" || command cat "${1}"
             return 0
         fi
 
@@ -61,31 +61,31 @@ function _MOAR_DECODE_DOC
         *)
         case "${_MOAR_MIME}" in
         *" "text/x-c|*" "text/x-c++) 
-            command batcat -pp --language=c++ --color always "${1}" || command cat "${1}"
+            command batcat --theme=GitHub -pp --language=c++ --color always "${1}" || command cat "${1}"
             return 0
             ;;
         *" "text/x-ecmascript|*" "text/x-javascript|*" "text/javascript)
-            command batcat -pp --language=js --color always "${1}" || command cat "${1}"
+            command batcat --theme=GitHub -pp --language=js --color always "${1}" || command cat "${1}"
             return 0
             ;;
         *" "text/x-diff) 
-            command batcat -pp --language=diff --color always "${1}" || command cat "${1}"
+            command batcat --theme=GitHub -pp --language=diff --color always "${1}" || command cat "${1}"
             return 0
             ;;
         *" "text/x-makefile) 
-            command batcat -pp --language=makefile --color always "${1}" || command cat "${1}"
+            command batcat --theme=GitHub -pp --language=makefile --color always "${1}" || command cat "${1}"
             return 0
             ;;
         *" "text/xml) 
-            command batcat -pp --language=xml --color always "${1}" || command cat "${1}"
+            command batcat --theme=GitHub -pp --language=xml --color always "${1}" || command cat "${1}"
             return 0
             ;;
         *" "text/x-java)
-            command batcat -pp --language=java -color always "${1}" || command cat "${1}"
+            command batcat --theme=GitHub -pp --language=java -color always "${1}" || command cat "${1}"
             return 0
             ;;
         *" "text/x-sql)
-            command batcat -pp --language=sql -color always "${1}" || command cat "${1}"
+            command batcat --theme=GitHub -pp --language=sql -color always "${1}" || command cat "${1}"
             return 0
             ;;
         *" "text/rtf) : ;;
@@ -148,7 +148,7 @@ function _MOAR_DECODE_DOC
     *": "us-ascii|*" "utf-8)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command batcat -pp --color always "${1}" || command cat "${1}"
+            command batcat --theme=GitHub -pp --color always "${1}" || command cat "${1}"
             return 0
         else
             command cat "${1}"
