@@ -185,7 +185,6 @@ _TIMER_STARTED=0
 function _PROMPT_LINE ()
 {
   (
-    set +x
 local LINE=""
 while [ ${#LINE} -lt ${COLUMNS} ]
 do

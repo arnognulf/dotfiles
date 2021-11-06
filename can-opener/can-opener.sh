@@ -23,6 +23,7 @@
 # calling 'o' without arguments will open the current folder in the file manager 
 # calling 'o' with a file will try to open it with xdg-open
 # calling 'o' with a program and argument will put the program in the background, debug output will be hidden.
+# calling 'o' with a URL will try to open a web browser
 #
 # Can Opened commands can be disabled by prepending \ eg \xterm
 # 
