@@ -9,6 +9,7 @@ command &
 and enable the program to live on once the terminal has been closed.
 Aliases will be created for known graphical programs.
 If this causes problems, the alias can temporarily be disabled by prepending slash:
+
 \command
 
 'o' without arguments will open the current folder in the file manager 
