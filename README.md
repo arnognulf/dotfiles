@@ -44,7 +44,7 @@ fonts.conf - font substitutions
 [moar](moar/README.md) - less for the lazy
 
 
-[prompt](prompt/README.md) - slightly overengineered but minimalistic prompt
+[prompt](prompt/README.md) - slightly overengineered while minimalistic prompt
 
 
 [shabacus](shabacus/README.md) - awesome shell calculator without the need to escape multiplication operator 
