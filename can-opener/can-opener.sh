@@ -433,12 +433,12 @@ gnome-passwordsafe \
 dragon \
 unclutter \
 /usr/bin/unclutter* \
+feathernotes \
 slack
 do
 if type -P "${CMD}" &>/dev/null
 then
-eval function _CAN_OPENER_${CMD##*/} { if [ \"\${_SOURCED}\" = 1 ]\; then \"${CMD/_CAN_OPENER/}\" \"\${@}\"\; else o \"${CMD##*/}\" \"\${@}\"\;fi\;}
-eval "alias ${CMD##*/}=_CAN_OPENER_${CMD##*/}"
+eval "alias ${CMD##*/}=\"o ${CMD##*/}\""
 fi
 done
 }
@@ -447,21 +447,11 @@ unset -f _CMD_PARSER
 function _FLATPAK_PARSER ()
 {
 local APPLICATION
-for APPLICATION in $(flatpak list --columns=application 2>/dev/null)
+for APPLICATION in /var/lib/flatpak/exports/bin/* ~/.local/share/flatpak/exports/bin/* 
 do
-local APPLICATION_LOWER=${APPLICATION,,}
-local APPLICATION_SHORT=${APPLICATION##*.}
-case ${APPLICATION} in
-*'.sdk'*|*'.Plugin'*|'org.gtk.'*|*'.Platform'*|*'qt5client')
-:;;
-*'.Client')
-local APPLICATION_NAME=${APPLICATION#*.}
-local APPLICATION_NAME=${APPLICATION_NAME%.*}
-alias ${APPLICATION_NAME}="flatpak run ${APPLICATION}"
-;;
-*)
-alias ${APPLICATION_SHORT}="flatpak run ${APPLICATION}"
-esac
+CMD=${APPLICATION,,}
+CMD=${CMD##*.}
+eval "alias ${CMD##*/}=\"o ${APPLICATION}\""
 done
 }
 _FLATPAK_PARSER

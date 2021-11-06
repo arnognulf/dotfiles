@@ -141,6 +141,7 @@ printf "\033]0;️️>  ${*}\007" 2>/dev/null
 esac
 _TIMER_STARTED=1
 _START_SECONDS=$SECONDS
+#( TTY=$(tty 2>/dev/null); PIDTTY=${TTY//\/} _PROMPT_PID_FILE=~/.cache/${PIDTTY}prompt-timer.pid; )
 }
 
 function _PROMPT_STOP_TIMER ()

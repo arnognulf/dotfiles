@@ -136,12 +136,7 @@ alias ru='repo upload'
 alias rb='repo branch'
 alias r='repo status'
 alias -- -='c -'
-alias ..ls='c ..'
 alias ..='c ..'
-alias ...='c ..'
-alias ....='c ..'
-alias .....='c ..'
-alias ......='c ..'
 alias rud='repo upload -d'
 alias vim=_EDITOR
 alias vi=_EDITOR
@@ -157,7 +152,6 @@ alias task_bug="🐛 Bug"
 alias trash="gio trash"
 #alias cp='rsync --append-verify --checksum --info=progress2'
 alias xargs="xargs -d'\n'"
-alias noless="command /bin/cat"
 alias mosh="MOSH_TITLE_NOPREFIX=1 mosh"
 alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
@@ -315,20 +309,6 @@ do
 eval "function $FILE { echo \"C-comment paste detected. Press CTRL+C to continue\";cat;}"
 break;
 done
-
-true || function cp
-{
-    if [ -t 1 ] && [ -t 2 ] && [ -z "${_SOURCED}" ]
-    then
-        {
-        ( command cp "$@" &>/tmp/.cp-out.$USER.$! & progress -qmp $!;)
-        command cat /tmp/.cp-out.${USER}.*
-        command rm /tmp/.cp-out.${USER}.*
-        } 2>/dev/null
-    else
-        cp "$@"
-    fi
-}
 
 LS_COLORS='di=01';
 export LS_COLORS
