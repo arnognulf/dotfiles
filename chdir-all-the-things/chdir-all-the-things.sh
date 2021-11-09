@@ -268,10 +268,9 @@ function _CHDIR_ALL_THE_THINGS ()
         
         case "${ORIG_FILE}" in 
             /*)
-
             ;;
             *)
-                ORIG_FILE="../${ORIG_FILE##*/}"
+                ORIG_FILE="${PWD}/${ORIG_FILE}"
             ;;
         esac;
         # shellcheck disable=SC2164
@@ -382,12 +381,13 @@ function _CHDIR_ALL_THE_THINGS ()
         if [ ${COUNT} = 0 ]; then
             $(type -P rm) -rf "${TEMPDIR}" &> /dev/null;
             # shellcheck disable=SC2164
-            _CHDIR_ALL_THE_THINGS_CD .. &>/dev/null
+            _CHDIR_ALL_THE_THINGS_CD "${ORIG_FILE%/*}" &>/dev/null
             if [ "${CATT_OLDPWD}" = "$(pwd)" ]
             then
                 command echo "COMPUTER SAYS NO" 1>&2 | command tee /dev/null 1>/dev/null
                 return 1
             fi
+            set +x
         elif [ "${_KEEP}" = 0 ];then
             gio trash "${ORIG_FILE}" &>/dev/null
             gvfs-trash "${ORIG_FILE}" &>/dev/null

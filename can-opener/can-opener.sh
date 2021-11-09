@@ -437,6 +437,8 @@ feathernotes \
 cantor \
 gcm-viewer \
 xarchiver \
+zeal \
+minder \
 texdoctk \
 slack
 do
