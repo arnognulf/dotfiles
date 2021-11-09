@@ -275,7 +275,6 @@ wine \
 wine64 \
 winecfg \
 winecmd \
-x11perf \
 x3270 \
 xchat \
 xconsole \
@@ -435,6 +434,10 @@ dragon \
 unclutter \
 /usr/bin/unclutter* \
 feathernotes \
+cantor \
+gcm-viewer \
+xarchiver \
+texdoctk \
 slack
 do
 if type -P "${CMD}" &>/dev/null

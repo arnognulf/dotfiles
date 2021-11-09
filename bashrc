@@ -47,9 +47,9 @@ function _EDITOR
     $(type -P "${EDITOR}"||type -P "vim" ||type -P "vi") "${@}"
 }
 
-#alias a=_ARCHIVR
-alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
-alias ghidra='~/.local/share/ghidra/ghidraRun'
+[ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
+[ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
+[ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
 alias dd='dd status=progress'
 alias dl=_UBER_FOR_MV
 alias octave=octave-cli

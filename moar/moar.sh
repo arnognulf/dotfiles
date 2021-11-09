@@ -174,7 +174,7 @@ function _MOAR_DECODE
         local TEMP=$(mktemp -u /tmp/.MOAR.XXXXXXXXXXXX)
         if [ ! -s "${FILE}" ] && command cat "${FILE}" &>"${TEMP}" && [ ! -s "${TEMP}" ]
         then
-            printf "\e[91m<EMPTY>\e[0m" 1>&2 | tee 1>/dev/null
+            printf "\e[91m<EMPTY>\e[0m" 2>/dev/null
         elif [ -f "${FILE}" ]
         then
             {
@@ -317,8 +317,7 @@ function _MOAR_DECODE
             } 2>/dev/null
             ;;
             *)
-            command printf "\e[91m<NONEXISTANT>\e[0m" 1>&2 | tee 1>/dev/null
-            command cat "${FILE}"
+            command printf "\e[91m<NONEXISTANT>\e[0m" 2>/dev/null
             esac
         fi
     done
@@ -518,6 +517,8 @@ file \
 fastboot \
 lsblk \
 lsattrib \
+/usr/bin/*info* \
+acpidump \
 ip
 do
 if type -P ${CMD##*/} &>/dev/null 
