@@ -20,20 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# CHDIR ALL THE THINGS!
-#
-# Usage: 
-#
-# c <directory> - will recurse all single subdirectories if no other files exists
-# c .. - will recurse backwards all single subdirectories if no other files exists
-# c <archive> # always create dir for files and unpack all files in the root of that dir; throw the archive in xdg wastebasket
-# c <git-repo> # do a shallow git clone and cd into it's working directory
-# c <file> # go to directory containing file
-# c tmp # create temp dir with tab compatible prefix + ISO8601isch date + three random words from dict
-# c <non-existant dir> # combo of mkdir+cd; autoremoves directory if you cd out of it without putting any files there; will refuse to create dir if basename is similar to already existing dir - great when you tab complete too fast.
-# c <file1> <file2> <file3> # decompress files on command line, but do not chdir into them
-# c //WORKSPACE/windows_share/dir - open Windows share
-
 function _RECURSE_REVERSE_CD
 {
     local COUNT=0
@@ -145,10 +131,12 @@ _CATT_LASTLASTPWD="${_CATT_LASTPWD}"
 _CATT_LASTPWD="${PWD}"
 builtin cd "$1"
 RETURN_VALUE=$?
-[ ${COUNT} = 2 -a -w "${_CATT_LASTPWD}" ] && rm -d "${_CATT_LASTPWD}" &>/dev/null
+rm -d "${_CATT_LASTPWD}" &>/dev/null
 else
+_CATT_LASTPWD="${PWD}"
 builtin cd
 RETURN_VALUE=$?
+rm -d "${_CATT_LASTPWD}" &>/dev/null
 fi
 return ${RETURN_VALUE}
 }
