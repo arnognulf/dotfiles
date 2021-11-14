@@ -262,6 +262,7 @@ rage \
 remmina \
 ristretto \
 /usr/bin/rxvt* \
+kxterm \
 scilab \
 signal \
 synaptic \
@@ -440,6 +441,21 @@ xarchiver \
 zeal \
 minder \
 texdoctk \
+tilda \
+xgterm \
+xmotd \
+tilix \
+putty \
+tcvt \
+kate \
+Eterm \
+xgammon \
+guake \
+gtkterm \
+gexec \
+geany \
+foot \
+sakura \
 slack
 do
 if type -P "${CMD}" &>/dev/null
