@@ -459,6 +459,7 @@ sakura \
 drawio \
 /usr/bin/emacs* \
 /usr/bin/xemacs* \
+verbiste \
 slack
 do
 if type -P "${CMD}" &>/dev/null

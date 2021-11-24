@@ -143,7 +143,7 @@ alias vi=_EDITOR
 alias v=_EDITOR
 alias keepass='o keepassxc'
 alias kp=keepassxc
-alias ls='_MOAR_ls -C --color=always'
+alias ls='_MOAR ls -C --color=always'
 alias ll='ls -al --color=always'
 alias l='ls -C --color=always'
 alias task_flash='task "⚡ FLASH ⚡"'

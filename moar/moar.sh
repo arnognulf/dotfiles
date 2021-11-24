@@ -525,8 +525,7 @@ do
 if type -P ${CMD##*/} &>/dev/null 
 then
     local BASECMD=${CMD##*/}
-    eval "function _MOAR_${BASECMD} { _MOAR \"\${FUNCNAME/_MOAR_/}\" \"\$@\";}"
-    eval "alias ${BASECMD}=_MOAR_${BASECMD}"
+    eval "alias ${BASECMD}=\"_MOAR ${BASECMD}\""
 fi
 done
 eval "function _MOAR_d { _MOAR \"\${FUNCNAME/_MOAR_/}\" \"\$@\";}"
