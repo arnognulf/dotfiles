@@ -456,6 +456,7 @@ gexec \
 geany \
 foot \
 sakura \
+drawio \
 slack
 do
 if type -P "${CMD}" &>/dev/null
