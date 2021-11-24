@@ -460,6 +460,7 @@ drawio \
 /usr/bin/emacs* \
 /usr/bin/xemacs* \
 verbiste \
+gftp-gtk \
 slack
 do
 if type -P "${CMD}" &>/dev/null

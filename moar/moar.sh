@@ -346,7 +346,7 @@ function _MOAR
             command "${CMD}" "$@"
         fi
         ;;
-        apt|apt-cache)
+        apt)
         case "${2}" in
         list|search)
             if [ "${_MOAR_STDOUT}" = 1 ]
@@ -519,7 +519,6 @@ lsblk \
 lsattrib \
 /usr/bin/*info* \
 acpidump \
-apt-cache \
 ip
 do
 if type -P ${CMD##*/} &>/dev/null 
