@@ -519,6 +519,7 @@ lsblk \
 lsattrib \
 /usr/bin/*info* \
 acpidump \
+apt-cache \
 ip
 do
 if type -P ${CMD##*/} &>/dev/null 

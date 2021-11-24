@@ -156,7 +156,7 @@ alias mosh="MOSH_TITLE_NOPREFIX=1 mosh"
 alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
 #alias p=_PANKY
-alias grep="grep -a"
+alias grep="_MOAR grep -a"
 alias willys="google-chrome-beta -user-data-dir=${HOME}/.config/willys --no-default-browser-check --no-first-run --app=https://willys.se"
 alias hbo="google-chrome-beta -user-data-dir=${HOME}/.config/hbo --no-default-browser-check --no-first-run --app=https://www.hbomax.com"
 alias dn="google-chrome-beta -user-data-dir=${HOME}/.config/dn --no-default-browser-check --no-first-run --app=https://dn.se"
