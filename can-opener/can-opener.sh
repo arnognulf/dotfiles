@@ -323,6 +323,8 @@ gthumb \
 gwyddion \
 oregano \
 plotdrop \
+xmball \
+/usr/games/xm* \
 polari \
 yelp \
 telegnome \
@@ -334,6 +336,7 @@ quake2 \
 quake3 \
 quake4 \
 hedgewars \
+xhexagons \
 obs \
 alacarte \
 rasmol \
@@ -341,6 +344,9 @@ gpicview \
 gmsh \
 pcmanfm \
 spacefm \
+gmanedit \
+nedit \
+jedit \
 dlt-viewer \
 unison-gtk \
 milkytracker \
@@ -399,11 +405,18 @@ hitori \
 iagno \
 lightsoff \
 mame \
+xmlink \
 quadrapassel \
 swell-foop \
 gnome-disks \
+xbarrel \
+xoct \
+xdino \
+xpanex \
 kolourpaint \
 pavucontrol \
+xtriangles \
+xrubik \
 xwpick \
 xsysinfo \
 xosview \
@@ -461,6 +474,13 @@ drawio \
 /usr/bin/xemacs* \
 verbiste \
 gftp-gtk \
+fldiff \
+ivtext \
+idemo \
+idraw \
+xsol \
+xabacus \
+xmabacus \
 slack
 do
 if type -P "${CMD}" &>/dev/null
