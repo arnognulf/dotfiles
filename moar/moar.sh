@@ -141,6 +141,7 @@ function _MOAR_DECODE_DOC
     *.org) command pandoc -s --from=org --to=man "${TEMP}";;
     *.tex) command pandoc -s --from=latex --to=man "${TEMP}";;
     *.rst) command pandoc -s --from=rst --to=man "${TEMP}";;
+    *.man) command cat "${1}";;
     *.asciidoc|*.adoc|*.asc) pandoc -s --from=asciidoc --to=man "${TEMP}";;
     esac > "${TEMP}.man" #end case1
 

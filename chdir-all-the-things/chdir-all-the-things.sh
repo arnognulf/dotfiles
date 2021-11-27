@@ -208,7 +208,7 @@ function _CHDIR_ALL_THE_THINGS ()
     case "${ARG}" in
     */*)
     case $(command file --mime-type -L "${ARG}" 2>/dev/null) in
-    *" "application/*)
+    *" "application/x-*)
         if [ -n "${ARG%/*}" -a "${ARG%/*}" != "${ARG}" ]
         then
             builtin cd "${ARG%/*}"
