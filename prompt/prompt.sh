@@ -171,9 +171,9 @@ command echo -ne "\nCommand took "
 DURATION=""
 [ ${DURATION_H} -gt 0 ] && DURATION="${DURATION}${DURATION_H}h "
 [ ${DURATION_M} -gt 0 ] && DURATION="${DURATION}${DURATION_M}m "
-DURATION="${DURATION}${DURATION_S}s, finished at "$(date +%H:%M:%S).""
+DURATION="${DURATION}${DURATION_S}s, finished at "$(date +%H:%M).""
 command echo "${DURATION}"
-( exec notify-send -a "Completed \"${_TIMER_CMD}\"" -i terminal "Completed \"${_TIMER_CMD}\"" & )
+( exec notify-send --hint int:transient:1 -a "Completed \"${_TIMER_CMD}\"" -i terminal "${_TIMER_CMD}" "Command took ${DURATION}" & )
 _PROMPT_ALERT
 _PROMPT_LONGRUNNING=1
 fi
