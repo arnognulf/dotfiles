@@ -144,6 +144,7 @@ lowriter \
 spotify \
 firefox \
 google-chrome \
+google-chrome-stable \
 google-chrome-beta \
 libreoffice \
 evince \

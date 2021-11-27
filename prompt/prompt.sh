@@ -137,7 +137,7 @@ case "${1}" in
 "c "*|"cd "*|".."*) :;;
 *)
 #printf "\033]0;️⚙️  ${*}\007" 2>/dev/null
-printf "\033]0;️️>  ${*}\007" 2>/dev/null
+printf "\033]0;️️>  ${*} in ${PWD##*/} at "$(date +%H:%M)"\007" 2>/dev/null
 esac
 _TIMER_STARTED=1
 _START_SECONDS=$SECONDS
@@ -212,7 +212,7 @@ _PROMPT ()
   then
   #if [ "$1" = 0 ]
   #then
-  TITLE="✅ Completed \"${_TIMER_CMD}\""
+  TITLE="✅ Completed ${_TIMER_CMD}"
   #else
   #TITLE="🛑 ERROR: \"${_TIMER_CMD}\""
   #fi
