@@ -152,7 +152,8 @@ alias task_bug="🐛 Bug"
 alias trash="gio trash"
 #alias cp='rsync --append-verify --checksum --info=progress2'
 alias xargs="xargs -d'\n'"
-alias mosh="MOSH_TITLE_NOPREFIX=1 mosh"
+alias mosh="_MEASURE=0;MOSH_TITLE_NOPREFIX=1 mosh"
+alias adb="_MEASURE=0;adb"
 alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
 #alias p=_PANKY
@@ -168,7 +169,8 @@ alias newsy="chrome-polisher-tmp newsy https://news.ycombinator.com"
 alias youtube="chrome-polisher-tmp youtube https://youtube.com"
 alias lobste.rs="chrome-polisher-tmp lobste.rs https://lobste.rs"
 alias svtplay="chrome-polisher-tmp lobste.rs https://svtplay.se"
-
+alias which="command -v"
+alias ssh="_MEASURE=0;ssh"
 unalias google-chrome &>/dev/null
 unalias chrome &>/dev/null
 pidof chrome &>/dev/null || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null

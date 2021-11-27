@@ -326,7 +326,7 @@ function _MOAR_DECODE
 function _MOAR
 {
     local _MOAR_STDERR_FILE=/tmp/.MOAR_STDERR."${RANDOM}"
-    _TIMER_STARTED=0
+    _MEASURE=0
     if [ -z "${_SOURCED}" ]
     then
     if [ -t 1 ]

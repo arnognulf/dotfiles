@@ -139,7 +139,7 @@ case "${1}" in
 #printf "\033]0;️⚙️  ${*}\007" 2>/dev/null
 printf "\033]0;️️>  ${*} in ${PWD##*/} at "$(date +%H:%M)"\007" 2>/dev/null
 esac
-_TIMER_STARTED=1
+_MEASURE=1
 _START_SECONDS=$SECONDS
 #( TTY=$(tty 2>/dev/null); PIDTTY=${TTY//\/} _PROMPT_PID_FILE=~/.cache/${PIDTTY}prompt-timer.pid; )
 }
@@ -160,7 +160,7 @@ top|htop|vim|nano|sudo|ssh|man|info)
 :
 ;;
 *)
-if [ ${_TIMER_STARTED-0} -gt 0 -a ${DIFF} -gt 29 ]
+if [ ${_MEASURE-0} -gt 0 -a ${DIFF} -gt 29 ]
 then
 SECONDS_M=$((DIFF % 3600))
 
@@ -178,7 +178,7 @@ _PROMPT_ALERT
 _PROMPT_LONGRUNNING=1
 fi
 esac
-_TIMER_STARTED=0
+_MEASURE=0
   } 2>/dev/null
 }
 
