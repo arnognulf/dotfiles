@@ -173,7 +173,7 @@ DURATION=""
 [ ${DURATION_M} -gt 0 ] && DURATION="${DURATION}${DURATION_M}m "
 DURATION="${DURATION}${DURATION_S}s, finished at "$(date +%H:%M).""
 command echo "${DURATION}"
-( exec notify-send --hint int:transient:1 -a "Completed \"${_TIMER_CMD}\"" -i terminal "${_TIMER_CMD}" "Command took ${DURATION}" & )
+( exec notify-send --hint int:transient:1 -a "Completed ${_TIMER_CMD}" -i terminal "${_TIMER_CMD}" "Command took ${DURATION}" & )
 _PROMPT_ALERT
 _PROMPT_LONGRUNNING=1
 fi
