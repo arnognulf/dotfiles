@@ -31,6 +31,10 @@ function unspace ()
 {
     for FILE in "${@}"
     do
+        if [ -d "${FILE}" ]
+        then
+            unspace "${FILE}"/*
+        fi
         command mv "${FILE}" "${FILE// /_}"
     done
 }
