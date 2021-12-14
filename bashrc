@@ -26,6 +26,7 @@ export VIM=${DOTFILESDIR}/vim
 . "${DOTFILESDIR}"/i-like-to-move-it/i-like-to-move-it.sh
 . "${DOTFILESDIR}"/fuuuu/fuuuu.sh
 . "${DOTFILESDIR}"/stawkastic/stawkastic.sh
+. "${DOTFILESDIR}"/yassify/yassify.sh
 
 EDITOR="vim"
 [ -z "$SSH_CLIENT" ] && if [ "${UID}" -gt 0 -o -n "${DISPLAY}" ]
