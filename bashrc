@@ -249,28 +249,48 @@ function c ()
 }
 
 function dowhile
-{
+(
     while "$@"
     do
     sleep 1
+    let COUNT=1+${COUNT}
+    if [ ${COUNT} -gt 10 ]
+    then
+        echo "=== "$(date +%H:%M:%S)" ==="
+        COUNT=0
+    fi
     done
-}
+)
 
 function dountil
-{
+(
+    COUNT=0
     until "$@"
     do
     sleep 1
+    let COUNT=1+${COUNT}
+    if [ ${COUNT} -gt 10 ]
+    then
+        echo "=== "$(date +%H:%M:%S)" ==="
+        COUNT=0
+    fi
     done
-}
+)
 
 function loop
-{
+(
+    COUNT=0
     while sleep 1
     do
     "${@}"
+    let COUNT=1+${COUNT}
+    if [ ${COUNT} -gt 10 ]
+    then
+        echo "=== "$(date +%H:%M:%S)" ==="
+        COUNT=0
+    fi
     done
-}
+)
 
 function now
 {

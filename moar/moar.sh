@@ -326,6 +326,16 @@ function _MOAR_DECODE
 
 function _MOAR
 {
+    local PIPEFAIL_ENABLED
+    if set -o|command egrep -q "pipefail(.*)off"
+    then
+        set -o pipefail
+        PIPEFAIL_ENABLED=0
+    else
+        PIPEFAIL_ENABLED=1
+    fi
+
+    local RETURN
     local _MOAR_STDERR_FILE=/tmp/.MOAR_STDERR."${RANDOM}"
     _MEASURE=0
     if [ -z "${_SOURCED}" ]
@@ -343,8 +353,10 @@ function _MOAR
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
             command "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
+            RETURN=$?
         else
             command "${CMD}" "$@"
+            RETURN=$?
         fi
         ;;
         apt)
@@ -353,12 +365,15 @@ function _MOAR
             if [ "${_MOAR_STDOUT}" = 1 ]
             then
                 command "$@" 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
+                RETURN=$?
             else
                 command "$@"
+                RETURN=$?
             fi
         ;;
         *)
             command "$@"
+            RETURN=$?
         esac
         ;;
         *git)
@@ -368,21 +383,26 @@ function _MOAR
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
             command git -c color.ui=always "${@}"  2>${_MOAR_STDERR_FILE} | _EMOJIFY | command less -R -X -F -K
+            RETURN=$?
         else
             command git -c color.ui=never "${@}" | _EMOJIFY
+            RETURN=$?
         fi
         ;;
         *)
-        command "$@"
+            command "$@"
+            RETURN=$?
         esac
     ;;
     less|more)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
             command "$@"
+            RETURN=$?
         else
             shift
             command cat "${@}"
+            RETURN=$?
         fi
         ;;
     d)
@@ -390,7 +410,7 @@ function _MOAR
         then
             shift
             _MOAR_DECODE * | command less -R -X -F -K
-            return $?
+            RETURN=$?
         fi
         TTY=$(tty) 2>/dev/null
         shift
@@ -405,47 +425,62 @@ function _MOAR
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
             command "$@" 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
+            RETURN=$?
         else
             command "$@"
+            RETURN=$?
         fi
     ;;
     echo)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
             command "$@" 2>${_MOAR_STDERR_FILE} | _EMOJIFY | command less -R -X -F -K
+            RETURN=$?
         else
             command "$@"| _EMOJIFY
+            RETURN=$?
         fi
     ;;
     rg)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
             command "$@" --color=always 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
+            RETURN=$?
         else
             command "$@" --color=never
+            RETURN=$?
         fi
     ;;
     fd|fdfind)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
             command "$@" --color always 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
+            RETURN=$?
         else
             command "$@" --color never
+            RETURN=$?
         fi
     ;;
     *)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
             command "$@" 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
+            RETURN=$?
         else
             command "$@"
+            RETURN=$?
         fi
     esac
     [ -s "${_MOAR_STDERR_FILE}" ] && { command less -R -X -F -K "${_MOAR_STDERR_FILE}"; command rm ${_MOAR_STDERR_FILE};}
 else
     command "$@"
-    return $?
+    RETURN=$?
 fi
+    if [ "${PIPEFAIL_ENABLED}" = 0 ]
+    then
+        set +o pipefail
+    fi
+    return ${RETURN}
 }
 
 _MOAR_DEFINE ()
