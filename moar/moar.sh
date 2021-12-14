@@ -522,10 +522,10 @@ lsattrib \
 acpidump \
 ip
 do
-if type -P ${CMD##*/} &>/dev/null 
+if type -P "${CMD##*/}" &>/dev/null 
 then
-    local BASECMD=${CMD##*/}
-    eval "alias ${BASECMD}=\"_MOAR ${BASECMD}\""
+    local BASECMD="${CMD##*/}"
+    eval "alias \"${BASECMD}\"=\"_MOAR \\\"${BASECMD}\\\"\""
 fi
 done
 eval "function _MOAR_d { _MOAR \"\${FUNCNAME/_MOAR_/}\" \"\$@\";}"
