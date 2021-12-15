@@ -272,17 +272,17 @@ function _CHDIR_ALL_THE_THINGS ()
                  {
                  command printf "\\e[?25l"
                  while sleep 0.05; do
-                 command printf "\\e[?25l\\e[99D   "
+                 command printf "\\e[99D   "
                  sleep 0.04
-                 command printf "\\e[?25l\\e[99D.  "
+                 command printf "\\e[99D.  "
                  sleep 0.04
-                 command printf "\\e[?25l\\e[99D.. "
+                 command printf "\\e[99D.. "
                  sleep 0.04
-                 command printf "\\e[?25l\\e[99D..."
+                 command printf "\\e[99D..."
                  sleep 0.04
-                 command printf "\\e[?25l\\e[99D .."
+                 command printf "\\e[99D .."
                  sleep 0.04
-                 command printf "\\e[?25l\\e[99D  ."
+                 command printf "\\e[99D  ."
                  done
                  };
                  if [[ -t 0 || -p /dev/stdin ]]
@@ -305,7 +305,7 @@ function _CHDIR_ALL_THE_THINGS ()
         kill -9 $(<"${SPINNER_PID_FILE}") &>/dev/null
         command echo -e "\\e[D "
         $(type -P rm) "${SPINNER_PID_FILE}" &>/dev/null
-        printf '\033[99D    \033[99D\033[?25h'
+        printf '\033[99D    \033[99D'
         if [ ${SUCCESS} = 0 ]
         then
             if pdftk "${ORIG_FILE}" unpack_files &>/dev/null
@@ -396,17 +396,17 @@ function _CHDIR_ALL_THE_THINGS ()
                  {
                  command printf "\\e[?25l"
                  while sleep 0.05; do
-                 command printf "\\e[?25l\\e[99D   "
+                 command printf "\\e[99D   "
                  sleep 0.04
-                 command printf "\\e[?25l\\e[99D.  "
+                 command printf "\\e[99D.  "
                  sleep 0.04
-                 command printf "\\e[?25l\\e[99D.. "
+                 command printf "\\e[99D.. "
                  sleep 0.04
-                 command printf "\\e[?25l\\e[99D..."
+                 command printf "\\e[99D..."
                  sleep 0.04
-                 command printf "\\e[?25l\\e[99D .."
+                 command printf "\\e[99D .."
                  sleep 0.04
-                 command printf "\\e[?25l\\e[99D  ."
+                 command printf "\\e[99D  ."
                  done
                  };
                  if [[ -t 0 || -p /dev/stdin ]]
@@ -421,7 +421,7 @@ function _CHDIR_ALL_THE_THINGS ()
         git clone --depth=1 --recursive "${ARG/git clone }" &>/dev/null
         kill -9 $(<"${SPINNER_PID_FILE}") &>/dev/null
         $(type -P rm) "${SPINNER_PID_FILE}" &>/dev/null
-        printf '\033[99D    \033[99D\033[?25h'
+        printf '\033[99D    \033[99D'
         local XARG="${ARG##*/}"
         _CHDIR_ALL_THE_THINGS_CD "${XARG%.git}" &>/dev/null
         ;;
@@ -438,12 +438,6 @@ function _CHDIR_ALL_THE_THINGS ()
             local DIR="${DIR#*/}"
             test -d "/run/user/${UID}/gvfs/smb-share\:server\=${SERVER}\,share\=${SHARE}/" || command gio mount "smb://${SERVER}/${SHARE}"
             _CHDIR_ALL_THE_THINGS "/run/user/${UID}/gvfs/smb-share\:server\=${SERVER}\,share\=${SHARE}/${DIR}"
-            return 0
-        ;;
-        \\*) DIR="$(xclip -o)"
-            DIR="${DIR//\\/\/}"
-            nautilus "smb:${DIR}"
-            command echo smb:${DIR}
             return 0
         ;;
         /*|./*|../*)

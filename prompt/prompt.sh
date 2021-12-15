@@ -72,7 +72,7 @@ function _PROMPT_MAGIC_SHELLBALL ()
   SPACES="${SPACES} "
   let i++
   done
-  command echo -e "\033[25?l\033[D \033[3A\033[994D\033[99D\033[K${SPACES}${ANSWER}                       \033[25?h\033[D "
+  command echo -e "\033[?25l\033[D \033[3A\033[994D\033[99D\033[K${SPACES}${ANSWER}                       \033[D "
 }
 
 function _PROMPT_COMMAND ()
@@ -101,7 +101,7 @@ function _PROMPT_COMMAND ()
         then
         CR_LEVEL=1
         else
-        command printf "\033[25?l\033[D \n\n" 
+        command printf "\033[D \n\n" 
         fi
         ;;
             2) CR_LEVEL=3;command git -c color.status=always status |head -n$((LINES - 2)) | command head -n$((LINES - 4)); command echo "        ..."; command printf "\n";;
@@ -137,7 +137,7 @@ case "${1}" in
 "c "*|"cd "*|".."*) :;;
 *)
 #printf "\033]0;️⚙️  ${*}\007" 2>/dev/null
-printf "\033]0;️️>  ${*} in ${PWD##*/} at "$(date +%H:%M)"\007" 2>/dev/null
+printf "\033]0;>  ${*} in ${PWD##*/} at "$(date +%H:%M)"\007" 2>/dev/null
 esac
 _MEASURE=1
 _START_SECONDS=$SECONDS
@@ -173,7 +173,7 @@ DURATION=""
 [ ${DURATION_M} -gt 0 ] && DURATION="${DURATION}${DURATION_M}m "
 DURATION="${DURATION}${DURATION_S}s, finished at "$(date +%H:%M).""
 command echo "${DURATION}"
-( exec notify-send --hint int:transient:1 -a "Completed ${_TIMER_CMD}" -i terminal "${_TIMER_CMD}" "Command took ${DURATION}" & )
+( exec notify-send -a "Completed ${_TIMER_CMD}" -i terminal "${_TIMER_CMD}" "Command took ${DURATION}" & )
 _PROMPT_ALERT
 _PROMPT_LONGRUNNING=1
 fi
@@ -288,8 +288,8 @@ function _PROMPT_BUCKLE_RESPAWN ()
 
 pidof buckle &>/dev/null || o buckle -f -s 0 &>/dev/null
 PROMPT_COMMAND="_PROMPT_BUCKLE_RESPAWN;_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
-PS1="\[\e[0m\e]0;"'${TITLE}'"\a\e[4m"'$([ $(id -u) = 0 ] && command echo -e "\e[31;4m")\]$(_PROMPT_LINE)'"
-\[\e(1\e[0;7m"'$([ $(id -u) = 0 ] && command echo -e "\e[31m")'"\] "'$(_PROMPT_PWD_BASENAME)'""'${_PROMPT_GIT_PS1}'" "'$([ $(id -u) = 0 ] && echo "# ")'"\[\e[0m\] "
+PS1="\[\e]0;"'${TITLE}'"\a\e[0;4m"'$([ $(id -u) = 0 ] && command echo -e "\e[31m")\]$(_PROMPT_LINE)'"
+\[\e(1\e[0;7m"'$([ $(id -u) = 0 ] && command echo -e "\e[31m")'"\] "'$(_PROMPT_PWD_BASENAME)'""'${_PROMPT_GIT_PS1}'" "'$([ $(id -u) = 0 ] && echo "# ")'"\[\e[0m\e[?25h\] "
 
 function name ()
 {

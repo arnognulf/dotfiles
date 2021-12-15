@@ -26,7 +26,7 @@ export VIM=${DOTFILESDIR}/vim
 . "${DOTFILESDIR}"/i-like-to-move-it/i-like-to-move-it.sh
 . "${DOTFILESDIR}"/fuuuu/fuuuu.sh
 . "${DOTFILESDIR}"/stawkastic/stawkastic.sh
-. "${DOTFILESDIR}"/yassify/yassify.sh
+. "${DOTFILESDIR}"/zipit/zipit.sh
 
 EDITOR="vim"
 [ -z "$SSH_CLIENT" ] && if [ "${UID}" -gt 0 -o -n "${DISPLAY}" ]
@@ -209,7 +209,6 @@ in
 *:*)
 SERVER=${ARG%%:*}
 SERVER=${SERVER#*@}
-until ping -c 1 "${SERVER}" &>/dev/null; do echo -n .;sleep 0.5; done
 esac
 done
 test -z "${SERVER}" && { echo "missing server argument"; return; }
