@@ -2,9 +2,11 @@
 
 function _YASSIFY
 (
-    command rm -rf "/tmp/.YASS/"
-    command mkdir -p /tmp/.YASS/
-    DEST="/tmp/.YASS/$(date +%Y-%m-%d_%H-%M-%S)_${1// /_}".7z
+    FOLDER='/tmp/.                                                                                                                         ZipIt!/'
+    command rm -rf "${FOLDER}"
+    NAME="${1// /_}"
+    NAME="${NAME##*/}"
+    DEST="${FOLDER}/$(date +%Y-%m-%d_%H-%M-%S)_${NAME}".zip
     if TTY=$(tty) && SPINNER_PID_FILE=$(mktemp); then
         (
              function spinner ()
@@ -32,9 +34,9 @@ function _YASSIFY
         )
     fi
  
-    command 7z a "${DEST}" "$@" &>/dev/null
+    command zip "${DEST}" "$@" &>/dev/null
     kill -9 $(<"${SPINNER_PID_FILE}") &>/dev/null
     test -f "${DEST}" && exec nautilus -s "${DEST}" &>/dev/null &
 )
 
-alias y=_YASSIFY
+alias z=_YASSIFY
