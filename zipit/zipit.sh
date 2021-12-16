@@ -38,7 +38,12 @@ function _ZIPIT
  
     command zip -r "${DEST}" "$@" &>/dev/null
     kill -9 $(<"${SPINNER_PID_FILE}") &>/dev/null
-    test -f "${DEST}" && exec nautilus -s "${DEST}" &>/dev/null &
+    if [ -f "${DEST}" ]
+    then
+        exec nautilus -s "${DEST}" &>/dev/null &
+    else
+        command echo "COMPUTER SAYS NO" 1>&2 | tee /dev/null 1>/dev/null
+    fi
 )
 
 alias z=_ZIPIT

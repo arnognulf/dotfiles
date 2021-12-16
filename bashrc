@@ -278,8 +278,9 @@ function dountil
 )
 
 function loop
-(
-    COUNT=0
+{
+    _MEASURE=0
+    local COUNT=0
     while sleep 1
     do
     "${@}"
@@ -290,7 +291,7 @@ function loop
         COUNT=0
     fi
     done
-)
+}
 
 function now
 {

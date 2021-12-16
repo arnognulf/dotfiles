@@ -56,6 +56,9 @@ fonts.conf - font substitutions
 [Uber but for mv(1)](uber-for-mv/README.md) - move latest file from Downloads to current directory: dl
 
 
+[Zip it!](zipit/README.md) - create zip and select in file manager: z 
+
+
 [thinking-machine](thinking-machine/README.md) - thinking machine CM demo in bash - slooooow!
 
 
