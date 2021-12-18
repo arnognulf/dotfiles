@@ -91,12 +91,14 @@ function s
 {
     if [ -t 0 ]
     then
-        command echo "USAGE: cmd|s"
-        command echo "if no arg then sort"
-        command echo "if arg then sort|grep arg"
-        return 1
-    fi
-    if [ -n "$1" ]
+        nautilus -q &>/dev/null
+        if [ ${#@} = 0 ]
+        then
+            ( exec nautilus "$PWD" &>/dev/null & )
+        else
+            ( exec nautilus -s "$1" &>/dev/null & )
+        fi
+    elif [ -n "$1" ]
     then
         command sort|command uniq|grep "$@"
     else

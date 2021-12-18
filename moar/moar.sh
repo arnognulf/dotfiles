@@ -409,8 +409,15 @@ function _MOAR
         if [ "${#@}" = 1 ]
         then
             shift
-            _MOAR_DECODE * | command less -R -X -F -K
-            RETURN=$?
+            for FILE in README README.md README.rst README.asc README.doc readme.doc README.txt readme.txt README.* *.txt
+            do
+                if [ -f "${FILE}" ]
+                then
+                    _MOAR_DECODE "${FILE}" | command less -R -X -F -K
+                    RETURN=$?
+                    break
+                fi
+            done
         fi
         TTY=$(tty) 2>/dev/null
         shift
