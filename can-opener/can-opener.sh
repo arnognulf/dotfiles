@@ -516,6 +516,7 @@ idraw \
 xsol \
 xabacus \
 xmabacus \
+kdeconnect-app \
 slack
 do
 if type -P "${CMD}" &>/dev/null
