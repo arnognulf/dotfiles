@@ -226,12 +226,6 @@ function _DEDUPE ()
 
 function c ()
 {
-    ( _DEDUPE &>/dev/null & )
-    if [ -n "${_SOURCED}" ]
-    then
-    command cd "$@"
-    return $?
-    fi
     _CHDIR_ALL_THE_THINGS "$@" && {
         local TMP=$(mktemp)
         local MAXLINES=$((LINES - 5))
@@ -255,6 +249,7 @@ function c ()
         fi
         $(type -P rm) -f "${TMP}"
     }
+    ( _DEDUPE &>/dev/null & )
 }
 
 function dowhile
