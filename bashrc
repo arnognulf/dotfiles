@@ -252,6 +252,11 @@ function c ()
 
 function dowhile
 (
+    if [ "${#@}" = 0 ] 
+    then
+        _NO
+        return 255
+    fi
     while "$@"
     do
     sleep 1
@@ -266,6 +271,11 @@ function dowhile
 
 function dountil
 (
+    if [ "${#@}" = 0 ] 
+    then
+        _NO
+        return 255
+    fi
     COUNT=0
     until "$@"
     do
@@ -279,8 +289,17 @@ function dountil
     done
 )
 
+function _NO
+{
+    echo "COMPUTER SAYS NO" 1>&2 | tee 1>/dev/null
+}
 function loop
 {
+    if [ "${#@}" = 0 ] 
+    then
+        _NO
+        return 255
+    fi
     _MEASURE=0
     local COUNT=0
     while sleep 1
@@ -306,25 +325,25 @@ function jetzt
 
 function /sbin/reboot
 {
-    echo "COMPUTER SAYS NO"
+    _NO
     return 255
 }
 
 function reboot
 {
-    echo "COMPUTER SAYS NO"
+    _NO
     return 255
 }
 
 function shutdown
 {
-    echo "COMPUTER SAYS NO"
+    _NO
     return 255
 }
 
 function /sbin/shutdown
 {
-    echo "COMPUTER SAYS NO"
+    _NO
     return 255
 }
 function //
