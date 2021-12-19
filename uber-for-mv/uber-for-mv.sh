@@ -39,8 +39,20 @@ _LATEST ()
         *)
         if [[ -z ${NEWEST_FILE} || ${FILE} -nt ${NEWEST_FILE} ]]
         then
-            SECOND_NEWEST_FILE="${NEWEST_FILE}"
             NEWEST_FILE=${FILE}
+        fi
+        esac
+    done
+    for FILE in "${@}"
+    do
+        case ${FILE} in
+        *.part|*.crdownload)
+        :
+        ;;
+        *)
+        if [[ -z ${SECOND_NEWEST_FILE} || ${FILE} -nt ${SECOND_NEWEST_FILE} ]] && [ "${FILE}" != ${NEWEST_FILE} ]
+        then
+            SECOND_NEWEST_FILE=${FILE}
         fi
         esac
     done
