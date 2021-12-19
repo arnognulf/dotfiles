@@ -75,10 +75,16 @@ function _PROMPT_MAGIC_SHELLBALL ()
   command echo -e "\033[?25l\033[D \033[3A\033[994D\033[99D\033[K${SPACES}${ANSWER}                       \033[D "
 }
 
+function _PROMPT_DEDUPE ()
+{
+    [ -d .git ] || command git rev-parse --git-dir || command yes 1 | command jdupes --delete --omit-first . &>/dev/null
+}
+
 function _PROMPT_COMMAND ()
 {
 #{
   local _SOURCED=1
+  ( _PROMPT_DEDUPE &>/dev/null & )
   # add trailing newline for last command if missing
   command printf "%$((COLUMNS-1))s\\r"
  # https://unix.stackexchange.com/questions/226909/tell-if-last-command-was-empty-in-prompt-command
