@@ -218,8 +218,15 @@ test -z "${SERVER}" && { echo "missing server argument"; return; }
 }
 alias scp=_SCP
 
+function _DEDUPE ()
+{
+    [ -d .git ] || command git rev-parse --git-dir || command yes 1 | command jdupes --delete --omit-first . &>/dev/null
+}
+
+
 function c ()
 {
+    ( _DEDUPE &>/dev/null & )
     if [ -n "${_SOURCED}" ]
     then
     command cd "$@"
