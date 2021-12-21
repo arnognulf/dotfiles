@@ -192,39 +192,18 @@ function _MOAR_DECODE
             done
             ;;
             *" "font/*|*" "application/vnd.ms-opentype)
-                local TEMP_JPG=${TEMP}.jpg
-                command convert -background white -fill black -font "${FILE}" -pointsize 300 label:"Abc" "${TEMP_JPG}"
-                [ -f "${TEMP_JPG}" ] && command jp2a --term-width --colors --fill "${TEMP_JPG}"
+                local TEMP_PNM=${TEMP}.pnm
+                command convert -background white -fill black -font "${FILE}" -pointsize 300 label:"Abc" "${TEMP_PNM}"
+                [ -f "${TEMP_JPG}" ] && command chafa -s ${COLUMNS}x$((LINES-3)) "${TEMP_PNM}"
+                command rm -f "${TEMP_PNM}"
             ;;
             *" "video/*|*" "audio/*)
             DISPLAY="" command mplayer -really-quiet -vo caca -framedrop -monitorpixelaspect 0.5 "${FILE}" 1>${TTY}
             reset
             ;;
-            *" "image/jpeg)
-            [ "${_MOAR_STDOUT}" = 1 ] && command jp2a --term-width --colors --fill "${FILE}"
-            command tesseract "${FILE}" -
-            ;;
-            *" "image/svg*)
-            local TEMP_JPG=${TEMP}.jpg
-            command cairosvg "${FILE}" -f png | command convert - ${TEMP_JPG}
-            if [ "${_MOAR_STDOUT}" = 1 ]
-            then
-                command jp2a --term-width --colors --fill "${TEMP_JPG}"
-            fi
-            command tesseract "${TEMP_JPG}" -
-            command rm -f "${TEMP_JPG}"
-            ;;
             *" "image/*)
-            local TEMP_JPG=${TEMP}.jpg
-            command convert "${FILE}" "${TEMP_JPG}"
-            local IMAGEFILE
-            for IMAGEFILE in ${TEMP_JPG%.*}*".jpg"
-            do
-                :
-            done
-            [ -f "${IMAGEFILE}" ] && [ "${_MOAR_STDOUT}" = 1 ] && command jp2a --term-width --colors --fill "${IMAGEFILE}"
-            command tesseract "${IMAGEFILE}" - 2>/dev/null
-            command rm -f ${TEMP%.*}*".jpg"
+            [ "${_MOAR_STDOUT}" = 1 ] && command chafa -s ${COLUMNS}x$((LINES-3)) "${FILE}"
+            command tesseract "${FILE}" - 2>/dev/null
             ;;
             *" text/"*|*" "application/vnd.apple.keynote|*" "application/vnd.wordperfect|*" "application/rtf|*" "application/vnd.oasis.opendocument.text|*" "application/vnd.openxmlformats-officedocument.presentationml.presentation|*" "application/vnd.openxmlformats-officedocument.wordprocessingml.document|*" "application/vnd.openxmlformats-officedocument.presentationml.presentation|*" "application/doc|*" "application/ms-doc|*" "application/msword)
             _MOAR_DECODE_DOC "${FILE}"

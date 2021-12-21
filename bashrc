@@ -252,13 +252,14 @@ function c ()
     ( _DEDUPE &>/dev/null & )
 }
 
-function dowhile
+function untilfail
 (
     if [ "${#@}" = 0 ] 
     then
         _NO
         return 255
     fi
+    COUNT=0
     while "$@"
     do
     sleep 1
@@ -271,7 +272,7 @@ function dowhile
     done
 )
 
-function dountil
+function retry
 (
     if [ "${#@}" = 0 ] 
     then
@@ -291,10 +292,13 @@ function dountil
     done
 )
 
+alias brrr=retry
+
 function _NO
 {
     echo "COMPUTER SAYS NO" 1>&2 | tee 1>/dev/null
 }
+
 function loop
 {
     if [ "${#@}" = 0 ] 
@@ -320,6 +324,7 @@ function now
 {
     date +%Y-%m-%d_%H-%M-%S
 }
+
 function jetzt
 {
     now
@@ -348,10 +353,12 @@ function /sbin/shutdown
     _NO
     return 255
 }
+
 function //
 {
     :
 }
+
 for FILE in /*
 do
 eval "function $FILE { echo \"C-comment paste detected. Press CTRL+C to continue\";cat;}"
