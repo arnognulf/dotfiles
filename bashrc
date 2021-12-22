@@ -157,7 +157,8 @@ alias task_bug="🐛 Bug"
 alias trash="gio trash"
 #alias cp='rsync --append-verify --checksum --info=progress2'
 alias xargs="xargs -d'\n'"
-alias mosh="_MEASURE=0;MOSH_TITLE_NOPREFIX=1 mosh"
+export MOSH_TITLE_NOPREFIX=1
+alias mosh="_MEASURE=0; mosh"
 alias adb="_MEASURE=0;adb"
 alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
