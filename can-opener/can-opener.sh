@@ -47,6 +47,9 @@ function _CAN_OPENER_ALL ()
                 exec xdg-open "${FILE}" &>/dev/null &
             fi
             ;;
+            application/pdf)
+                exec firefox --profile $(mktemp -d) --kiosk "${FILE}" &>/dev/null &
+            ;;
             *)
                 exec xdg-open "${FILE}" &>/dev/null &
             esac
@@ -141,6 +144,8 @@ loffice \
 loimpress \
 localc \
 lowriter \
+lodraw \
+loweb \
 spotify \
 firefox \
 google-chrome \

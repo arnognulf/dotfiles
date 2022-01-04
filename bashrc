@@ -54,10 +54,13 @@ function _EDITOR
 alias dd='dd status=progress'
 alias dl=_UBER_FOR_MV
 alias octave=octave-cli
-alias excel='o localc'
-alias word='o lowriter'
-alias powerpoint='o loimpress'
-alias visio='o lodraw'
+alias excel='o localc --norestore'
+alias word='o lowriter --norestore'
+alias localc='o localc --norestore'
+alias loimpress='o loimpress --norestore'
+alias lowriter='o lowriter --norestore'
+alias powerpoint='o loimpress --norestore'
+alias visio='o lodraw --norestore'
 alias chrome='o google-chrome'
 alias code-insiders='o code-insiders'
 alias code='o code-insiders'
