@@ -1,0 +1,10 @@
+commit b82ac78a2d4457d2ca09973332638f123f065fd1
+Author: Queensferry <queensferry.me@gmail.com>
+Date:   Tue Jun 1 01:23:39 2021 +0800
+
+    Skip excluding when `$_Z_EXCLUDE_DIRS` is empty (#302)
+
+commit 574f64b84e4aedfcacaf9a636100235cfce91f1c
+Author: Eric Nielsen <eric@amalgamar.com.br>
+Date:   Wed May 26 12:59:50 2021 -0500
+
