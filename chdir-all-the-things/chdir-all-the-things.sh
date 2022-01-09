@@ -447,7 +447,8 @@ function _CHDIR_ALL_THE_THINGS ()
         *)
         if _z "$@" 2>/dev/null
         then
-            pwd
+            command echo -ne "\033[7m";pwd
+            command echo -ne "\033[0m"
             return 0
         else
         local COUNT=0
