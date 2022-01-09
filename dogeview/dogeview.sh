@@ -321,7 +321,7 @@ function _DOGEVIEW
     local RETURN
     local _DOGE_STDERR_FILE=/tmp/.DOGE_STDERR."${RANDOM}"
     _MEASURE=0
-    if [ "${#@}" = 1 ]
+    if [ "${#@}" = 0 ]
     then
         shift
         for FILE in README README.md README.rst README.asc README.doc readme.doc README.txt readme.txt README.* *.txt
@@ -332,6 +332,12 @@ function _DOGEVIEW
                 RETURN=$?
                 break
             fi
+        done
+    else
+        for FILE in "$@"
+        do
+                _DOGE_DECODE "${FILE}" | command less -R -X -F -K
+                RETURN=$?
         done
     fi
     TTY=$(tty) 2>/dev/null
