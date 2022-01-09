@@ -29,6 +29,8 @@ export VIM=${DOTFILESDIR}/vim
 _Z_DATA=${HOME}/.config/z
 _Z_NO_PROMPT_COMMAND=1 _Z_CMD=_Z . "${DOTFILESDIR}"/z/z.sh
 . "${DOTFILESDIR}"/zipit/zipit.sh
+. "${DOTFILESDIR}"/dogeview/dogeview.sh
+
 EDITOR="vim"
 [ -z "$SSH_CLIENT" ] && if [ "${UID}" -gt 0 -o -n "${DISPLAY}" ]
 then
@@ -110,29 +112,16 @@ function s
     fi
 }
 
-true||function x
+(
+function _KILLTRACKER
 {
-    if [ -t 0 ]
-    then
-        if [ -z "${1}" ]
-        then
-            if [ -f README.md ]
-            then
-            cat README.md
-            elif [ -f README.txt ]
-            then
-            cat README.txt
-            elif [ -f README ]
-            then
-            cat README
-            fi
-        else
-            cat "${@}"
-        fi
-    else
-        command grep -v "$@"
-    fi
+    systemctl --user mask tracker-store.service tracker-miner-fs.service tracker-miner-rss.service tracker-extract.service tracker-miner-apps.service tracker-writeback.service
+    tracker3 daemon -k
+    tracker daemon -k
+    command rm -rf ~/.cache/tracker* ~/.local/share/tracker*
 }
+_KILLTRACKER &>/dev/null &
+)
 
 alias gl="LESS='-R --pattern ^(commit|diff)' git log -p"
 alias ga='git add -p'
