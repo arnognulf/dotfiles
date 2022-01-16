@@ -200,7 +200,7 @@ function _DOGE_DECODE
                 command rm -f "${TEMP_PNM}"
             ;;
             *" "video/*)
-                local TEMP_GIF=$(mktemp).gif
+                local TEMP_GIF=$(mktemp /tmp/.DOGE.XXXXXXXXXXXX.gif)
                 ffmpeg -ss 00:00:00.000 -i "${FILE}" -vf "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1" -pix_fmt rgb8 -s 500x240 -t 00:00:5.000 "${TEMP_GIF}" &>/dev/null
                 chafa "${TEMP_GIF}" 1>${TTY}
                 command rm -f "${TEMP_GIF}" &>/dev/null
@@ -314,10 +314,11 @@ function _DOGE_DECODE
 
 function _DOGEVIEW
 {
+    command rm -rf /tmp/.DOGE* &>/dev/null
     _MEASURE=0
     if [ -z "$1" ]
     then
-        command echo "WOW! Such view! Many formats! Much decode!" 1>&2 | tee 1>/dev/null
+        command echo "WOW! Such view! Many formats! Much decode!" 1>&2 | tee /dev/null 1>/dev/null
         return 1
     fi
     local PIPEFAIL_ENABLED
@@ -334,7 +335,7 @@ function _DOGEVIEW
     fi
     local TTY=$(tty) 2>/dev/null
     local RETURN
-    local _DOGE_STDERR_FILE=/tmp/.DOGE_STDERR."${RANDOM}"
+    local _DOGE_STDERR_FILE=/tmp/.DOGE.STDERR."${RANDOM}"
     if [ "${#@}" = 0 ]
     then
         shift
