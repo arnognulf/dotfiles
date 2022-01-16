@@ -295,6 +295,7 @@ xlogo \
 xmame \
 xmess \
 xmms \
+qmmp \
 xpdf \
 xroach \
 xwpe \
