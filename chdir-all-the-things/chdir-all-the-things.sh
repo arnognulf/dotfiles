@@ -376,7 +376,6 @@ function _CHDIR_ALL_THE_THINGS ()
                 command echo "COMPUTER SAYS NO" 1>&2 | command tee /dev/null 1>/dev/null
                 return 1
             fi
-            set +x
         elif [ "${_KEEP}" = 0 ];then
             gio trash "${ORIG_FILE}" &>/dev/null
             gvfs-trash "${ORIG_FILE}" &>/dev/null

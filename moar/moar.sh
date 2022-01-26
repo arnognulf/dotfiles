@@ -242,6 +242,8 @@ fastboot \
 lsblk \
 lsattrib \
 /usr/bin/*info* \
+usb-devices \
+sensors \
 acpidump \
 ip
 do
