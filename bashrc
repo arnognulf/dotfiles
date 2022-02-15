@@ -214,9 +214,8 @@ alias scp=_SCP
 
 function _DEDUPE ()
 {
-    [ -d .git ] || command git rev-parse --git-dir || command yes 1 | command jdupes --delete --omit-first . &>/dev/null
+    command yes 1 | command jdupes --delete --omit-first "${XDG_DOWNLOAD_DIR-/dev/null}" ~/Downloads &>/dev/null
 }
-
 
 function c ()
 {

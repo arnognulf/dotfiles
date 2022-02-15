@@ -444,12 +444,6 @@ function _CHDIR_ALL_THE_THINGS ()
             return 1
             ;;
         *)
-        if _z "$@" 2>/dev/null
-        then
-            command echo -ne "\033[7m";pwd
-            command echo -ne "\033[0m"
-            return 0
-        else
         local COUNT=0
         for i in "${ARG}"*
         do
@@ -480,7 +474,6 @@ function _CHDIR_ALL_THE_THINGS ()
                 command mkdir "${XDIR}" &>/dev/null
                 _CHDIR_ALL_THE_THINGS_CD "${XDIR}" &>/dev/null
             fi
-        fi
         fi
         esac
     else

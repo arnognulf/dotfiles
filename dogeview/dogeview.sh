@@ -121,7 +121,12 @@ function _DOGE_DECODE_DOC
         esac
     esac #end case2
 
-    local TEMP="/tmp/.DOGE.${RANDOM}.${1##*.}"
+    local BASENAME="${1##*/}"
+    if [ -z "${BASENAME}" ]
+    then
+        BASENAME="${1}"
+    fi
+    local TEMP="/tmp/.DOGE.${RANDOM}.${BASENAME##*.}"
     if command cp -s "${PWD}/${1}" "${TEMP}" 2>/dev/null
     then
         :

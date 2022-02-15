@@ -12,7 +12,8 @@ do
 
     if [ $COUNT -ge 1200 ]
     then
-        notify-send.py "DEAL WITH IT" --action ok:"▝▔▔▀▀▀▀▔▀▀▀" --icon ~/.config/dotfiles/deal-with-it/deal-with-it.png -u critical
+        # python3-notify2
+        notify-send.py "DEAL WITH IT" --action ok:"▝▔▔▀░▒▓▀▔▀▓▀" --icon ~/.config/dotfiles/deal-with-it/deal-with-it.png -u critical
         sleep 20
         mplayer /usr/share/sounds/gnome/default/alerts/drip.ogg
         COUNT=0
