@@ -52,7 +52,7 @@ function _RECURSE_CD
     fi
     if [ "$1" = ".." ]
     then
-        _RECURSE_REVERSE_CD "$1"
+        _CHDIR_ALL_THE_THINGS_CD "$1"
         return $?
     fi
     case "${1}" in
@@ -71,7 +71,7 @@ function _RECURSE_CD
     done
     if [ "${COUNT}" = 1 ] && [ "${DIRS}" = 1 ]
     then
-        _RECURSE_CD "${DIRENTRY}"
+        _CHDIR_ALL_THE_THINGS_CD "${DIRENTRY}"
     else
         _CHDIR_ALL_THE_THINGS_CD "${1}"
     fi
@@ -131,12 +131,12 @@ _CATT_LASTLASTPWD="${_CATT_LASTPWD}"
 _CATT_LASTPWD="${PWD}"
 builtin cd "$1"
 RETURN_VALUE=$?
-rm -d "${_CATT_LASTPWD}" &>/dev/null
+[ -w "${_CATT_LASTPWD}" ] && rm -d "${_CATT_LASTPWD}" &>/dev/null
 else
 _CATT_LASTPWD="${PWD}"
 builtin cd
 RETURN_VALUE=$?
-rm -d "${_CATT_LASTPWD}" &>/dev/null
+[ -w "${_CATT_LASTPWD}" ] && rm -d "${_CATT_LASTPWD}" &>/dev/null
 fi
 return ${RETURN_VALUE}
 }
@@ -381,7 +381,7 @@ function _CHDIR_ALL_THE_THINGS ()
             gvfs-trash "${ORIG_FILE}" &>/dev/null
         fi
     elif [ -d "${ARG}" ] && [ -x "${ARG}" ]; then
-        _RECURSE_CD "${ARG}"
+        _CHDIR_ALL_THE_THINGS_CD "${ARG}"
         return
     elif [ -e "${ARG}" ]; then
         command echo "COMPUTER SAYS NO"
