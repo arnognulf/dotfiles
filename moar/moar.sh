@@ -245,6 +245,7 @@ lsattrib \
 usb-devices \
 sensors \
 acpidump \
+fc-list \
 ip
 do
 if type -P "${CMD##*/}" &>/dev/null 
