@@ -73,6 +73,7 @@ alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
 type -P fdfind &>/dev/null && alias fd='fdfind'
+alias hog='~/.config/dotfiles/hog/hog.sh'
 function _GREP
 {
     if [ "${#@}" = 0 ]
