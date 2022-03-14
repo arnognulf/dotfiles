@@ -140,8 +140,8 @@ echo ""
 done | less -r
 ;;
 delete)
-[ ! -d [ "${REPO_DIR}/$1" ] && error "no such commit"
-COMMIT_DIR="${REPO_DIR}/objects/$1"
+[ ! -d "${REPO_DIR}/${2-}" ] && error "no such commit"
+COMMIT_DIR="${REPO_DIR}/objects/${2-}"
 rm -rdf "${COMMIT_DIR}" || error "couldn\'t remove COMMIT_DIR=${COMMIT_DIR}"
 ;;
 *)
