@@ -23,7 +23,7 @@
 # "Never wrestle with a pig. You just get dirty and the pig enjoys it - George Bernard Shaw"
 
 set -eou pipefail
-trap "chmod +x \"${REPO_DIR-}\" 2>/dev/null" EXIT
+trap "chmod -x \"${REPO_DIR-}\" 2>/dev/null" EXIT
 
 NAME=hog
 stderr ()
@@ -140,7 +140,7 @@ echo ""
 done | less -r
 ;;
 delete)
-[ ! -d "${REPO_DIR}/${2-}" ] && error "no such commit"
+[ ! -d "${REPO_DIR}/objects/${2-}" ] && error "no such commit"
 COMMIT_DIR="${REPO_DIR}/objects/${2-}"
 rm -rdf "${COMMIT_DIR}" || error "couldn\'t remove COMMIT_DIR=${COMMIT_DIR}"
 ;;
