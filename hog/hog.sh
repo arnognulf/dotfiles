@@ -23,9 +23,25 @@
 # "Never wrestle with a pig. You just get dirty and the pig enjoys it - George Bernard Shaw"
 
 set -eou pipefail
-trap "chmod -x \"${REPO_DIR-}\" 2>/dev/null" EXIT
-
+goto_repo_dir ()
+{
+    while [ ! -d ".${NAME}" ] && [ "$OLDPWD" != "${PWD}" ]
+    do
+        cd ..
+    done
+    if  [ ! -d ".${NAME}" ]
+    then
+        error "not a ${NAME} repository"
+    fi
+    REPO_DIR=".${NAME}"
+    chmod +r "${REPO_DIR}"
+}
 NAME=hog
+
+goto_repo_dir
+
+trap "chmod -r \"${REPO_DIR-}\" 2>/dev/null" EXIT
+
 stderr ()
 {
     echo "$*" 1>&2| tee 1>/dev/null
@@ -41,20 +57,6 @@ error ()
     stderr "ERROR: $*"
     [ -n "${COMMIT_DIR-}" ] && rm -rf "${COMMIT_DIR}"
     exit 42
-}
-
-goto_repo_dir ()
-{
-    while [ ! -d ".${NAME}" ] && [ "$OLDPWD" != "${PWD}" ]
-    do
-        cd ..
-    done
-    if  [ ! -d ".${NAME}" ]
-    then
-        error "not a ${NAME} repository"
-    fi
-    REPO_DIR=".${NAME}" 
-    chmod +x "${REPO_DIR}"
 }
 
 REPO_DIR=".${NAME}" 
@@ -138,6 +140,7 @@ echo ""
 cat "${COMMIT_DIR}/message"
 echo ""
 done | less -r
+echo ${REPO_DIR}
 ;;
 delete)
 [ ! -d "${REPO_DIR}/objects/${2-}" ] && error "no such commit"
