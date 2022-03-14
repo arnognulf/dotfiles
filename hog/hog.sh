@@ -77,13 +77,13 @@ stdout "Initialized empty ${NAME} repository in $PWD/.${NAME}/"
 commit)
 goto_repo_dir
 COMMIT_DIR="${REPO_DIR}/objects/$(date +%s)/"
-if [ "$2" = "-m" ]
+if [ "${2-}" = "-m" ]
 then
-if [ -z "$3" ]
+if [ -z "${3-}" ]
 then
 error "empty commit message"
 else
-echo "$3" > "${COMMIT_DIR}/message"
+echo "${3-}" > "${COMMIT_DIR}/message"
 fi
 else
 TEMP=$(mktemp)
