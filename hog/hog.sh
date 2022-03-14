@@ -23,22 +23,26 @@
 # "Never wrestle with a pig. You just get dirty and the pig enjoys it - George Bernard Shaw"
 
 set -eou pipefail
+trap "chmod +x \"${REPO_DIR-}\" 2>/dev/null" EXIT
 
 NAME=hog
 stderr ()
 {
     echo "$*" 1>&2| tee 1>/dev/null
 }
+
 stdout ()
 {
     echo "$*"
 }
+
 error ()
 {
     stderr "ERROR: $*"
     [ -n "${COMMIT_DIR-}" ] && rm -rf "${COMMIT_DIR}"
     exit 42
 }
+
 goto_repo_dir ()
 {
     while [ ! -d ".${NAME}" ] && [ "$OLDPWD" != "${PWD}" ]
@@ -50,6 +54,7 @@ goto_repo_dir ()
         error "not a ${NAME} repository"
     fi
     REPO_DIR=".${NAME}" 
+    chmod +x "${REPO_DIR}"
 }
 
 REPO_DIR=".${NAME}" 
@@ -72,17 +77,17 @@ stdout "Initialized empty ${NAME} repository in $PWD/.${NAME}/"
 commit)
 goto_repo_dir
 COMMIT_DIR="${REPO_DIR}/objects/$(date +%s)/"
-if [ "$1" = "-m" ] 
+if [ "$2" = "-m" ]
 then
-if [ ! -n "$2" ]
+if [ -z "$3" ]
 then
 error "empty commit message"
 else
-echo "$2" > "${COMMIT_DIR}/message"
+echo "$3" > "${COMMIT_DIR}/message"
 fi
 else
 TEMP=$(mktemp)
-${EDITOR} ${TEMP}
+vi ${TEMP}
 mkdir -p "${COMMIT_DIR}" || error "couldn\'t create dir"
 [ ! -s "${TEMP}" ] && error "empty commit message"
 cp "${TEMP}" "${COMMIT_DIR}"/message || erro "couldn\'t write commit message"
@@ -93,7 +98,11 @@ mkdir -p "${SNAPSHOT_DIR}" || error "couldn\'t create dir"
 for ITEM in *
 do
     [ "${ITEM}" = ".${NAME}" ] && continue
-    cp --reflink=auto -rdf "${ITEM}" "${SNAPSHOT_DIR}"
+    cp --reflink=auto -rdf "${ITEM}" "${SNAPSHOT_DIR}" &
+done
+while fg &>/dev/null
+do
+:
 done
 ;;
 checkout)
@@ -108,7 +117,15 @@ do
     mv "${ITEM}" ".${NAME}/tmp" || error "can\'t move item to temp"
     ( exec rm -rf ".${NAME}/tmp/${ITEM}" &>/dev/null & )
 done
-cp -rdf ".${SNAPSHOT_DIR}"/* .
+
+for ITEM in ".${SNAPSHOT_DIR}"/*
+do
+    cp --reflink=auto -rdf "${ITEM}" . &
+done
+while fg &>/dev/null
+do
+:
+done
 ;;
 log)
 goto_repo_dir
@@ -128,12 +145,12 @@ COMMIT_DIR="${REPO_DIR}/objects/$1"
 rm -rdf "${COMMIT_DIR}" || error "couldn\'t remove COMMIT_DIR=${COMMIT_DIR}"
 ;;
 *)
-stderr "Hog: Multi-gigabyte version control."
+stderr "Hog: multi-gigabyte version control tool."
 stderr ""
 stderr "Usage:"
-stderr "hog init"
-stderr "hog commit"
-stderr "hog checkout"
-stderr "hog delete"
-stderr "hog log"
+stderr "    hog init"
+stderr "    hog commit"
+stderr "    hog checkout"
+stderr "    hog delete"
+stderr "    hog log"
 esac
