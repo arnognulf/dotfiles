@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2022 Thoma Eriksson <thomas.eriksson@gmail.com>
+# Copyright (c) 2022 Thomas Eriksson <thomas.eriksson@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,13 @@ error ()
 }
 print_objects ()
 {
+    COMMIT_DIRS=""
     for COMMIT_DIR in ".${NAME}/objects"/*
+    do
+        COMMIT_DIRS="${COMMIT_DIR} ${COMMIT_DIRS}"
+    done
+
+    for COMMIT_DIR in ${COMMIT_DIRS}
     do
     [ ! -d "${COMMIT_DIR}" ] && { stdout "<EMPTY REPOSITORY>" ; exit 0; }
     echo -e "${COLOR_SET}commit ${COMMIT_DIR##*/}${COLOR_RESET}"
@@ -67,14 +73,13 @@ goto_repo_dir ()
 }
 NAME=hog
 
-goto_repo_dir
-
 trap "chmod -r \"${REPO_DIR-}\" 2>/dev/null" EXIT
 
 REPO_DIR=".${NAME}" 
 
 case "${1-}" in
 init)
+goto_repo_dir
 REPO_DIR=".${NAME}" 
 mkdir "${REPO_DIR}" &>/dev/null || error "repository alread initialized"
 echo 1 > "${REPO_DIR}"/version
@@ -97,6 +102,7 @@ if [ -z "${3-}" ]
 then
 error "empty commit message"
 else
+mkdir -p "${COMMIT_DIR}" || error "couldn\'t create dir"
 echo "${3-}" > "${COMMIT_DIR}/message"
 fi
 else
@@ -147,7 +153,7 @@ if [ -t 1 ]
 then
     COLOR_SET="\033[33m"
     COLOR_RESET="\033[0m"
-    print_objects | less -r
+    print_objects | less -j0 -R
 else
     COLOR_SET=""
     COLOR_RESET=""
@@ -155,6 +161,7 @@ else
 fi
 ;;
 delete)
+goto_repo_dir
 [ ! -d "${REPO_DIR}/objects/${2-}" ] && error "no such commit"
 COMMIT_DIR="${REPO_DIR}/objects/${2-}"
 rm -rdf "${COMMIT_DIR}" || error "couldn\'t remove COMMIT_DIR=${COMMIT_DIR}"
