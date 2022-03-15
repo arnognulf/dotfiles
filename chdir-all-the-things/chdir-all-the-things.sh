@@ -456,7 +456,10 @@ function _CHDIR_ALL_THE_THINGS ()
         else
             if [ -d "${1%%/*}" ]
             then
-                command mkdir -p "${1}"
+                command mkdir -p "${1}" || { 
+                    command echo "COMPUTER SAYS NO" 1>&2 | command tee /dev/null 1>/dev/null
+                    return 1
+                }
                 _CHDIR_ALL_THE_THINGS_CD "${1}" &>/dev/null
             else
                 local XDIR

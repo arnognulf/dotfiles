@@ -22,7 +22,36 @@
 #
 # "Never wrestle with a pig. You just get dirty and the pig enjoys it - George Bernard Shaw"
 
-set -eou pipefail
+set -meou pipefail
+stderr ()
+{
+    echo "$*" 1>&2| tee 1>/dev/null
+}
+
+stdout ()
+{
+    echo "$*"
+}
+
+error ()
+{
+    stderr "ERROR: $*"
+    [ -n "${COMMIT_DIR-}" ] && rm -rf "${COMMIT_DIR}"
+    exit 42
+}
+print_objects ()
+{
+    for COMMIT_DIR in ".${NAME}/objects"/*
+    do
+    [ ! -d "${COMMIT_DIR}" ] && { stdout "<EMPTY REPOSITORY>" ; exit 0; }
+    echo -e "${COLOR_SET}commit ${COMMIT_DIR##*/}${COLOR_RESET}"
+    echo -e "Date:\t $(date --date=@${COMMIT_DIR##*/})"
+    echo ""
+    cat "${COMMIT_DIR}/message"
+    echo ""
+    done 
+}
+
 goto_repo_dir ()
 {
     while [ ! -d ".${NAME}" ] && [ "$OLDPWD" != "${PWD}" ]
@@ -41,23 +70,6 @@ NAME=hog
 goto_repo_dir
 
 trap "chmod -r \"${REPO_DIR-}\" 2>/dev/null" EXIT
-
-stderr ()
-{
-    echo "$*" 1>&2| tee 1>/dev/null
-}
-
-stdout ()
-{
-    echo "$*"
-}
-
-error ()
-{
-    stderr "ERROR: $*"
-    [ -n "${COMMIT_DIR-}" ] && rm -rf "${COMMIT_DIR}"
-    exit 42
-}
 
 REPO_DIR=".${NAME}" 
 
@@ -89,7 +101,7 @@ echo "${3-}" > "${COMMIT_DIR}/message"
 fi
 else
 TEMP=$(mktemp)
-vi ${TEMP}
+"${EDITOR}" "${TEMP}"
 mkdir -p "${COMMIT_DIR}" || error "couldn\'t create dir"
 [ ! -s "${TEMP}" ] && error "empty commit message"
 cp "${TEMP}" "${COMMIT_DIR}"/message || erro "couldn\'t write commit message"
@@ -109,8 +121,8 @@ done
 ;;
 checkout)
 goto_repo_dir
-[ ! -d [ "${REPO_DIR}/$1" ] && error "no such commit"
-COMMIT_DIR="${REPO_DIR}/objects/$1"
+[ ! -d [ "${REPO_DIR}/${2-}" ] && error "no such commit"
+COMMIT_DIR="${REPO_DIR}/objects/${2-}"
 SNAPSHOT_DIR="${COMMIT_DIR}/snapshot"
 mkdir -p ".${NAME}/tmp" || error "couldn\'t create temp dir=${PWD}/.${NAME}/tmp"
 for ITEM in *
@@ -131,16 +143,16 @@ done
 ;;
 log)
 goto_repo_dir
-for COMMIT_DIR in ".${NAME}/objects"/*
-do
-    [ ! -d "${COMMIT_DIR}" ] && { stdout "<EMPTY REPOSITORY>" ; exit 0; }
-echo -e "\033[33mcommit ${COMMIT_DIR##*/}\033[0m"
-echo -e "Date:\t $(date --date=@${COMMIT_DIR##*/})"
-echo ""
-cat "${COMMIT_DIR}/message"
-echo ""
-done | less -r
-echo ${REPO_DIR}
+if [ -t 1 ]
+then
+    COLOR_SET="\033[33m"
+    COLOR_RESET="\033[0m"
+    print_objects | less -r
+else
+    COLOR_SET=""
+    COLOR_RESET=""
+    print_objects
+fi
 ;;
 delete)
 [ ! -d "${REPO_DIR}/objects/${2-}" ] && error "no such commit"

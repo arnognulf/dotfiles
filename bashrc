@@ -34,10 +34,6 @@ export VIM=${DOTFILESDIR}/vim
 ( bash ~/.config/dotfiles/deal-with-it/deal-with-it.sh & )
 
 EDITOR="vim"
-[ -z "$SSH_CLIENT" ] && if [ "${UID}" -gt 0 -o -n "${DISPLAY}" ]
-then
-type -P code-insiders &>/dev/null && EDITOR="code-insiders"
-fi
 export EDITOR
 
 function _EDITOR
@@ -50,7 +46,12 @@ function _EDITOR
         *.kt|*.java) type -P studio.sh &>/dev/null && _CAN_OPENER studio.sh "${PWD}/${FILE}" ; return
         esac
     done
-    $(type -P "${EDITOR}"||type -P "vim" ||type -P "vi") "${@}"
+    if [ -z "$SSH_CLIENT" ] && [ "${UID}" -gt 0 ] && [ -n "${DISPLAY}" ]
+    then
+        $(type -P "code-insiders"||type -P "vim" ||type -P "vi") "${@}"
+    else
+        $(type -P "vim" ||type -P "vi") "${@}"
+    fi
 }
 
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
