@@ -65,7 +65,17 @@ function _MOAR
         ;;
         apt)
         case "${2}" in
-        list|search)
+        list)
+            if [ "${_MOAR_STDOUT}" = 1 ]
+            then
+                command socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} |tail -n +2| command less -R -X -F -K
+                RETURN=$?
+            else
+                command "$@"
+                RETURN=$?
+            fi
+        ;;
+        search)
             if [ "${_MOAR_STDOUT}" = 1 ]
             then
                 command "$@" 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
@@ -224,7 +234,6 @@ netstat \
 strings \
 nmap \
 ps \
-curl \
 iconv \
 xargs \
 rg \
