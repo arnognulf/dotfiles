@@ -17,16 +17,11 @@ do
     if LC_ALL=C gnome-screensaver-command -q | grep "is active"
     then
         COUNT=0
+        WALKCOUNT=0
     else
         let COUNT++
     fi
 
-    #if [ $WALKCOUNT -ge 2 ]
-    #then
-    #    ( killAfter10Min & )
-    #    python3 ~/.config/dotfiles/deal-with-it/multi-actions.py "WALK LIKE AN EGYPTIAN" "𓀛𓅱𓃝"
-    #    WALKCOUNT=0
-    #elif [ $COUNT -ge 1200 ]
     if [ $COUNT -ge 1200 ]
     then
         if type -p notify-send.py &>/dev/null
@@ -34,7 +29,13 @@ do
             notify-send.py "DEAL WITH IT" --action ok:"▝▔▔▀░▒▓▀▔▀▓▀" --icon ~/.config/dotfiles/deal-with-it/deal-with-it.png -u critical
         else
             ( killAfter10Min & )
-            python3 ~/.config/dotfiles/deal-with-it/multi-actions.py
+            if [ ${WALKCOUNT} -ge 2 ]
+            then
+                python3 ~/.config/dotfiles/deal-with-it/multi-actions.py "𓀟 𓀟 𓀟" "WALK THE WALK" 
+            else
+                python3 ~/.config/dotfiles/deal-with-it/multi-actions.py "▝▔▔▀▓▒▓▀▔▀▓▀" "DEAL WITH IT"
+                let WALKCOUNT++
+            fi
         fi
         sleep 20
         mplayer /usr/share/sounds/gnome/default/alerts/drip.ogg

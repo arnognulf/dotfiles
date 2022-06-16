@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+import gi
 
+gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 import notify2
 import sys
@@ -24,11 +26,13 @@ if __name__ == '__main__':
     
     server_capabilities = notify2.get_server_caps()
 
-    n = notify2.Notification("▝▔▔▀▓▒▓▀▔▀▓▀", "")
+    #n = notify2.Notification("▝▔▔▀▓▒▓▀▔▀▓▀", "")
+    n = notify2.Notification(sys.argv[1], "")
     n.set_urgency(notify2.URGENCY_CRITICAL)
     n.set_category("device")
     if ('actions' in server_capabilities) or OVERRIDE_NO_ACTIONS:
-        n.add_action("help", "DEAL WITH IT", help_cb)
+        #n.add_action("help", "DEAL WITH IT", help_cb)
+        n.add_action("help", sys.argv[2], help_cb)
     n.connect('closed', closed_cb)
 
     if not n.show():
