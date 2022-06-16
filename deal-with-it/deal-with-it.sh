@@ -1,4 +1,5 @@
 #!/bin/bash
+# great research in stretchly: https://hovancik.net/stretchly/research/
 
 OLD_PID=$(cat ~/.cache/deal-with-it.pid 2>/dev/null)
 if [ "${OLD_PID}" != "$$" ]
@@ -8,9 +9,9 @@ fi
 echo -n "$$" >~/.cache/deal-with-it.pid
 COUNT=0
 WALKCOUNT=0
-killAfter10Min ()
+killAfter5Min ()
 {
-    sleep 600 && kill -9 $(command ps aux|command grep multi-actions.py|command grep -v grep|command awk '{ print $2 }';) &>/dev/null; 
+    sleep 300 && kill -9 $(command ps aux|command grep multi-actions.py|command grep -v grep|command awk '{ print $2 }';) &>/dev/null; 
 }
 while sleep 1;
 do
@@ -28,11 +29,17 @@ do
         then
             notify-send.py "DEAL WITH IT" --action ok:"▝▔▔▀░▒▓▀▔▀▓▀" --icon ~/.config/dotfiles/deal-with-it/deal-with-it.png -u critical
         else
-            ( killAfter10Min & )
-            if [ ${WALKCOUNT} -ge 2 ]
+            ## if notification is forgotten or placed behind another notification, kill it after 5min
+            ( killAfter5Min & )
+            if [ ${WALKCOUNT} -ge 3 ]
             then
+                ## every hour, a take 5min walk
+                ## make your cardiologist happy
                 python3 ~/.config/dotfiles/deal-with-it/multi-actions.py "𓀟 𓀟 𓀟" "WALK THE WALK" 
             else
+                ## 20-20-20 rule:
+                ## every 20 minutes, look 20 feet (6m) away for 20 seconds
+                ## make your ophtologist happy
                 python3 ~/.config/dotfiles/deal-with-it/multi-actions.py "▝▔▔▀▓▒▓▀▔▀▓▀" "DEAL WITH IT"
                 let WALKCOUNT++
             fi
