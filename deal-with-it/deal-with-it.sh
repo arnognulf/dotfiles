@@ -22,7 +22,8 @@ do
     else
         let COUNT++
     fi
-
+    
+    BEEP=0
     if [ $COUNT -ge 1200 ]
     then
         if type -p notify-send.py &>/dev/null
@@ -33,19 +34,19 @@ do
             ( killAfter5Min & )
             if [ ${WALKCOUNT} -ge 3 ]
             then
-                ## every hour, a take 5min walk
+                ## every hour, take 5min walk
                 ## make your cardiologist happy
-                python3 ~/.config/dotfiles/deal-with-it/multi-actions.py "𓀟 𓀟 𓀟" "WALK THE WALK" 
+                python3 ~/.config/dotfiles/deal-with-it/multi-actions.py "𓀟 𓀟 𓀟" "WALK THE WALK"
             else
                 ## 20-20-20 rule:
                 ## every 20 minutes, look 20 feet (6m) away for 20 seconds
                 ## make your ophtologist happy
-                python3 ~/.config/dotfiles/deal-with-it/multi-actions.py "▝▔▔▀▓▒▓▀▔▀▓▀" "DEAL WITH IT"
+                python3 ~/.config/dotfiles/deal-with-it/multi-actions.py "▝▔▔▀▓▒▓▀▔▀▓▀" "DEAL WITH IT" && BEEP=1
                 let WALKCOUNT++
             fi
         fi
         sleep 20
-        mplayer /usr/share/sounds/gnome/default/alerts/drip.ogg
+        [[ $BEEP == 1 ]] && mplayer /usr/share/sounds/gnome/default/alerts/drip.ogg
         COUNT=0
         let WALKCOUNT++
     fi
