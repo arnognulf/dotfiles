@@ -149,6 +149,17 @@ function _MOAR
             RETURN=$?
         fi
     ;;
+    rga)
+        if [ "${_MOAR_STDOUT}" = 1 ]
+        then
+            command "$@" --color=always 2>/dev/null | command less -R -X -F -K
+            RETURN=$?
+        else
+            command "$@" --color=never 2>/dev/null
+            RETURN=$?
+        fi
+    ;;
+
     fd|fdfind)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
@@ -237,6 +248,7 @@ ps \
 iconv \
 xargs \
 rg \
+rga \
 fd \
 fdfind \
 declare \

@@ -526,6 +526,7 @@ kdeconnect-app \
 gtklp \
 mtpaint \
 rgbpaint \
+doublecmd \
 slack
 do
 if type -P "${CMD}" &>/dev/null
