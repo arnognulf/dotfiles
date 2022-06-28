@@ -370,6 +370,7 @@ if [ -n "${TMUX}" ]
 then
 tmux set -g status off
 tmux bind -n S-Pageup copy-mode -u
+tmux bind -n S-Up copy-mode -u
 tmux set-option -g set-titles on
 tmux set-option -g set-titles-string "#T"
 tmux set-window-option -g mode-keys vi
@@ -380,7 +381,7 @@ tmux bind-key p paste-buffer
 
 elif [ "${SSH_CLIENT}" ]
 then
-tmux -L ssh attach-session || tmux -L ssh
+tmux -d -L ssh attach-session || tmux -L ssh
 clear
 command printf "\0337\n"
 command printf "\0338................                              \n"
