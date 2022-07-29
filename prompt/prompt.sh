@@ -129,6 +129,7 @@ function _PROMPT_COMMAND ()
   HISTCMD_before_last=$HISTCMD_previous
   trap "CTRLC=1;command echo -n" INT
   trap "CTRLC=1;command echo -n" ERR
+  stty echo 2>/dev/null
 #} >/dev/stdout
 }
 function preexec ()
@@ -200,7 +201,8 @@ local PWD_BASENAME="${PWD##*/}"
 [ -z "${PWD_BASENAME}" ] && PWD_BASENAME=/
 case ${PWD} in
 ${HOME}) command echo -n "~";;
-*) command echo -n "${NAME-${PWD_BASENAME}}"
+#*) command echo -e "\e]8;;file:///${PWD}\e\\${NAME-${PWD_BASENAME}}\e]8;;\e\\"
+*) command echo "${NAME-${PWD_BASENAME}}"
 esac
 }
 function title ()

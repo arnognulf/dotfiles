@@ -226,7 +226,7 @@ function c ()
     _CHDIR_ALL_THE_THINGS "$@" && {
         local TMP=$(mktemp)
         local MAXLINES=$((LINES - 5))
-        /bin/ls -C -w${COLUMNS} --color=always | command tee "${TMP}" | command head -n${MAXLINES}
+        /bin/ls --hyperlink=always -C -w${COLUMNS} --color=always | command tee "${TMP}" | command head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
         [ ${LS_LINES} -gt ${MAXLINES} ] && command echo "..."
         if [ ${LS_LINES} = 0 ]
@@ -239,7 +239,7 @@ function c ()
         done
         if [ ${COUNT} -gt 2 ]
         then
-        /bin/ls -A -C -w${COLUMNS} --color=always | command tee "${TMP}" | command head -n${MAXLINES}
+        /bin/ls --hyperlink=always -A -C -w${COLUMNS} --color=always | command tee "${TMP}" | command head -n${MAXLINES}
         else
         command echo "<empty>"
         fi
