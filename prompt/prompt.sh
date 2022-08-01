@@ -130,6 +130,7 @@ function _PROMPT_COMMAND ()
   trap "CTRLC=1;command echo -n" INT
   trap "CTRLC=1;command echo -n" ERR
   stty echo 2>/dev/null
+  history -a
 #} >/dev/stdout
 }
 function preexec ()

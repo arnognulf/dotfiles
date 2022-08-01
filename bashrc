@@ -1,6 +1,9 @@
 #!/bin/bash
 if [ -n "$PS1" ]
 then
+export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
+export HISTSIZE=100000                   # big big history
+export HISTFILESIZE=100000               # big big history
 _SOURCED=1
 shopt -s globstar
 function . { _SOURCED=1 command . "$@";}
