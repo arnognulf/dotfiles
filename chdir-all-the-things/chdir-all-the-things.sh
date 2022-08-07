@@ -454,6 +454,7 @@ function _CHDIR_ALL_THE_THINGS ()
             command echo "COMPUTER SAYS NO" 1>&2 | command tee /dev/null 1>/dev/null
             return 1
         else
+            local BOOKMARKDIR=~/.config/bookmark-all-the-things/
             if [ -d "${1%%/*}" ]
             then
                 command mkdir -p "${1}" || { 
@@ -461,7 +462,14 @@ function _CHDIR_ALL_THE_THINGS ()
                     return 1
                 }
                 _CHDIR_ALL_THE_THINGS_CD "${1}" &>/dev/null
+            elif [ -L "${BOOKMARKDIR}/${1}" ]
+            then
+                _CHDIR_ALL_THE_THINGS_CD $(readlink "${BOOKMARKDIR}/${1}") &>/dev/null || { 
+                    command echo "COMPUTER SAYS NO" 1>&2 | command tee /dev/null 1>/dev/null
+                    return 1
+                }
             else
+
                 local XDIR
                 # replace slash(solidus) with division slash
                 XDIR="${*//\//∕}"
@@ -483,6 +491,30 @@ function _CHDIR_ALL_THE_THINGS ()
         _CHDIR_ALL_THE_THINGS_CD "${ARG}" &>/dev/null
     fi
     return 0
+}
+function bookmark ()
+{
+local BOOKMARKDIR=~/.config/bookmark-all-the-things/
+mkdir -p "${BOOKMARKDIR}"
+case "${1}" in
+-l)
+for FILE in ${BOOKMARKDIR}/*
+do
+if [ -L "${FILE}" ]
+then
+echo -e "${FILE##*/}\t->\t$(readlink ${FILE})"
+fi
+done
+;;
+-d)
+rm "${BOOKMARKDIR}${2##*/}" 2>/dev/null
+;;
+"")
+ln -s "${PWD}" "${BOOKMARKDIR}${PWD##*/}"
+;;
+*)
+ln -s "${PWD}" "${BOOKMARKDIR}${1##*/}"
+esac
 }
 if [[ -t 0 || -p /dev/stdin ]]
 then
