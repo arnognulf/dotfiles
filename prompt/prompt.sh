@@ -131,6 +131,7 @@ function _PROMPT_COMMAND ()
   trap "CTRLC=1;command echo -n" ERR
   stty echo 2>/dev/null
   history -a
+echo -ne "\033]11;#FFF9F0\007\033]10;#312D2A\007\033]12;#312D2A\007"
 #} >/dev/stdout
 }
 function preexec ()
@@ -139,8 +140,21 @@ _TIMER_CMD="$1"
 case "${1}" in
 "c "*|"cd "*|".."*) :;;
 *)
-#printf "\033]0;️⚙️  ${*}\007" 2>/dev/null
-printf "\033]0;>  ${*} in ${PWD##*/} at "$(date +%H:%M)"\007" 2>/dev/null
+case "${1}" in
+sudo*)
+local CHAR="#"
+;;
+*)
+local CHAR=">"
+esac
+local LINE="\033]0;${CHAR}  ${*} in ${PWD##*/} at "$(date +%H:%M)
+if [ -n "$SSH_CLIENT" ]
+then
+local SHORT_HOSTNAME=${HOSTNAME%%.*}
+LINE="${LINE} by ${SHORT_HOSTNAME}"
+fi
+LINE="${LINE}\007"
+printf "$LINE"
 esac
 _MEASURE=1
 _START_SECONDS=$SECONDS
@@ -189,9 +203,16 @@ function _PROMPT_LINE ()
 {
   (
 local LINE=""
+if [ ${TERM} = linux ]
+then
+local CHAR="_"
+printf "\e[0m"
+else
+local CHAR=" "
+fi
 while [ ${#LINE} -lt ${COLUMNS} ]
 do
-LINE="${LINE} "
+LINE="${LINE}${CHAR}"
 done
 command echo -n "${LINE}"
   )
@@ -253,7 +274,15 @@ then
 TITLE="🚧  ${PWD##*/}"
 else
 case "${_PROMPT_REALPWD}" in
-${HOME}) TITLE="🏠  ${SHORT_HOSTNAME}";;
+${HOME}) 
+
+if [ -n "$SSH_CLIENT" ]
+then
+TITLE="📡  ${SHORT_HOSTNAME}"
+else
+TITLE="🏠  ${SHORT_HOSTNAME}"
+fi
+;;
 */etc|*/etc/*) TITLE="️🗂️  ${PWD##*/}";;
 */bin|*/sbin) TITLE="️⚙️  ${PWD##*/}";;
 */lib|*/lib64|*/lib32) TITLE="🔩  ${PWD##*/}";;

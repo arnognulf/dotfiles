@@ -1,7 +1,6 @@
 #!/bin/bash
 if [ -n "$PS1" ]
 then
-export HISTCONTROL=ignoredups:erasedups  # no duplicate entries
 export HISTSIZE=100000                   # big big history
 export HISTFILESIZE=100000               # big big history
 _SOURCED=1
@@ -199,7 +198,7 @@ alias chromium=chrome-polisher
 alias google-chrome=chrome-polisher
 alias chrome=chrome-polisher
 alias dos="bash ${DOTFILESDIR}/dos/sh-dos.sh"
-
+alias sudo="\echo -ne \"\033]10;#DD2222\007\033]11;#000000\007\033]12;#DD2222\007\";sudo"
 function _SCP
 {
 local ARG
