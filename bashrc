@@ -1,4 +1,8 @@
 #!/bin/bash
+ORIG_TMUX="${TMUX}"
+unset TMUX
+TMUX="${ORIG_TMUX}"
+unset ORIG_TMUX
 if [ -n "$PS1" ]
 then
 export HISTSIZE=100000                   # big big history
@@ -370,6 +374,8 @@ test -f ~/.bashrc.local && . ~/.bashrc.local
 unset _SOURCED
 if [ -n "${TMUX}" ]
 then
+(
+    export TMUX
 tmux set -g status off
 tmux bind -n S-Pageup copy-mode -u
 tmux bind -n S-Up copy-mode -u
@@ -380,10 +386,11 @@ tmux bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
 tmux bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
 tmux bind-key p paste-buffer
 # C-B+] to paste
-
-elif [ "${SSH_CLIENT}" ]
+)
+elif [ -z "${GNOME_TERMINAL_SCREEN}" ]
 then
-tmux -d -L ssh attach-session || tmux -L ssh
+TTY=$(tty 2>/dev/null)
+tmux -d -L ${TTY##*/} attach-session || tmux -L ${TTY##*/}
 clear
 command printf "\0337\n"
 command printf "\0338................                              \n"
@@ -428,3 +435,8 @@ sleep 0.1
 exit 1
 fi
 fi
+
+ORIG_GNOME_TERMINAL_SCREEN="${GNOME_TERMINAL_SCREEN}"
+unset GNOME_TERMINAL_SCREEN
+[ -n "${ORIG_GNOME_TERMINAL_SCREEN}" ] && GNOME_TERMINAL_SCREEN=${ORIG_GNOME_TERMINAL_SCREEN}
+unset ORIG_GNOME_TERMINAL_SCREEN

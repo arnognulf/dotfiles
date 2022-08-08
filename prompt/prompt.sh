@@ -131,7 +131,7 @@ function _PROMPT_COMMAND ()
   trap "CTRLC=1;command echo -n" ERR
   stty echo 2>/dev/null
   history -a
-echo -ne "\033]11;#FFF9F0\007\033]10;#312D2A\007\033]12;#312D2A\007"
+  [ -n "${GNOME_TERMINAL_SCREEN}" ] && echo -ne "\033]11;#FFF9F0\007\033]10;#312D2A\007\033]12;#312D2A\007"
 #} >/dev/stdout
 }
 function preexec ()
