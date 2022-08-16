@@ -16,6 +16,7 @@ PATH=${PATH}:~/.local/share/ParaView/bin:~/.local/share/android-studio/bin:~/.lo
 DOTFILESDIR=$(readlink "${HOME}/.bashrc")
 DOTFILESDIR=${DOTFILESDIR%/*}
 export VIM=${DOTFILESDIR}/vim
+export VIMRUNTIME=${DOTFILESDIR}/vim
 . "${DOTFILESDIR}"/prompt/prompt.sh
 . "${DOTFILESDIR}"/chdir-all-the-things/chdir-all-the-things.sh
 . "${DOTFILESDIR}"/can-opener/can-opener.sh

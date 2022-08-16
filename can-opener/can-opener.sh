@@ -34,6 +34,10 @@ function _CAN_OPENER_ALL ()
 {
     local FILE
     local MIME
+    while [ "${#@}" -gt 1 ]
+    do
+        shift
+    done
     for FILE in "$@"
     do
         (
