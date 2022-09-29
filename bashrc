@@ -1,8 +1,5 @@
 #!/bin/bash
-ORIG_TMUX="${TMUX}"
-unset TMUX
-TMUX="${ORIG_TMUX}"
-unset ORIG_TMUX
+
 if [ -n "$PS1" ]
 then
 export HISTSIZE=100000                   # big big history
@@ -133,8 +130,8 @@ function _KILLTRACKER
 }
 _KILLTRACKER &>/dev/null &
 )
-
-alias gl="LESS='-R --pattern ^(commit|diff)' git log -p"
+export LESS='-Q'
+alias gl="LESS='-Q -R --pattern ^(commit|diff)' git log -p"
 alias ga='git add -p'
 alias gr='git reflog'
 alias gx='git checkout'
@@ -388,10 +385,10 @@ tmux bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
 tmux bind-key p paste-buffer
 # C-B+] to paste
 )
-elif [ -z "${GNOME_TERMINAL_SCREEN}" ]
+elif [ -z "${WAYLAND_DISPLAY}" ] && [ -z "${DISPLAY}" ]
 then
-TTY=$(tty 2>/dev/null)
-tmux -d -L ${TTY##*/} attach-session || tmux -L ${TTY##*/}
+#TTY=$(tty 2>/dev/null)
+tmux -L ssh attach-session || tmux -L ssh
 clear
 command printf "\0337\n"
 command printf "\0338................                              \n"
@@ -437,7 +434,10 @@ exit 1
 fi
 fi
 
-ORIG_GNOME_TERMINAL_SCREEN="${GNOME_TERMINAL_SCREEN}"
-unset GNOME_TERMINAL_SCREEN
-[ -n "${ORIG_GNOME_TERMINAL_SCREEN}" ] && GNOME_TERMINAL_SCREEN=${ORIG_GNOME_TERMINAL_SCREEN}
-unset ORIG_GNOME_TERMINAL_SCREEN
+(
+exec sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
+    ~/.config/google-chrome/Default/Preferences \
+    ~/.config/google-chrome-beta/Default/Preferences &>/dev/null &
+)
+
+bind 'set bell-style none'

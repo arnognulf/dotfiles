@@ -136,22 +136,25 @@ function _PROMPT_COMMAND ()
 }
 function preexec ()
 {
-_TIMER_CMD="$1"
-case "${1}" in
+_TIMER_CMD="${1/$(printf '\\\\033')/<ESC>}"
+_TIMER_CMD="${_TIMER_CMD/$(printf '\\\\e')/<ESC>}"
+_TIMER_CMD="${_TIMER_CMD/$(printf '\\\\007')/<BEL>}"
+_TIMER_CMD="${_TIMER_CMD/$(printf '\\\\a')/<BEL>}"
+case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;
 *)
-case "${1}" in
+case "${_TIMER_CMD}" in
 sudo*)
 local CHAR="#"
 ;;
 *)
 local CHAR=">"
 esac
-local LINE="\033]0;${CHAR}  ${*} in ${PWD##*/} at "$(date +%H:%M)
+local LINE="\033]0;${CHAR}  ${_TIMER_CMD} in ${PWD##*/} at "$(date +%H:%M)
 if [ -n "$SSH_CLIENT" ]
 then
 local SHORT_HOSTNAME=${HOSTNAME%%.*}
-LINE="${LINE} by ${SHORT_HOSTNAME}"
+LINE="${LINE} on ${SHORT_HOSTNAME}"
 fi
 LINE="${LINE}\007"
 printf "$LINE"
@@ -184,7 +187,7 @@ SECONDS_M=$((DIFF % 3600))
 DURATION_H=$((DIFF / 3600))
 DURATION_M=$((SECONDS_M / 60))
 DURATION_S=$((SECONDS_M % 60))
-command echo -ne "\nCommand took "
+command echo -ne "\n\007Command took "
 DURATION=""
 [ ${DURATION_H} -gt 0 ] && DURATION="${DURATION}${DURATION_H}h "
 [ ${DURATION_M} -gt 0 ] && DURATION="${DURATION}${DURATION_M}m "
@@ -274,15 +277,6 @@ then
 TITLE="🚧  ${PWD##*/}"
 else
 case "${_PROMPT_REALPWD}" in
-${HOME}) 
-
-if [ -n "$SSH_CLIENT" ]
-then
-TITLE="📡  ${SHORT_HOSTNAME}"
-else
-TITLE="🏠  ${SHORT_HOSTNAME}"
-fi
-;;
 */etc|*/etc/*) TITLE="️🗂️  ${PWD##*/}";;
 */bin|*/sbin) TITLE="️⚙️  ${PWD##*/}";;
 */lib|*/lib64|*/lib32) TITLE="🔩  ${PWD##*/}";;
@@ -305,7 +299,16 @@ ${XDG_VIDEOS_DIR}|${XDG_VIDEOS_DIR}/*) TITLE="🎬  ${PWD##*/}";;
 */Downloads|*/Downloads/*|${XDG_DOWNLOAD_DIR}|${XDG_DOWNLOAD_DIR}/*) TITLE="📦  ${PWD##*/}";;
 *) TITLE="📂  ${PWD##*/}";;
 esac
-#TITLE="${TITLE} ${SHORT_HOSTNAME,,}:$PWD  "
+case "${_PROMPT_REALPWD}" in
+${HOME}) 
+TITLE="🏠  ${SHORT_HOSTNAME}"
+;;
+*)
+if [ -n "$SSH_CLIENT" ]
+then
+TITLE="${TITLE} on ${SHORT_HOSTNAME}"
+fi
+esac
 fi
 else
 TITLE="${TITLE_OVERRIDE}"

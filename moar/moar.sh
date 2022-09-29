@@ -56,7 +56,7 @@ function _MOAR
         shift
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
+            command "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K
             RETURN=$?
         else
             command "${CMD}" "$@"
@@ -68,7 +68,7 @@ function _MOAR
         list)
             if [ "${_MOAR_STDOUT}" = 1 ]
             then
-                command socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} |tail -n +2| command less -R -X -F -K
+                command socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} |tail -n +2| command less -Q -R -X -F -K
                 RETURN=$?
             else
                 command "$@"
@@ -78,7 +78,7 @@ function _MOAR
         search)
             if [ "${_MOAR_STDOUT}" = 1 ]
             then
-                command "$@" 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
+                command "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K
                 RETURN=$?
             else
                 command "$@"
@@ -92,11 +92,11 @@ function _MOAR
         ;;
         *git)
         case "$2" in
-        log|diff|status|remote)
+        log|status|remote)
         shift
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command git -c color.ui=always "${@}"  2>${_MOAR_STDERR_FILE} | _EMOJIFY | command less -R -X -F -K
+            command git -c color.ui=always "${@}"  2>${_MOAR_STDERR_FILE} | _EMOJIFY | command less -Q -R -X -F -K
             RETURN=$?
         else
             command git -c color.ui=never "${@}" | _EMOJIFY
@@ -122,7 +122,7 @@ function _MOAR
     find|od|hexdump|declare)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command "$@" 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
+            command "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K
             RETURN=$?
         else
             command "$@"
@@ -132,7 +132,7 @@ function _MOAR
     echo)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command "$@" 2>${_MOAR_STDERR_FILE} | _EMOJIFY | command less -R -X -F -K
+            command "$@" 2>${_MOAR_STDERR_FILE} | _EMOJIFY | command less -Q -R -X -F -K
             RETURN=$?
         else
             command "$@"| _EMOJIFY
@@ -142,17 +142,28 @@ function _MOAR
     rg)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command "$@" --color=always 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
+            command "$@" --color=always 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K
             RETURN=$?
         else
             command "$@" --color=never
             RETURN=$?
         fi
     ;;
+    systemctl)
+        if [ "${_MOAR_STDOUT}" = 1 ]
+        then
+            command "$@" --no-pager 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K
+            RETURN=$?
+        else
+            command "$@" --color=never
+            RETURN=$?
+        fi
+    ;;
+ 
     rga)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command "$@" --color=always 2>/dev/null | command less -R -X -F -K
+            command "$@" --color=always 2>/dev/null | command less -Q -R -X -F -K
             RETURN=$?
         else
             command "$@" --color=never 2>/dev/null
@@ -163,7 +174,7 @@ function _MOAR
     fd|fdfind)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command "$@" --color always 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
+            command "$@" --color always 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K
             RETURN=$?
         else
             command "$@" --color never
@@ -173,14 +184,14 @@ function _MOAR
     *)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command "$@" 2>${_MOAR_STDERR_FILE} | command less -R -X -F -K
+            command "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K
             RETURN=$?
         else
             command "$@"
             RETURN=$?
         fi
     esac
-    [ -s "${_MOAR_STDERR_FILE}" ] && { command less -R -X -F -K "${_MOAR_STDERR_FILE}"; command rm ${_MOAR_STDERR_FILE};}
+    [ -s "${_MOAR_STDERR_FILE}" ] && { command less -Q -R -X -F -K "${_MOAR_STDERR_FILE}"; command rm ${_MOAR_STDERR_FILE};}
 else
     command "$@"
     RETURN=$?
@@ -267,6 +278,7 @@ usb-devices \
 sensors \
 acpidump \
 fc-list \
+systemctl \
 ip
 do
 if type -P "${CMD##*/}" &>/dev/null 
