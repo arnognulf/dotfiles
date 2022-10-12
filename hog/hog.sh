@@ -67,20 +67,32 @@ goto_repo_dir ()
     if  [ ! -d ".${NAME}" ]
     then
         error "not a ${NAME} repository"
+        return 1
     fi
     REPO_DIR=".${NAME}"
     chmod +r "${REPO_DIR}"
+    chmod +w "${REPO_DIR}"
+    chmod +x "${REPO_DIR}"
+    return 0
 }
 NAME=hog
 
-trap "chmod -r \"${REPO_DIR-}\" 2>/dev/null" EXIT
+trap "goto_repo_dir &>/dev/null && chmod -r \".hog\" 2>/dev/null" EXIT
 
 REPO_DIR=".${NAME}" 
 
 case "${1-}" in
 init)
-goto_repo_dir
-REPO_DIR=".${NAME}" 
+#goto_repo_dir
+#REPO_DIR=".${NAME}" 
+if [ "${2-}" = "-f" ]
+then
+chmod +r "${REPO_DIR}"
+chmod +w "${REPO_DIR}"
+chmod +x "${REPO_DIR}"
+rm -rf "${REPO_DIR}"
+mkdir -p "${REPO_DIR}"
+fi
 mkdir "${REPO_DIR}" &>/dev/null || error "repository alread initialized"
 echo 1 > "${REPO_DIR}"/version
 if cp --reflink=always -rdf "${REPO_DIR}"/version "${REPO_DIR}"/reflink_supported &>/dev/null 
@@ -110,37 +122,50 @@ TEMP=$(mktemp)
 "${EDITOR}" "${TEMP}"
 mkdir -p "${COMMIT_DIR}" || error "couldn\'t create dir"
 [ ! -s "${TEMP}" ] && error "empty commit message"
-cp "${TEMP}" "${COMMIT_DIR}"/message || erro "couldn\'t write commit message"
+cp "${TEMP}" "${COMMIT_DIR}"/message || { rm -rf "${COMMIT_DIR}"; error "couldn\'t write commit message";}
 rm "${TEMP}" &>/dev/null
 fi
 SNAPSHOT_DIR="${COMMIT_DIR}/snapshot"
 mkdir -p "${SNAPSHOT_DIR}" || error "couldn\'t create dir"
-for ITEM in *
+START="${SECONDS}"
+for ITEM in * .*
 do
+    [ "${ITEM}" = "." ] && continue
+    [ "${ITEM}" = ".." ] && continue
     [ "${ITEM}" = ".${NAME}" ] && continue
-    cp --reflink=auto -rdf "${ITEM}" "${SNAPSHOT_DIR}" &
+    cp --preserve=all --reflink=auto -rdf "${ITEM}" "${SNAPSHOT_DIR}" &
 done
 while fg &>/dev/null
 do
 :
 done
+END="${SECONDS}"
+echo $((${END} - ${START})) > "${COMMIT_DIR}"/commit_duration
 ;;
 checkout)
 goto_repo_dir
-[ ! -d [ "${REPO_DIR}/${2-}" ] && error "no such commit"
+[ ! -d [ "${REPO_DIR}/objects/${2-}" ] && error "no such commit"
 COMMIT_DIR="${REPO_DIR}/objects/${2-}"
 SNAPSHOT_DIR="${COMMIT_DIR}/snapshot"
 mkdir -p ".${NAME}/tmp" || error "couldn\'t create temp dir=${PWD}/.${NAME}/tmp"
-for ITEM in *
+for ITEM in * .*
 do
-    [ "${ITEM}" = ".${NAME}"] && continue
-    mv "${ITEM}" ".${NAME}/tmp" || error "can\'t move item to temp"
+    [ "${ITEM}" = ".${NAME}" ] && continue
+    case "${ITEM}" in
+    "."|".."|*"/."|*"/..") :;;
+    *)
+    mv "${ITEM}" ".${NAME}/tmp" || true 
     ( exec rm -rf ".${NAME}/tmp/${ITEM}" &>/dev/null & )
+    esac
 done
 
-for ITEM in ".${SNAPSHOT_DIR}"/*
+for ITEM in "${SNAPSHOT_DIR}"/* "${SNAPSHOT_DIR}"/.*
 do
-    cp --reflink=auto -rdf "${ITEM}" . &
+    case "${ITEM}" in
+    *"/."|*"/..") :;;
+    *)
+    cp --preserve=all --reflink=auto -rdf "${ITEM}" . &
+    esac
 done
 while fg &>/dev/null
 do
@@ -153,7 +178,7 @@ if [ -t 1 ]
 then
     COLOR_SET="\033[33m"
     COLOR_RESET="\033[0m"
-    print_objects | less -j0 -R
+    print_objects | less -X -Q -F -j0 -R
 else
     COLOR_SET=""
     COLOR_RESET=""

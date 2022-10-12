@@ -321,10 +321,19 @@ function _DOGEVIEW
 {
     command rm -rf /tmp/.DOGE* &>/dev/null
     _MEASURE=0
-    if [ -z "$1" ]
+    if [ "${#@}" = 0 ]
     then
         command echo "WOW! Such view! Many formats! Much decode!" 1>&2 | tee /dev/null 1>/dev/null
         return 1
+    elif [ "${#@}" -gt 1 ]
+    then
+        local FILE
+        for FILE in "${@}"
+        do
+            :
+        done
+        _DOGEVIEW "${FILE}"
+        return $?
     fi
     local PIPEFAIL_ENABLED
     if set -o|command egrep -q "pipefail(.*)off"

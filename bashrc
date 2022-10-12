@@ -110,7 +110,13 @@ function s
         then
             ( exec nautilus "$PWD" &>/dev/null & )
         else
-            ( exec nautilus -s "$1" &>/dev/null & )
+            local FILE
+            for FILE in "$@"
+            do
+                #( exec nautilus -s "$1" &>/dev/null & )
+                :
+            done
+            ( exec nautilus -s "$FILE" &>/dev/null & )
         fi
     elif [ -n "$1" ]
     then
@@ -130,7 +136,7 @@ function _KILLTRACKER
 }
 _KILLTRACKER &>/dev/null &
 )
-export LESS='-Q'
+export LESS='-Q -R'
 alias gl="LESS='-Q -R --pattern ^(commit|diff)' git log -p"
 alias ga='git add -p'
 alias gr='git reflog'
@@ -387,8 +393,7 @@ tmux bind-key p paste-buffer
 )
 elif [ -z "${WAYLAND_DISPLAY}" ] && [ -z "${DISPLAY}" ]
 then
-#TTY=$(tty 2>/dev/null)
-tmux -L ssh attach-session || tmux -L ssh
+tmux new-session -t 0
 clear
 command printf "\0337\n"
 command printf "\0338................                              \n"
