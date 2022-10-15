@@ -521,8 +521,10 @@ esac
 fi
 }
 
+if [ -n "$ZSH_NAME" ]
+then
 function command_not_found_handler ()
 {
 command_not_found_handle "${@}"
 }
-
+fi

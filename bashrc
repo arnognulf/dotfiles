@@ -166,7 +166,16 @@ function repo
 
 function s
 {
-    if [ -t 0 ]
+    if [ ! -t 1 ]
+    then
+            local FILE
+            for FILE in "$@"
+            do
+                :
+            done
+            command echo "${FILE}"
+
+    elif [ -t 0 ]
     then
         nautilus -q &>/dev/null
         if [ ${#@} = 0 ]
@@ -187,31 +196,6 @@ function s
         command sort|command uniq
     fi
 }
-
-function last
-{
-    if [ -t 0 ]
-    then
-        nautilus -q &>/dev/null
-        if [ ${#@} = 0 ]
-        then
-            ( exec nautilus "$PWD" &>/dev/null & )
-        else
-            local FILE
-            for FILE in "$@"
-            do
-                :
-            done
-            ( exec nautilus -s "$FILE" &>/dev/null & )
-        fi
-    elif [ -n "$1" ]
-    then
-        command sort|command uniq|grep "$@"
-    else
-        command sort|command uniq
-    fi
-}
-
 
 (
 function _KILLTRACKER
@@ -265,33 +249,33 @@ alias gmail="google-chrome-beta -user-data-dir=${HOME}/.config/gmail --no-defaul
 alias facebook="google-chrome-beta -user-data-dir=${HOME}/.config/facebook --no-default-browser-check --no-first-run --app=https://facebook.com"
 alias lwn="google-chrome-beta -user-data-dir=${HOME}/.config/lwn --no-default-browser-check --no-first-run --app=https://lwn.net"
 alias linkedin="google-chrome-beta -user-data-dir=${HOME}/.config/linkedin --no-default-browser-check --no-first-run --app=https://linkedin.com"
-alias newsy="chrome-polisher-tmp newsy https://news.ycombinator.com"
-alias youtube="chrome-polisher-tmp youtube https://youtube.com"
-alias lobste.rs="chrome-polisher-tmp lobste.rs https://lobste.rs"
-alias svtplay="chrome-polisher-tmp lobste.rs https://svtplay.se"
+alias newsy="_CHROME-POLISHER-tmp newsy https://news.ycombinator.com"
+alias youtube="_CHROME-POLISHER-tmp youtube https://youtube.com"
+alias lobste.rs="_CHROME-POLISHER-tmp lobste.rs https://lobste.rs"
+alias svtplay="_CHROME-POLISHER-tmp lobste.rs https://svtplay.se"
 alias which="command -v"
 alias ssh="_MEASURE=0;ssh"
 unalias google-chrome &>/dev/null
 unalias chrome &>/dev/null
 pidof chrome &>/dev/null || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
-function chrome-polisher
+function _CHROME-POLISHER
 {
-    local DIR=/tmp/chrome-polisher-${USER}
+    local DIR=/tmp/_CHROME-POLISHER-${USER}
     pidof chrome &>/dev/null || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
     command mkdir -p "${DIR}" &>/dev/null
     _CAN_OPENER google-chrome-beta --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
 }
-function chrome-polisher-tmp
+function _CHROME-POLISHER-tmp
 {
-    local DIR="/tmp/chrome-polisher-${USER}/${1}"
+    local DIR="/tmp/_CHROME-POLISHER-${USER}/${1}"
     pidof chrome &>/dev/null || command rm -rf "${DIR}"
     command mkdir -p ${DIR}
     shift
     _CAN_OPENER google-chrome-beta --disable-notifications --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}" --app="${*}"
 }
-alias chromium=chrome-polisher
-alias google-chrome=chrome-polisher
-alias chrome=chrome-polisher
+alias chromium=_CHROME-POLISHER
+alias google-chrome=_CHROME-POLISHER
+alias chrome=_CHROME-POLISHER
 alias dos="bash ${DOTFILESDIR}/dos/sh-dos.sh"
 alias sudo="\echo -ne \"\033]10;#DD2222\007\033]11;#000000\007\033]12;#DD2222\007\";sudo"
 function _SCP
