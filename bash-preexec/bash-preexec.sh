@@ -286,7 +286,7 @@ __bp_install() {
     # Add two functions to our arrays for convenience
     # of definition.
     precmd_functions+=(precmd)
-    preexec_functions+=(preexec)
+    preexec_functions+=(_PREEXEC)
 
     # Since this function is invoked via PROMPT_COMMAND, re-execute PC now that it's properly set
     eval "$PROMPT_COMMAND"

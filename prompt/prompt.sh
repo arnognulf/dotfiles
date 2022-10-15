@@ -142,7 +142,7 @@ function _PROMPT_COMMAND ()
   history -a
   [ -n "${GNOME_TERMINAL_SCREEN}" ] && command echo -ne "\033]11;#FFF9F0\007\033]10;#312D2A\007\033]12;#312D2A\007"
 }
-function preexec ()
+function _PREEXEC ()
 {
 _TIMER_CMD="${1/$(command echo -ne '\\\\033')/<ESC>}"
 _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\e')/<ESC>}"
