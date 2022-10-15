@@ -2,6 +2,69 @@
 
 if [ -n "$PS1" ]
 then
+if [ -n "${TMUX}" ]
+then
+(
+setup_tmux ()
+{
+    tmux set -g status off
+    tmux bind -n S-Pageup copy-mode -u
+    tmux bind -n S-Up copy-mode -u
+    tmux set-option -g set-titles on
+    tmux set-option -g set-titles-string "#T"
+    tmux set-window-option -g mode-keys vi
+    tmux bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
+    tmux bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
+    tmux bind-key p paste-buffer
+    # C-B+] to paste
+}
+setup_tmux &
+)
+elif [ -z "${WAYLAND_DISPLAY}" ] && [ -z "${DISPLAY}" ]
+then
+read NUM < ~/.cache/tmux-session &>/dev/null
+NUM=${NUM-0}
+NUM=$((NUM + 1))
+NUM=$((NUM % 3))
+mkdir -p ~/.cache
+command echo ${NUM} > ~/.cache/tmux-session
+tmux -L ${NUM} attach-session || tmux -L ${NUM}
+clear
+command echo -ne "\0337\n"
+command echo -ne "\0338................                              \n"
+sleep 0.1
+command echo -ne "\0338...............                              \n"
+sleep 0.1
+command echo -ne "\0338..............                              \n"
+sleep 0.1
+command echo -ne "\0338.............                              \n"
+sleep 0.1
+command echo -ne "\0338............                              \n"
+sleep 0.1
+command echo -ne "\0338...........                              \n"
+sleep 0.1
+command echo -ne "\0338..........                              \n"
+sleep 0.1
+command echo -ne "\0338.........                              \n"
+sleep 0.1
+command echo -ne "\0338........                              \n"
+sleep 0.1
+command echo -ne "\0338.......                              \n"
+sleep 0.1
+command echo -ne "\0338......                              \n"
+sleep 0.1
+command echo -ne "\0338.....                              \n"
+sleep 0.1
+command echo -ne "\0338....                              \n"
+sleep 0.1
+command echo -ne "\0338...                              \n"
+sleep 0.1
+command echo -ne "\0338..                              \n"
+sleep 0.1
+command echo -ne "\0338.                              \n"
+sleep 0.1
+exit 1
+fi
 export HISTSIZE=100000                   # big big history
 export HISTFILESIZE=100000               # big big history
 _SOURCED=1
@@ -113,7 +176,6 @@ function s
             local FILE
             for FILE in "$@"
             do
-                #( exec nautilus -s "$1" &>/dev/null & )
                 :
             done
             ( exec nautilus -s "$FILE" &>/dev/null & )
@@ -125,6 +187,31 @@ function s
         command sort|command uniq
     fi
 }
+
+function last
+{
+    if [ -t 0 ]
+    then
+        nautilus -q &>/dev/null
+        if [ ${#@} = 0 ]
+        then
+            ( exec nautilus "$PWD" &>/dev/null & )
+        else
+            local FILE
+            for FILE in "$@"
+            do
+                :
+            done
+            ( exec nautilus -s "$FILE" &>/dev/null & )
+        fi
+    elif [ -n "$1" ]
+    then
+        command sort|command uniq|grep "$@"
+    else
+        command sort|command uniq
+    fi
+}
+
 
 (
 function _KILLTRACKER
@@ -376,73 +463,13 @@ LS_COLORS='di=01';
 export LS_COLORS
 test -f ~/.bashrc.local && . ~/.bashrc.local
 unset _SOURCED
-if [ -n "${TMUX}" ]
-then
-(
-    export TMUX
-tmux set -g status off
-tmux bind -n S-Pageup copy-mode -u
-tmux bind -n S-Up copy-mode -u
-tmux set-option -g set-titles on
-tmux set-option -g set-titles-string "#T"
-tmux set-window-option -g mode-keys vi
-tmux bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
-tmux bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
-tmux bind-key p paste-buffer
-# C-B+] to paste
-)
-elif [ -z "${WAYLAND_DISPLAY}" ] && [ -z "${DISPLAY}" ]
-then
-tmux new-session -t 0
-clear
-command printf "\0337\n"
-command printf "\0338................                              \n"
-sleep 0.1
-command printf "\0338...............                              \n"
-sleep 0.1
-command printf "\0338..............                              \n"
-sleep 0.1
-command printf "\0338.............                              \n"
-sleep 0.1
-command printf "\0338............                              \n"
-sleep 0.1
-command printf "\0338...........                              \n"
-sleep 0.1
-command printf "\0338..........                              \n"
-sleep 0.1
-command printf "\0338.........                              \n"
-sleep 0.1
-command printf "\0338........                              \n"
-sleep 0.1
-command printf "\0338.......                              \n"
-sleep 0.1
-command printf "\0338......                              \n"
-sleep 0.1
-command printf "\0338.....                              \n"
-sleep 0.1
-command printf "\0338....                              \n"
-sleep 0.1
-command printf "\0338...                              \n"
-sleep 0.1
-command printf "\0338..                              \n"
-sleep 0.1
-command printf "\0338.                              \n"
-sleep 0.1
+bind 'set bell-style none'
 
-
-
-
-
-
-
-exit 1
 fi
-fi
-
 (
 exec sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
     ~/.config/google-chrome/Default/Preferences \
     ~/.config/google-chrome-beta/Default/Preferences &>/dev/null &
 )
 
-bind 'set bell-style none'
+

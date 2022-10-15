@@ -20,8 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+XDG_DESKTOP_DIR="$HOME/"
+XDG_DOWNLOAD_DIR="$HOME/Downloads"
+XDG_TEMPLATES_DIR="$HOME/Templates"
+XDG_PUBLICSHARE_DIR="$HOME/Public"
+XDG_DOCUMENTS_DIR="$HOME/Documents"
+XDG_MUSIC_DIR="$HOME/Music"
+XDG_PICTURES_DIR="$HOME/Pictures"
+XDG_VIDEOS_DIR="$HOME/Videos"
 
-source ~/.config/user-dirs.dirs &>/dev/null
+[[ -f ~/.config/user-dirs.dirs ]] || xdg-user-dirs-update 2>/dev/null
+. ~/.config/user-dirs.dirs &>/dev/null
 
 function _PROMPT_ALERT ()
 {
@@ -102,10 +111,10 @@ function _PROMPT_COMMAND ()
         then
         CR_LEVEL=1
         else
-        command printf "\033[D \n\n" 
+        command echo -ne "\033[D \n\n" 
         fi
         ;;
-            2) CR_LEVEL=3;command git -c color.status=always status |head -n$((LINES - 2)) | command head -n$((LINES - 4)); command echo "        ..."; command printf "\n";;
+            2) CR_LEVEL=3;command git -c color.status=always status |head -n$((LINES - 2)) | command head -n$((LINES - 4)); command echo "        ...\n";;
             *) _PROMPT_MAGIC_SHELLBALL
         esac
         CR_LEVEL=$((CR_LEVEL + 1))
@@ -131,15 +140,14 @@ function _PROMPT_COMMAND ()
   trap "CTRLC=1;command echo -n" ERR
   stty echo 2>/dev/null
   history -a
-  [ -n "${GNOME_TERMINAL_SCREEN}" ] && echo -ne "\033]11;#FFF9F0\007\033]10;#312D2A\007\033]12;#312D2A\007"
-#} >/dev/stdout
+  [ -n "${GNOME_TERMINAL_SCREEN}" ] && command echo -ne "\033]11;#FFF9F0\007\033]10;#312D2A\007\033]12;#312D2A\007"
 }
 function preexec ()
 {
-_TIMER_CMD="${1/$(printf '\\\\033')/<ESC>}"
-_TIMER_CMD="${_TIMER_CMD/$(printf '\\\\e')/<ESC>}"
-_TIMER_CMD="${_TIMER_CMD/$(printf '\\\\007')/<BEL>}"
-_TIMER_CMD="${_TIMER_CMD/$(printf '\\\\a')/<BEL>}"
+_TIMER_CMD="${1/$(command echo -ne '\\\\033')/<ESC>}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\e')/<ESC>}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\007')/<BEL>}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\a')/<BEL>}"
 case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;
 *)
@@ -154,10 +162,11 @@ local LINE="\033]0;${CHAR}  ${_TIMER_CMD} in ${PWD##*/} at "$(date +%H:%M)
 if [ -n "$SSH_CLIENT" ]
 then
 local SHORT_HOSTNAME=${HOSTNAME%%.*}
+SHORT_HOSTNAME=${SHORT_HOSTNAME,,}
 LINE="${LINE} on ${SHORT_HOSTNAME}"
 fi
 LINE="${LINE}\007"
-printf "$LINE"
+command echo -ne "$LINE"
 esac
 _MEASURE=1
 _START_SECONDS=$SECONDS
@@ -209,7 +218,7 @@ local LINE=""
 if [ ${TERM} = linux ]
 then
 local CHAR="_"
-printf "\e[0m"
+command echo -ne "\e[0m"
 else
 local CHAR=" "
 fi
@@ -269,12 +278,21 @@ _PROMPT ()
 if [ "${TITLE_OVERRIDE}" = "" ]
 then
 local SHORT_HOSTNAME=${HOSTNAME%%.*}
+SHORT_HOSTNAME=${SHORT_HOSTNAME,,}
 if [ -n "${_PROMPT_REPO}" ]
 then
     TITLE="🏗️  ${PWD##*/}"
+    if [ -n "$SSH_CLIENT" ]
+    then
+        TITLE="${TITLE} on ${SHORT_HOSTNAME}"
+    fi 
 elif [ -n "${_PROMPT_GIT_PS1}" ]
 then
-TITLE="🚧  ${PWD##*/}"
+    TITLE="🚧  ${PWD##*/}"
+    if [ -n "$SSH_CLIENT" ]
+    then
+        TITLE="${TITLE} on ${SHORT_HOSTNAME}"
+    fi
 else
 case "${_PROMPT_REALPWD}" in
 */etc|*/etc/*) TITLE="️🗂️  ${PWD##*/}";;

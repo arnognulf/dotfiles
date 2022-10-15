@@ -36,7 +36,6 @@ stdout ()
 error ()
 {
     stderr "ERROR: $*"
-    [ -n "${COMMIT_DIR-}" ] && rm -rf "${COMMIT_DIR}"
     exit 42
 }
 print_objects ()
