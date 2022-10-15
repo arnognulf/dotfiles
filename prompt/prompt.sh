@@ -114,7 +114,7 @@ function _PROMPT_COMMAND ()
         command echo -ne "\033[D \n\n" 
         fi
         ;;
-            2) CR_LEVEL=3;command git -c color.status=always status |head -n$((LINES - 2)) | command head -n$((LINES - 4)); command echo "        ...\n";;
+            2) CR_LEVEL=3;command git -c color.status=always status |head -n$((LINES - 2)) | command head -n$((LINES - 4)); command echo -e "        ...\n\n";;
             *) _PROMPT_MAGIC_SHELLBALL
         esac
         CR_LEVEL=$((CR_LEVEL + 1))
