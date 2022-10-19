@@ -191,7 +191,18 @@ function _MOAR
             RETURN=$?
         fi
     esac
-    [ -s "${_MOAR_STDERR_FILE}" ] && { command less -Q -R -X -F -K -S "${_MOAR_STDERR_FILE}"; command rm ${_MOAR_STDERR_FILE};}
+    if [ -s "${_MOAR_STDERR_FILE}" ]
+    then
+        local STDERR_LINES=$(wc -l "${_MOAR_STDERR_FILE}")
+        STDERR_LINES=${STDERR_LINES% *}
+        if [ ${STDERR_LINES} -gt ${LINES} ]
+        then
+            command less -Q -R -X -F -K -S "${_MOAR_STDERR_FILE}"
+        else
+            command cat "${_MOAR_STDERR_FILE}"
+        fi
+        command rm ${_MOAR_STDERR_FILE}
+    fi
 else
     command "$@"
     RETURN=$?

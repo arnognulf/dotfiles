@@ -70,6 +70,11 @@ export HISTFILESIZE=100000               # big big history
 _SOURCED=1
 shopt -s globstar
 function . { _SOURCED=1 command . "$@";}
+
+#function xcp () {
+#    command tar -cf - "$@"|command pv|command pixz|command ssh server 'command tar -Ipixz -tf -'
+#}
+
 function source { _SOURCED=1 command . "$@";}
 PATH=${PATH}:~/.local/share/ParaView/bin:~/.local/share/android-studio/bin:~/.local/bin:/usr/share/code-insiders/resources/app/node_modules.asar.unpacked/vscode-ripgrep/bin/
 
