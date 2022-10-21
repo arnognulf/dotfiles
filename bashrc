@@ -455,6 +455,21 @@ unset _SOURCED
 bind 'set bell-style none'
 
 fi
+
+(
+    IFS="
+"
+    for ITEM in $(command cat ~/.config/gtk-3.0/bookmarks)
+    do
+    case "${ITEM}" in
+    file://*) :;;
+    *)
+    ITEM="${ITEM% *}"
+    gio mount "${ITEM}" &>/dev/null &
+    esac
+    done
+)
+
 (
 exec sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
     ~/.config/google-chrome/Default/Preferences \

@@ -87,7 +87,7 @@ function _PROMPT_MAGIC_SHELLBALL ()
 function _PROMPT_COMMAND ()
 {
 #{
-  (_z --add "$(command pwd '$_Z_RESOLVE_SYMLINKS')" 2>/dev/null &)
+  #(_z --add "$(command pwd -L '$_Z_RESOLVE_SYMLINKS')" 2>/dev/null &)
   local _SOURCED=1
   # add trailing newline for last command if missing
   command printf "%$((COLUMNS-1))s\\r"

@@ -131,12 +131,12 @@ _CATT_LASTLASTPWD="${_CATT_LASTPWD}"
 _CATT_LASTPWD="${PWD}"
 builtin cd "$1"
 RETURN_VALUE=$?
-[ -w "${_CATT_LASTPWD}" ] && rm -d "${_CATT_LASTPWD}" &>/dev/null
+[ -w "${_CATT_LASTPWD}" ] && [ ! -L "${_CATT_LASTPWD}" ] && rm -d "${_CATT_LASTPWD}" &>/dev/null
 else
 _CATT_LASTPWD="${PWD}"
 builtin cd
 RETURN_VALUE=$?
-[ -w "${_CATT_LASTPWD}" ] && rm -d "${_CATT_LASTPWD}" &>/dev/null
+[ -w "${_CATT_LASTPWD}" ] && [ ! -L "${_CATT_LASTPWD}" ]  && rm -d "${_CATT_LASTPWD}" &>/dev/null
 fi
 return ${RETURN_VALUE}
 }
@@ -223,7 +223,13 @@ function _CHDIR_ALL_THE_THINGS ()
     esac
     if [ -L "${ARG}" ];then
         local LINKARG=$(readlink "${ARG}")
-        _CHDIR_ALL_THE_THINGS "${LINKARG}"
+        if [ -d "${LINKARG}" ]
+        then
+            builtin cd "${ARG}"
+
+        else
+            _CHDIR_ALL_THE_THINGS "${LINKARG}"
+        fi
         return 0
     elif [ -f "${ARG}" ]; then
         case "${ARG,,}" in 

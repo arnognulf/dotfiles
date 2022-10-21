@@ -100,7 +100,7 @@ then
 elif [ "${2-}" != "-f" ]
 then
         rm -rf ".${NAME}" 
-        error "reflinks are not recommended, use a supported filesystem such as XFS, BTRFS, F2FS, or BCACHEFS, or use -f to force creation"
+        error "reflinks are not supported on this filesystem, use a filesystem such as XFS, BTRFS, F2FS, or BCACHEFS, or use -f to force creation using non-reflink files"
 fi
 stdout "Initialized empty ${NAME} repository in $PWD/.${NAME}/"
 ;;
