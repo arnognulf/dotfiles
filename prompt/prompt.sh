@@ -86,8 +86,6 @@ function _PROMPT_MAGIC_SHELLBALL ()
 
 function _PROMPT_COMMAND ()
 {
-#{
-  #(_z --add "$(command pwd -L '$_Z_RESOLVE_SYMLINKS')" 2>/dev/null &)
   local _SOURCED=1
   # add trailing newline for last command if missing
   command printf "%$((COLUMNS-1))s\\r"
@@ -158,6 +156,9 @@ local CHAR="#"
 *)
 local CHAR=">"
 esac
+(
+function print_title
+{
 local LINE="\033]0;${CHAR}  ${_TIMER_CMD} in ${PWD##*/} at "$(date +%H:%M)
 if [ -n "$SSH_CLIENT" ]
 then
@@ -167,6 +168,9 @@ LINE="${LINE} on ${SHORT_HOSTNAME}"
 fi
 LINE="${LINE}\007"
 command echo -ne "$LINE"
+}
+print_title &
+)
 esac
 _MEASURE=1
 _START_SECONDS=$SECONDS
@@ -212,8 +216,7 @@ _MEASURE=0
 }
 
 function _PROMPT_LINE ()
-{
-  (
+(
 local LINE=""
 if [ ${TERM} = linux ]
 then
@@ -227,15 +230,13 @@ do
 LINE="${LINE}${CHAR}"
 done
 command echo -n "${LINE}"
-  )
-}
+)
 function _PROMPT_PWD_BASENAME ()
 {
 local PWD_BASENAME="${PWD##*/}"
 [ -z "${PWD_BASENAME}" ] && PWD_BASENAME=/
 case ${PWD} in
 ${HOME}) command echo -n "~";;
-#*) command echo -e "\e]8;;file:///${PWD}\e\\${NAME-${PWD_BASENAME}}\e]8;;\e\\"
 *) command echo "${NAME-${PWD_BASENAME}}"
 esac
 }
@@ -247,12 +248,7 @@ _PROMPT ()
 {
   if [ -n "${_PROMPT_LONGRUNNING}" ]
   then
-  #if [ "$1" = 0 ]
-  #then
   TITLE="✅ Completed ${_TIMER_CMD}"
-  #else
-  #TITLE="🛑 ERROR: \"${_TIMER_CMD}\""
-  #fi
   unset _PROMPT_LONGRUNNING
   return 0
   fi
@@ -272,7 +268,6 @@ _PROMPT ()
     _PROMPT_PWD="${_PROMPT_PWD%/*}"
   done
     _PROMPT_GIT_PS1=$(__git_ps1 2>/dev/null)
-    _PROMPT_REALPWD="$(readlink -f . 2>/dev/null)"
   esac
 
 if [ "${TITLE_OVERRIDE}" = "" ]
@@ -294,7 +289,7 @@ then
         TITLE="${TITLE} on ${SHORT_HOSTNAME}"
     fi
 else
-case "${_PROMPT_REALPWD}" in
+case "${PWD}" in
 */etc|*/etc/*) TITLE="️🗂️  ${PWD##*/}";;
 */bin|*/sbin) TITLE="️⚙️  ${PWD##*/}";;
 */lib|*/lib64|*/lib32) TITLE="🔩  ${PWD##*/}";;
@@ -304,10 +299,8 @@ ${HOME}"/.local/share/Trash/files"*) TITLE="♻️  ${PWD##*/}";;
 /boot|/boot/*) TITLE="🥾  ${PWD##*/}";;
 /) TITLE="💻  /";;
 */.*) TITLE="📌  ${PWD##*/}";;
-#/media/*) TITLE="💽  ${PWD##*/}";;
 /media/*) TITLE="💾  ${PWD##*/}";;
 /proc/*|/sys/*|/dev/*|/proc|/sys|/dev) TITLE="🤖  ${PWD##*/}";;
-#/usr/*|/boot/*|/var/*|/srv/*|/usr|/var|/srv) TITLE="🗄️  ${PWD##*/}";;
 */Documents|*/Documents/*|*/doc|*/docs|*/doc/*|*/docs/*|${XDG_DOCUMENTS_DIR}|${XDG_DOCUMENTS_DIR}/*) TITLE="📄  ${PWD##*/}";;
 */out|*/out/*) TITLE="🚀  ${PWD##*/}";;
 */src|*/src/*|*/sources|*/sources/*) TITLE="🚧  ${PWD##*/}";;
@@ -332,18 +325,10 @@ else
 TITLE="${TITLE_OVERRIDE}"
 fi
 }
-function _PROMPT_BUCKLE_RESPAWN ()
-{
-    if [ -n "${WAYLAND_DISPLAY}" -o -n "${DISPLAY}" ] 
-    then
-        type -p buckle &>/dev/null && { pidof buckle &>/dev/null || o buckle -f -s 0 &>/dev/null; }
-    fi
-}
 
-pidof buckle &>/dev/null || o buckle -f -s 0 &>/dev/null
-PROMPT_COMMAND="_PROMPT_BUCKLE_RESPAWN;_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
-PS1="\[\e]0;"'${TITLE}'"\a\e[0;4m"'$([ $(id -u) = 0 ] && command echo -e "\e[31m")\]$(_PROMPT_LINE)'"
-\[\e(1\e[0;7m"'$([ $(id -u) = 0 ] && command echo -e "\e[31m")'"\] "'$(_PROMPT_PWD_BASENAME)'""'${_PROMPT_GIT_PS1}'" "'$([ $(id -u) = 0 ] && echo "# ")'"\[\e[0m\e[?25h\] "
+PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
+PS1="\[\e]0;"'${TITLE}'"\a\e[0;4m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")\]$(_PROMPT_LINE)'"
+\[\e(1\e[0;7m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")'"\] "'$(_PROMPT_PWD_BASENAME)'""'${_PROMPT_GIT_PS1}'" "'$([ $UID = 0 ] && echo "# ")'"\[\e[0m\e[?25h\] "
 
 function name ()
 {
@@ -353,6 +338,7 @@ NAME="$*"
 function task ()
 {
 title "$*"
+
 name "$*"
 
 alias c='echo "Terminal is locked to task: ${NAME}\007";: '

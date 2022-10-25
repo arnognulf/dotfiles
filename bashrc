@@ -18,16 +18,15 @@ setup_tmux ()
     tmux bind-key p paste-buffer
     # C-B+] to paste
 }
-setup_tmux &
+setup_tmux &>/dev/null &
 )
 elif [ -z "${WAYLAND_DISPLAY}" ] && [ -z "${DISPLAY}" ]
 then
-read NUM < ~/.cache/tmux-session &>/dev/null
+read NUM < /run/user/${UID}/tmux-session &>/dev/null
 NUM=${NUM-0}
 NUM=$((NUM + 1))
 NUM=$((NUM % 3))
-mkdir -p ~/.cache
-command echo ${NUM} > ~/.cache/tmux-session
+command echo ${NUM} > /run/user/${UID}/tmux-session
 tmux -L ${NUM} attach-session || tmux -L ${NUM}
 clear
 command echo -ne "\0337\n"
@@ -103,7 +102,6 @@ export VIMRUNTIME=${DOTFILESDIR}/vim
 . "${DOTFILESDIR}"/zipit/zipit.sh
 . "${DOTFILESDIR}"/dogeview/dogeview.sh
 
-( bash ~/.config/dotfiles/deal-with-it/deal-with-it.sh & )
 
 EDITOR="vim"
 export EDITOR
@@ -196,22 +194,13 @@ function s
         fi
     elif [ -n "$1" ]
     then
-        command sort|command uniq|grep "$@"
+        command sort|command uniq|command grep "$@"
     else
         command sort|command uniq
     fi
 }
 
-(
-function _KILLTRACKER
-{
-    systemctl --user mask tracker-store.service tracker-miner-fs.service tracker-miner-rss.service tracker-extract.service tracker-miner-apps.service tracker-writeback.service
-    tracker3 daemon -k
-    tracker daemon -k
-    command rm -rf ~/.cache/tracker* ~/.local/share/tracker*
-}
-_KILLTRACKER &>/dev/null &
-)
+
 export LESS='-Q -R'
 alias gl="LESS='-Q -R --pattern ^(commit|diff)' git log -p"
 alias ga='git add -p'
@@ -260,19 +249,21 @@ alias lobste.rs="_CHROME-POLISHER-tmp lobste.rs https://lobste.rs"
 alias svtplay="_CHROME-POLISHER-tmp lobste.rs https://svtplay.se"
 alias which="command -v"
 alias ssh="_MEASURE=0;ssh"
-unalias google-chrome &>/dev/null
-unalias chrome &>/dev/null
-pidof chrome &>/dev/null || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
+{
+unalias google-chrome
+unalias chrome
+pidof chrome || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome"
+} &>/dev/null
 function _CHROME-POLISHER
 {
-    local DIR=/tmp/_CHROME-POLISHER-${USER}
+    local DIR=/run/user/${UID}/_CHROME-POLISHER-${USER}
     pidof chrome &>/dev/null || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
     command mkdir -p "${DIR}" &>/dev/null
     _CAN_OPENER google-chrome-beta --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
 }
 function _CHROME-POLISHER-tmp
 {
-    local DIR="/tmp/_CHROME-POLISHER-${USER}/${1}"
+    local DIR="/run/user/${UID}/_CHROME-POLISHER-${USER}/${1}"
     pidof chrome &>/dev/null || command rm -rf "${DIR}"
     command mkdir -p ${DIR}
     shift
@@ -310,9 +301,9 @@ function _DEDUPE ()
 function c ()
 {
     _CHDIR_ALL_THE_THINGS "$@" && {
-        local TMP=$(mktemp)
+        local TMP="/run/user/${UID}/ls-${RANDOM}.txt"
         local MAXLINES=$((LINES - 5))
-        /bin/ls --hyperlink=always -C -w${COLUMNS} --color=always | command tee "${TMP}" | command head -n${MAXLINES}
+        command ls --hyperlink=always -C -w${COLUMNS} --color=always | command tee "${TMP}" | command head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
         [ ${LS_LINES} -gt ${MAXLINES} ] && command echo "..."
         if [ ${LS_LINES} = 0 ]
@@ -325,12 +316,14 @@ function c ()
         done
         if [ ${COUNT} -gt 2 ]
         then
-        /bin/ls --hyperlink=always -A -C -w${COLUMNS} --color=always | command tee "${TMP}" | command head -n${MAXLINES}
+        command ls --hyperlink=always -A -C -w${COLUMNS} --color=always | command tee "${TMP}" | command tee "${TMP}" | command head -n${MAXLINES}
+        local LS_LINES=$(wc -l < $TMP) 
+        [ ${LS_LINES} -gt ${MAXLINES} ] && command echo "..."
         else
         command echo "<empty>"
         fi
         fi
-        $(type -P rm) -f "${TMP}"
+        ( command rm -f "${TMP}" &>/dev/null & )
     }
     ( _DEDUPE &>/dev/null & )
 }
@@ -374,8 +367,6 @@ function retry
     fi
     done
 )
-
-alias brrr=retry
 
 function _NO
 {
@@ -457,6 +448,14 @@ bind 'set bell-style none'
 fi
 
 (
+function ignore_chrome_crash
+(
+exec sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
+    ~/.config/google-chrome/Default/Preferences \
+    ~/.config/google-chrome-beta/Default/Preferences
+)
+function mount_shares
+(
     IFS="
 "
     for ITEM in $(command cat ~/.config/gtk-3.0/bookmarks)
@@ -465,15 +464,27 @@ fi
     file://*) :;;
     *)
     ITEM="${ITEM% *}"
-    gio mount "${ITEM}" &>/dev/null &
+    gio mount "${ITEM}"
     esac
     done
 )
 
-(
-exec sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
-    ~/.config/google-chrome/Default/Preferences \
-    ~/.config/google-chrome-beta/Default/Preferences &>/dev/null &
+function kill_tracker 
+{
+    systemctl --user mask tracker-store.service tracker-miner-fs.service tracker-miner-rss.service tracker-extract.service tracker-miner-apps.service tracker-writeback.service
+    tracker3 daemon -k
+    tracker daemon -k
+    command rm -rf ~/.cache/tracker* ~/.local/share/tracker*
+}
+# try to run one thread for non-blocking background tasks such that CPU and IO is not
+# stressed at shell startup, this way we will get to prompt faster
+function background_startup_tasks
+{
+ignore_chrome_crash
+kill_tracker
+# mount shares can wait for network I/O quite some time, do this late to not block other tasks
+mount_shares
+bash ~/.config/dotfiles/deal-with-it/deal-with-it.sh &
+}
+background_startup_tasks &>/dev/null &
 )
-
-

@@ -29,6 +29,7 @@
 
 function _MOAR
 {
+    if [ "${#@}" = 0 ]; then yes 'MOAR!';fi
     command rm -rf /tmp/.MOAR* &>/dev/null
     local PIPEFAIL_ENABLED
     if set -o|command egrep -q "pipefail(.*)off"
