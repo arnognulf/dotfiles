@@ -17,6 +17,7 @@
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
@@ -28,7 +29,7 @@
 # * Moar-ified commands can be disabled by prepending backslash: '\' : eg. \grep
 
 function _MOAR
-{
+(
     if [ "${#@}" = 0 ]; then yes 'MOAR!';fi
     command rm -rf /tmp/.MOAR* &>/dev/null
     local PIPEFAIL_ENABLED
@@ -213,7 +214,7 @@ fi
         set +o pipefail
     fi
     return ${RETURN}
-}
+)
 
 _MOAR_DEFINE ()
 {
