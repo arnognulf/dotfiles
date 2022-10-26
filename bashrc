@@ -4,22 +4,7 @@ if [ -n "$PS1" ]
 then
 if [ -n "${TMUX}" ]
 then
-(
-setup_tmux ()
-{
-    tmux set -g status off
-    tmux bind -n S-Pageup copy-mode -u
-    tmux bind -n S-Up copy-mode -u
-    tmux set-option -g set-titles on
-    tmux set-option -g set-titles-string "#T"
-    tmux set-window-option -g mode-keys vi
-    tmux bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
-    tmux bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
-    tmux bind-key p paste-buffer
-    # C-B+] to paste
-}
-setup_tmux &>/dev/null &
-)
+:
 elif [ -z "${WAYLAND_DISPLAY}" ] && [ -z "${DISPLAY}" ]
 then
 read NUM < /run/user/${UID}/tmux-session &>/dev/null
@@ -27,6 +12,20 @@ NUM=${NUM-0}
 NUM=$((NUM + 1))
 NUM=$((NUM % 3))
 command echo ${NUM} > /run/user/${UID}/tmux-session
+command cat >~/.tmux.conf << EOF
+set-option -g history-limit 10000
+set -g status off
+bind -n S-Pageup copy-mode -u
+bind -n S-Up copy-mode -u
+set-option -g set-titles on
+set-option -g set-titles-string "#T"
+set-window-option -g mode-keys vi
+bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
+bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
+bind-key p paste-buffer
+set -g status off
+EOF
+
 tmux -L ${NUM} attach-session || tmux -L ${NUM}
 clear
 command echo -ne "\0337\n"

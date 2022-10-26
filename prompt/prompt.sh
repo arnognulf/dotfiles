@@ -174,7 +174,6 @@ print_title &
 esac
 _MEASURE=1
 _START_SECONDS=$SECONDS
-#( TTY=$(tty 2>/dev/null); PIDTTY=${TTY//\/} _PROMPT_PID_FILE=~/.cache/${PIDTTY}prompt-timer.pid; )
 }
 
 function _PROMPT_STOP_TIMER ()
