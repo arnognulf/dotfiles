@@ -1,12 +1,11 @@
 #!/bin/bash
 # great research in stretchly: https://hovancik.net/stretchly/research/
-
-OLD_PID=$(cat ~/.cache/deal-with-it.pid 2>/dev/null)
-if [ "${OLD_PID}" != "$$" ]
+PID=$(command cat /run/user/${UID}/deal-with-it.pid 2>/dev/null)
+if command ps "${PID}" | command grep deal-with-it
 then
 exit 0
 fi
-echo -n "$$" >~/.cache/deal-with-it.pid
+command echo -n "$$" >/run/user/${UID}/deal-with-it.pid
 COUNT=0
 WALKCOUNT=0
 killAfter5Min ()

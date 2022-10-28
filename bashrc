@@ -4,7 +4,22 @@ if [ -n "$PS1" ]
 then
 if [ -n "${TMUX}" ]
 then
-:
+(
+setup_tmux ()
+{
+set -g status off
+bind -n S-Pageup copy-mode -u
+bind -n S-Up copy-mode -u
+set-option -g set-titles on
+set-option -g set-titles-string "#T"
+set-window-option -g mode-keys vi
+bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
+bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
+bind-key p paste-buffer
+set -g status off
+}
+setup_tmux &>/dev/null &
+)
 elif [ -z "${WAYLAND_DISPLAY}" ] && [ -z "${DISPLAY}" ]
 then
 read NUM < /run/user/${UID}/tmux-session &>/dev/null
