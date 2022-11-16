@@ -51,8 +51,6 @@ case $((16#$(command echo -n "${HOSTNAME}"|command sum|command cut -c1))) in
 5|6) _PROMPTHOSTDOT="\033[105m• \033[0;7m";;
 5|6) _PROMPTHOSTDOT="\033[106m• \033[0;7m";;
 esac
-echo ${_PROMPTHOSTDOT}
-sleep 3
 fi
 function _PROMPT_MAGIC_SHELLBALL ()
 {
