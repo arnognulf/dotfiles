@@ -41,7 +41,19 @@ function _FASD_PROMPT_FUNC ()
 {
 :
 }
-
+if [ -n "${SSH_CLIENT}" ]
+then
+case $((16#$(command echo -n "${HOSTNAME}"|command sum|command cut -c1))) in
+0|1|7) _PROMPTHOSTDOT="\033[101m• \033[0;7m";;
+2|3|8) _PROMPTHOSTDOT="\033[102m• \033[0;7m";;
+3|4|9) _PROMPTHOSTDOT="\033[103m• \033[0;7m";;
+3|4) _PROMPTHOSTDOT="\033[104m• \033[0;7m";;
+5|6) _PROMPTHOSTDOT="\033[105m• \033[0;7m";;
+5|6) _PROMPTHOSTDOT="\033[106m• \033[0;7m";;
+esac
+echo ${_PROMPTHOSTDOT}
+sleep 3
+fi
 function _PROMPT_MAGIC_SHELLBALL ()
 {
   local ANSWER
@@ -249,6 +261,12 @@ _PROMPT ()
   if [ -n "${_PROMPT_LONGRUNNING}" ]
   then
   TITLE="✅ Completed ${_TIMER_CMD}"
+  if [ -n "$SSH_CLIENT" ]
+  then
+    local SHORT_HOSTNAME=${HOSTNAME%%.*}
+    SHORT_HOSTNAME=${SHORT_HOSTNAME,,}
+    TITLE="${TITLE} on ${SHORT_HOSTNAME}"
+  fi
   unset _PROMPT_LONGRUNNING
   return 0
   fi
@@ -328,7 +346,7 @@ fi
 
 PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
 PS1="\[\e]0;"'${TITLE}'"\a\e[0;4m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")\]$(_PROMPT_LINE)'"
-\[\e(1\e[0;7m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")'"\] "'$(_PROMPT_PWD_BASENAME)'""'${_PROMPT_GIT_PS1}'" "'$([ $UID = 0 ] && echo "# ")'"\[\e[0m\e[?25h\] "
+\[\e(1\e[0;7m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")'"\] ${_PROMPTHOSTDOT}"'$(_PROMPT_PWD_BASENAME)'""'${_PROMPT_GIT_PS1}'" "'$([ $UID = 0 ] && echo "# ")'"\[\e[0m\e[?25h\] "
 
 function name ()
 {
