@@ -121,8 +121,7 @@ EDITOR="vim"
 export EDITOR
 
 function _EDITOR
-{
-    local FILE
+(
     for FILE in "$@"
     do
         case "${FILE,,}" in
@@ -136,7 +135,7 @@ function _EDITOR
     else
         $(type -P "vim" ||type -P "vi") "${@}"
     fi
-}
+)
 
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
@@ -160,14 +159,14 @@ alias gca='git commit --amend -p --verbose'
 type -P fdfind &>/dev/null && alias fd='fdfind'
 alias hog='~/.config/dotfiles/hog/hog.sh'
 function _GREP
-{
+(
     if [ "${#@}" = 0 ]
     then
-        git status
+        command status
     else
         egrep "$@"
     fi
-}
+)
 alias g=_GREP
 alias gv="grep -v"
 
@@ -182,7 +181,7 @@ function repo
 }
 
 function s
-{
+(
     if [ ! -t 1 ]
     then
             local FILE
@@ -199,7 +198,6 @@ function s
         then
             ( exec nautilus "$PWD" &>/dev/null & )
         else
-            local FILE
             for FILE in "$@"
             do
                 :
@@ -212,7 +210,7 @@ function s
     else
         command sort|command uniq
     fi
-}
+)
 
 
 export LESS='-Q -R'
@@ -229,8 +227,8 @@ alias r='repo status'
 alias -- -='c -'
 alias ..='c ..'
 alias rud='repo upload -d'
-alias vim=_EDITOR
-alias vi=_EDITOR
+#alias vim=_EDITOR
+#alias vi=_EDITOR
 alias v=_EDITOR
 alias keepass='o keepassxc'
 alias kp=keepassxc
@@ -308,9 +306,9 @@ test -z "${SERVER}" && { echo "missing server argument"; return; }
 alias scp=_SCP
 
 function _DEDUPE ()
-{
+(
     command yes 1 | command jdupes --delete --omit-first "${XDG_DOWNLOAD_DIR-/dev/null}" ~/Downloads &>/dev/null
-}
+)
 
 function c ()
 {
@@ -383,9 +381,9 @@ function retry
 )
 
 function _NO
-{
-    echo "COMPUTER SAYS NO" 1>&2 | tee 1>/dev/null
-}
+(
+    command echo "COMPUTER SAYS NO" 1>&2 | command tee 1>/dev/null
+)
 
 function loop
 {
@@ -402,50 +400,76 @@ function loop
     let COUNT=1+${COUNT}
     if [ ${COUNT} -gt 10 ]
     then
-        echo "=== "$(date +%H:%M:%S)" ==="
+        command echo "=== "$(date +%H:%M:%S)" ==="
         COUNT=0
     fi
     done
 }
 
 function now
-{
-    date +%Y-%m-%d_%H-%M-%S
-}
+(
+    command date +%Y-%m-%d_%H-%M-%S
+)
 
 function jetzt
-{
+(
     now
-}
+)
 
 function /sbin/reboot
-{
+(
     _NO
     return 255
-}
+)
 
 function reboot
-{
+(
     _NO
     return 255
-}
+)
 
 function shutdown
-{
+(
     _NO
     return 255
-}
+)
 
 function /sbin/shutdown
-{
+(
     _NO
     return 255
-}
+)
 
 function //
-{
+(
     :
-}
+)
+
+function front
+(
+    if [ "${#@}" = 0 ]
+    then
+    return 1
+    fi
+    for FILE in "$@"
+    do
+        command echo "${FILE}"
+        break
+    done
+)
+function back
+(
+    if [ "${#@}" = 0 ]
+    then
+    return 1
+    fi
+    for FILE in "$@"
+    do
+        :
+    done
+    command echo "${FILE}"
+)
+
 
 for FILE in /*
 do
