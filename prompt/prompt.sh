@@ -44,12 +44,11 @@ function _FASD_PROMPT_FUNC ()
 if [ -n "${SSH_CLIENT}" ]
 then
 case $((16#$(command echo -n "${HOSTNAME}"|command sum|command cut -c1))) in
-0|1|7) _PROMPTHOSTDOT="\033[101m• \033[0;7m";;
-2|3|8) _PROMPTHOSTDOT="\033[102m• \033[0;7m";;
-3|4|9) _PROMPTHOSTDOT="\033[103m• \033[0;7m";;
-3|4) _PROMPTHOSTDOT="\033[104m• \033[0;7m";;
-5|6) _PROMPTHOSTDOT="\033[105m• \033[0;7m";;
-5|6) _PROMPTHOSTDOT="\033[106m• \033[0;7m";;
+0|5) _PROMPTHOSTDOT="\[\033[102m\]• \[\033[0;7m\]";;
+1|6) _PROMPTHOSTDOT="\[\033[103m\]• \[\033[0;7m\]";;
+2|7) _PROMPTHOSTDOT="\[\033[104m\]• \[\033[0;7m\]";;
+3|8) _PROMPTHOSTDOT="\[\033[105m\]• \[\033[0;7m\]";;
+4|9) _PROMPTHOSTDOT="\[\033[106m\]• \[\033[0;7m\]";;
 esac
 fi
 function _PROMPT_MAGIC_SHELLBALL ()
