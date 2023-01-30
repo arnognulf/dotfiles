@@ -362,14 +362,22 @@ function untilfail
 
 function retry
 (
+    function retry_watchdog
+    (
+        command echo $$ >"/run/${UID}/retry.pid"
+        sleep 3
+        command printf '\007'
+    )
     if [ "${#@}" = 0 ] 
     then
         _NO
         return 255
     fi
     COUNT=0
+    ( retry_watchdog & )
     until "$@"
     do
+    kill -9 $(command cat /run/${UID}/retry.pid &>/dev/null)
     sleep 1
     let COUNT=1+${COUNT}
     if [ ${COUNT} -gt 10 ]
@@ -377,7 +385,9 @@ function retry
         echo "=== "$(date +%H:%M:%S)" ==="
         COUNT=0
     fi
+    ( retry_watchdog & )
     done
+    command rm -f /run/${UID}/retry.pid &>/dev/null
 )
 
 function _NO
@@ -493,9 +503,10 @@ exec sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
     ~/.config/google-chrome-beta/Default/Preferences
 )
 function mount_shares
-(
-    IFS="
+{
+    local IFS="
 "
+    local ITEM
     for ITEM in $(command cat ~/.config/gtk-3.0/bookmarks)
     do
     case "${ITEM}" in
@@ -505,7 +516,7 @@ function mount_shares
     gio mount "${ITEM}"
     esac
     done
-)
+}
 
 function kill_tracker 
 {
@@ -521,8 +532,9 @@ function background_startup_tasks
 ignore_chrome_crash
 kill_tracker
 # mount shares can wait for network I/O quite some time, do this late to not block other tasks
-mount_shares
 bash ~/.config/dotfiles/deal-with-it/deal-with-it.sh &
+mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo/
+mount_shares
 }
 background_startup_tasks &>/dev/null &
 )
