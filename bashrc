@@ -504,18 +504,11 @@ exec sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
 )
 function mount_shares
 {
-    local IFS="
-"
-    local ITEM
-    for ITEM in $(command cat ~/.config/gtk-3.0/bookmarks)
-    do
-    case "${ITEM}" in
-    file://*) :;;
-    *)
-    ITEM="${ITEM% *}"
-    gio mount "${ITEM}"
-    esac
-    done
+local item
+for item in $(cat ~/.config/gtk-3.0/bookmarks | grep -v file:// | cut -d" " -f1)
+do
+gio mount "${item}" &
+done &>/dev/null
 }
 
 function kill_tracker 
