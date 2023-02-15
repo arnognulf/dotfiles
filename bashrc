@@ -93,6 +93,8 @@ PATH=${PATH}:~/.local/share/ParaView/bin:~/.local/share/android-studio/bin:~/.lo
 
 DOTFILESDIR=$(readlink "${HOME}/.bashrc")
 DOTFILESDIR=${DOTFILESDIR%/*}
+export GOPATH=${HOME}/.local/share/go
+
 export VIM=${DOTFILESDIR}/vim
 export VIMRUNTIME=${DOTFILESDIR}/vim
 . "${DOTFILESDIR}"/prompt/prompt.sh
@@ -233,6 +235,18 @@ alias v=_EDITOR
 alias keepass='o keepassxc'
 alias kp=keepassxc
 alias ls='_MOAR ls -C --color=always'
+
+## TODO: make array and hide files in ~/.hidden
+#!/usr/bin/env sh
+#myArray+=( "newElement1" "newElement2" )
+#hide=
+#if [ -f .hidden ]; then
+#    while IFS= read -r line; do
+#        hide="$hide --hide=$line"
+#    done < .hidden
+#fi
+#
+#ls $hide "$@"
 alias ll='ls -al --color=always'
 alias l='ls -C --color=always'
 alias task_flash='task "⚡ FLASH ⚡"'
@@ -527,6 +541,9 @@ kill_tracker
 # mount shares can wait for network I/O quite some time, do this late to not block other tasks
 bash ~/.config/dotfiles/deal-with-it/deal-with-it.sh &
 mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo/
+mkdir -p "${GOPATH}"
+# hide files from nautilus and ls
+ln -sf "${DOTFILESDIR}/home.hidden" ~/.hidden
 mount_shares
 }
 background_startup_tasks &>/dev/null &
