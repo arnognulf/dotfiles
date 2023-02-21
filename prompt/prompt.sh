@@ -343,7 +343,7 @@ fi
 }
 
 PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
-PS1="\[\e]0;"'${TITLE}'"\a\e[0;4m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")\]$(_PROMPT_LINE)'"
+PS1="\[\r\e]0;"'${TITLE}'"\a\e[0;4m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")\]$(_PROMPT_LINE)'"
 \[\e(1\e[0;7m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")'"\] ${_PROMPTHOSTDOT}"'$(_PROMPT_PWD_BASENAME)'""'${_PROMPT_GIT_PS1}'" "'$([ $UID = 0 ] && echo "# ")'"\[\e[0m\e[?25h\] "
 
 function name ()

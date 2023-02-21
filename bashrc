@@ -236,8 +236,6 @@ alias keepass='o keepassxc'
 alias kp=keepassxc
 alias ls='_MOAR ls -C --color=always'
 
-## TODO: make array and hide files in ~/.hidden
-#!/usr/bin/env sh
 #myArray+=( "newElement1" "newElement2" )
 #hide=
 #if [ -f .hidden ]; then
@@ -247,6 +245,7 @@ alias ls='_MOAR ls -C --color=always'
 #fi
 #
 #ls $hide "$@"
+
 alias ll='ls -al --color=always'
 alias l='ls -C --color=always'
 alias task_flash='task "⚡ FLASH ⚡"'
