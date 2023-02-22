@@ -62,6 +62,11 @@ function _CAN_OPENER_ALL ()
 }
 function _CAN_OPENER ()
 {
+    if [ -z "${WAYLAND_DISPLAY}${DISPLAY}" ]
+    then
+        echo "COMPUTER SAYS NO" 1>&2 | tee /dev/null 1>/dev/null
+    return
+    fi
     if [ -f "$*" ]
     then
         _CAN_OPENER_ALL "$*"
@@ -141,8 +146,13 @@ alias o &>/dev/null || alias "o"="_CAN_OPENER"
 
 function _CMD_PARSER ()
 {
+if [ -z "${WAYLAND_DISPLAY}${DISPLAY}" ]
+then
+return
+fi
 local CMD
 for CMD in \
+/usr/*/xscreensaver/* \
 /usr/bin/gnome-* \
 loffice \
 loimpress \
@@ -535,7 +545,13 @@ slack
 do
 if type -P "${CMD}" &>/dev/null
 then
+case "${CMD}" in
+/usr/*/xscreensaver/*)
+eval "alias ${CMD##*/}=\"o nice -n 19 ${CMD##*/}\""
+;;
+*)
 eval "alias ${CMD##*/}=\"o ${CMD##*/}\""
+esac
 fi
 done
 }

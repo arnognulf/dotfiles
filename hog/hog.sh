@@ -143,7 +143,7 @@ echo $((${END} - ${START})) > "${COMMIT_DIR}"/commit_duration
 ;;
 checkout)
 goto_repo_dir
-[ ! -d [ "${REPO_DIR}/objects/${2-}" ] && error "no such commit"
+[ ! -d "${REPO_DIR}/objects/${2-}" ] && error "no such commit"
 COMMIT_DIR="${REPO_DIR}/objects/${2-}"
 SNAPSHOT_DIR="${COMMIT_DIR}/snapshot"
 mkdir -p ".${NAME}/tmp" || error "couldn\'t create temp dir=${PWD}/.${NAME}/tmp"

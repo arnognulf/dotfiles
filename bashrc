@@ -184,27 +184,41 @@ function repo
 
 function s
 (
+    local FILE
+    for FILE in "$@"
+    do
+        :
+    done
+
     if [ ! -t 1 ]
     then
-            local FILE
-            for FILE in "$@"
-            do
-                :
-            done
-            command echo "${FILE}"
-
+        command echo "${FILE}"
     elif [ -t 0 ]
     then
-        nautilus -q &>/dev/null
-        if [ ${#@} = 0 ]
+        local FILE
+        for FILE in "$@"
+        do
+            :
+        done
+        case "${FILE}" in
+        /*) :;; 
+        *) FILE="${PWD}/${FILE}"
+        esac
+
+        if [ -n "${WAYLAND_DISPLAY}${DISPLAY}" ]
         then
-            ( exec nautilus "$PWD" &>/dev/null & )
+            nautilus -q &>/dev/null
+            if [ ${#@} = 0 ]
+            then
+                ( exec nautilus "${PWD}" &>/dev/null & )
+            else
+                ( exec nautilus -s "${FILE}" &>/dev/null & )
+            fi
+        elif [ -n "${SSH_CLIENT}" ]
+        then
+            command echo "sftp://${HOSTNAME}${FILE}"
         else
-            for FILE in "$@"
-            do
-                :
-            done
-            ( exec nautilus -s "$FILE" &>/dev/null & )
+            command echo "${FILE}"
         fi
     elif [ -n "$1" ]
     then
@@ -234,20 +248,30 @@ alias rud='repo upload -d'
 alias v=_EDITOR
 alias keepass='o keepassxc'
 alias kp=keepassxc
-alias ls='_MOAR ls -C --color=always'
 
-#myArray+=( "newElement1" "newElement2" )
-#hide=
-#if [ -f .hidden ]; then
-#    while IFS= read -r line; do
-#        hide="$hide --hide=$line"
-#    done < .hidden
-#fi
-#
-#ls $hide "$@"
+_LS_HIDDEN ()
+{
+case "${PWD}" in
+${HOME}/Network/*|/run/user/*/gvfs/*)
+_MOAR ls -C "$@"
+;;
+*)
+local hide=()
+if [ -f .hidden ]
+then
+while IFS="
+" read -r line
+do
+hide+=("--hide=${line}")
+done < .hidden
+fi
+_MOAR ls "${hide[@]}" --color=always "$@"
+esac
+}
 
-alias ll='ls -al --color=always'
-alias l='ls -C --color=always'
+alias ll='ls -al --color=always --hyperlink=always'
+alias l='_LS_HIDDEN -C --hyperlink=always'
+alias ls='_LS_HIDDEN -C --hyperlink=always'
 alias task_flash='task "⚡ FLASH ⚡"'
 alias task_bake='task "🍞 Bake"'
 alias task_bug="🐛 Bug"
@@ -328,7 +352,7 @@ function c ()
     _CHDIR_ALL_THE_THINGS "$@" && {
         local TMP="/run/user/${UID}/ls-${RANDOM}.txt"
         local MAXLINES=$((LINES - 5))
-        command ls --hyperlink=always -C -w${COLUMNS} --color=always | command tee "${TMP}" | command head -n${MAXLINES}
+        _LS_HIDDEN --hyperlink=always -C -w${COLUMNS} | command tee "${TMP}" | command head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
         [ ${LS_LINES} -gt ${MAXLINES} ] && command echo "..."
         if [ ${LS_LINES} = 0 ]
@@ -341,7 +365,7 @@ function c ()
         done
         if [ ${COUNT} -gt 2 ]
         then
-        command ls --hyperlink=always -A -C -w${COLUMNS} --color=always | command tee "${TMP}" | command tee "${TMP}" | command head -n${MAXLINES}
+        _LS_HIDDEN --hyperlink=always -A -C -w${COLUMNS} | command tee "${TMP}" | command tee "${TMP}" | command head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
         [ ${LS_LINES} -gt ${MAXLINES} ] && command echo "..."
         else

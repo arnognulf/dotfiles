@@ -114,7 +114,7 @@ function _PROMPT_COMMAND ()
     if [ -z "$CR_FIRST" -a "$?" = 0 -a -z "$CTRLC" ]; then
         case "${CR_LEVEL}" in
         0)
-        command ls --color=yes -w${COLUMNS}
+        _LS_HIDDEN -w${COLUMNS}
         CR_LEVEL=3;
         if command git status &>/dev/null
         then
