@@ -42,7 +42,7 @@ function _ZIPIT
     then
         exec nautilus -s "${DEST}" &>/dev/null &
     else
-        command echo "COMPUTER SAYS NO" 1>&2 | tee /dev/null 1>/dev/null
+        _NO
     fi
 )
 
@@ -88,7 +88,7 @@ function _XZIBIT
     then
         exec nautilus -s "${DEST}" &>/dev/null &
     else
-        command echo "COMPUTER SAYS NO" 1>&2 | tee /dev/null 1>/dev/null
+        _NO
     fi
 )
 alias x=_XZIBIT

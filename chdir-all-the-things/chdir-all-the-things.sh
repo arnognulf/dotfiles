@@ -215,7 +215,7 @@ function _CHDIR_ALL_THE_THINGS ()
             builtin cd "${ARG%/*}"
             return 0
         else
-            command echo "COMPUTER SAYS NO" 1>&2 | command tee /dev/null 1>/dev/null
+            _NO
             return 42
         fi
         ;;
@@ -257,7 +257,7 @@ function _CHDIR_ALL_THE_THINGS ()
         elif DEST_DIR=$(mktemp -d "/tmp/${DEST_DIR}.XXXXXXX" 2>/dev/null) &>/dev/null; then :
         elif DEST_DIR=$(mktemp -d 2>/dev/null) &>/dev/null; then :
         else
-            echo "COMPUTER SAYS NO" 1>&2 | tee /dev/null 1>/dev/null
+            _NO
             return 42
         fi
         
@@ -379,7 +379,7 @@ function _CHDIR_ALL_THE_THINGS ()
             _CHDIR_ALL_THE_THINGS_CD "${ORIG_FILE%/*}" &>/dev/null
             if [ "${CATT_OLDPWD}" = "$(pwd)" ]
             then
-                command echo "COMPUTER SAYS NO" 1>&2 | command tee /dev/null 1>/dev/null
+                _NO
                 return 1
             fi
         elif [ "${_KEEP}" = 0 ];then
@@ -390,7 +390,7 @@ function _CHDIR_ALL_THE_THINGS ()
         _CHDIR_ALL_THE_THINGS_CD "${ARG}"
         return
     elif [ -e "${ARG}" ]; then
-        command echo "COMPUTER SAYS NO"
+        _NO
         return 1
     elif [ -n "${ARG}" ]; then
         case "${ARG}" in
@@ -446,7 +446,7 @@ function _CHDIR_ALL_THE_THINGS ()
             return 0
         ;;
         /*|./*|../*)
-            command echo "COMPUTER SAYS NO" 1>&2 | command tee /dev/null 1>/dev/null
+            _NO
             return 1
             ;;
         *)
@@ -457,21 +457,21 @@ function _CHDIR_ALL_THE_THINGS ()
         done
         if [ ${COUNT} -gt 0 ]
         then
-            command echo "COMPUTER SAYS NO" 1>&2 | command tee /dev/null 1>/dev/null
+            _NO
             return 1
         else
             local BOOKMARKDIR=~/.config/bookmark-all-the-things/
             if [ -d "${1%%/*}" ]
             then
                 command mkdir -p "${1}" || { 
-                    command echo "COMPUTER SAYS NO" 1>&2 | command tee /dev/null 1>/dev/null
+                    _NO
                     return 1
                 }
                 _CHDIR_ALL_THE_THINGS_CD "${1}" &>/dev/null
             elif [ -L "${BOOKMARKDIR}/${1}" ]
             then
                 _CHDIR_ALL_THE_THINGS_CD $(readlink "${BOOKMARKDIR}/${1}") &>/dev/null || { 
-                    command echo "COMPUTER SAYS NO" 1>&2 | command tee /dev/null 1>/dev/null
+                    _NO
                     return 1
                 }
             else

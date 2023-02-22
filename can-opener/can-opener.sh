@@ -64,8 +64,8 @@ function _CAN_OPENER ()
 {
     if [ -z "${WAYLAND_DISPLAY}${DISPLAY}" ]
     then
-        echo "COMPUTER SAYS NO" 1>&2 | tee /dev/null 1>/dev/null
-    return
+        _NO
+        return 1
     fi
     if [ -f "$*" ]
     then
@@ -122,21 +122,21 @@ function _CAN_OPENER ()
     then
     case "${1,,}" in
     *".txt"|*".pdf"|*".docx"|*".cpp"|*".h"|*".c"|*".kt"|*".java")
-        echo "COMPUTER SAYS NO" 1>&2 | tee /dev/null 1>/dev/null
+        _NO
         return 1
         ;;
     *"://"*|*"."*)
         ( exec x-www-browser "$1" &>/dev/null & )
         ;;
         *)
-        echo "COMPUTER SAYS NO" 1>&2 | tee /dev/null 1>/dev/null
+        _NO
         return 1
     esac
     elif [ -d "$PWD" ]
     then
         _CAN_OPENER_ALL .
     else
-        echo "COMPUTER SAYS NO" 1>&2 | tee /dev/null 1>/dev/null
+        _NO
         return 1
     fi
     return 0
