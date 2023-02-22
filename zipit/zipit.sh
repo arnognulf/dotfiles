@@ -1,4 +1,50 @@
 #!/bin/bash
+function _SHOVE_IT_UP_YOUR
+(
+    local FILE
+    for FILE in "$@"
+    do
+        :
+    done
+
+    if [ ! -t 1 ]
+    then
+        command echo "${FILE}"
+    elif [ -t 0 ]
+    then
+        local FILE
+        for FILE in "$@"
+        do
+            :
+        done
+        case "${FILE}" in
+        /*) :;; 
+        *) FILE="${PWD}/${FILE}"
+        esac
+
+        if [ -n "${WAYLAND_DISPLAY}${DISPLAY}" ]
+        then
+            command nautilus -q &>/dev/null
+            if [ ${#@} = 0 ]
+            then
+                ( exec nautilus "${PWD}" &>/dev/null & )
+            else
+                ( exec nautilus -s "${FILE}" &>/dev/null & )
+            fi
+        elif [ -n "${SSH_CLIENT}" ]
+        then
+            command echo "sftp://${HOSTNAME}${FILE}"
+        else
+            command echo "${FILE}"
+        fi
+    elif [ -n "$1" ]
+    then
+        command sort|command uniq|command grep "$@"
+    else
+        command sort|command uniq
+    fi
+)
+
 
 function _ZIPIT
 (
@@ -93,3 +139,5 @@ function _XZIBIT
 )
 alias x=_XZIBIT
 alias z=_ZIPIT
+alias s=_SHOVE_IT_UP_YOUR
+
