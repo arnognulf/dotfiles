@@ -1,5 +1,5 @@
-My dotfiles
-===========
+# My dotfiles
+
 
 You may not like it, but this is what peak dotfiles look like
 
@@ -56,8 +56,11 @@ fonts.conf - font substitutions
 [Uber but for mv(1)](uber-for-mv/README.md) - move latest file from Downloads to current directory: dl
 
 
-[Zip it!](zipit/README.md) - create zip and select in file manager: z 
+[Zip it!](zipit/README.md) - Zip it! Create zip and show it so it can be quickly copy-and-pasted to slack or your favourite email client.
 
+Xzibit! Do the same, but using pixz for better compression while still plenty fast.
+
+Shove It! Select a file in Nautilus (Gnome Files) so it can be copied as above.
 
 [thinking-machine](thinking-machine/README.md) - thinking machine CM demo in bash - slooooow!
 

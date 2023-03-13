@@ -66,5 +66,5 @@ set t_vb=
 set belloff=all
 set backupdir=~/.cache/vim/backup/
 set directory=~/.cache/vim/swp/
-set undo=~/.cache/vim/undo/
+"set undo=~/.cache/vim/undo/
 

@@ -142,7 +142,7 @@ function _CAN_OPENER ()
     return 0
 }
 # shellcheck disable=2139,2140
-alias o &>/dev/null || alias "o"="_CAN_OPENER"
+alias o || alias "o"="_CAN_OPENER"
 
 function _CMD_PARSER ()
 {
@@ -543,7 +543,7 @@ rgbpaint \
 doublecmd \
 slack
 do
-if type -P "${CMD}" &>/dev/null
+if type -P "${CMD}"
 then
 case "${CMD}" in
 /usr/*/xscreensaver/*)
@@ -575,7 +575,7 @@ function _APP_PARSER ()
 local DESKTOP_FILE
 for DESKTOP_FILE in /usr/share/applications/*.desktop
 do
-if grep Terminal=false "${DESKTOP_FILE}" &>/dev/null
+if grep Terminal=false "${DESKTOP_FILE}"
 then
     local NAME=$(grep "^Name=" "${DESKTOP_FILE}"|sed -e 's/Name=//g' -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|head -n1)
     local NAME_LOCALIZED=$(grep "^Name\[${LANG%%_*}\]=" "${DESKTOP_FILE}"|cut -d= -f2|sed -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|head -n1)

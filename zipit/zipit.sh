@@ -1,5 +1,5 @@
 #!/bin/bash
-function _SHOVE_IT_UP_YOUR
+function _SHOVEIT
 (
     local FILE
     for FILE in "$@"
@@ -33,7 +33,7 @@ function _SHOVE_IT_UP_YOUR
             fi
         elif [ -n "${SSH_CLIENT}" ]
         then
-            command echo "sftp://${HOSTNAME}${FILE}"
+            command echo "sftp://${HOSTNAME}${FILE// /%20}"
         else
             command echo "${FILE}"
         fi
@@ -86,7 +86,7 @@ function _ZIPIT
     kill -9 $(<"${SPINNER_PID_FILE}") &>/dev/null
     if [ -s "${DEST}" ]
     then
-        exec nautilus -s "${DEST}" &>/dev/null &
+        _SHOVEIT "${DEST}"
     else
         _NO
     fi
@@ -132,12 +132,12 @@ function _XZIBIT
     kill -9 $(<"${SPINNER_PID_FILE}") &>/dev/null
     if [ -s "${DEST}" ]
     then
-        exec nautilus -s "${DEST}" &>/dev/null &
+        _SHOVEIT "${DEST}"
     else
         _NO
     fi
 )
 alias x=_XZIBIT
 alias z=_ZIPIT
-alias s=_SHOVE_IT_UP_YOUR
+alias s=_SHOVEIT
 

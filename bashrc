@@ -1,5 +1,5 @@
 #!/bin/bash
-
+{
 if [ -n "$PS1" ]
 then
 if [ -n "${TMUX}" ]
@@ -18,11 +18,11 @@ bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
 bind-key p paste-buffer
 set -g status off
 }
-setup_tmux &>/dev/null &
+setup_tmux &
 )
 elif [ -z "${WAYLAND_DISPLAY}" ] && [ -z "${DISPLAY}" ]
 then
-read NUM < /run/user/${UID}/tmux-session &>/dev/null
+read NUM < /run/user/${UID}/tmux-session
 NUM=${NUM-0}
 NUM=$((NUM + 1))
 NUM=$((NUM % 3))
@@ -158,7 +158,7 @@ alias code='o code-insiders'
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
-type -P fdfind &>/dev/null && alias fd='fdfind'
+type -P fdfind && alias fd='fdfind'
 alias hog='~/.config/dotfiles/hog/hog.sh'
 function _GREP
 (
@@ -222,9 +222,9 @@ _MOAR ls "${hide[@]}" --color=always "$@"
 esac
 }
 
-alias ll='ls -al --color=always --hyperlink=always'
-alias l='_LS_HIDDEN -C --hyperlink=always'
-alias ls='_LS_HIDDEN -C --hyperlink=always'
+alias ll='ls -al --color=always'
+alias l='_LS_HIDDEN -C'
+alias ls='_LS_HIDDEN -C'
 alias task_flash='task "⚡ FLASH ⚡"'
 alias task_bake='task "🍞 Bake"'
 alias task_bug="🐛 Bug"
@@ -238,7 +238,7 @@ alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
 #alias p=_PANKY
 alias grep="_MOAR grep -a"
-alias willys="google-chrome-beta -user-data-dir=${HOME}/.config/willys --no-default-browser-check --no-first-run --app=https://willys.se"
+alias willys="o google-chrome-beta --enable-features=UseOzonePlatform --ozone-platform=wayland -user-data-dir=${HOME}/.config/willys --no-default-browser-check --no-first-run --app=https://willys.se"
 alias hbo="google-chrome-beta -user-data-dir=${HOME}/.config/hbo --no-default-browser-check --no-first-run --app=https://www.hbomax.com"
 alias dn="google-chrome-beta -user-data-dir=${HOME}/.config/dn --no-default-browser-check --no-first-run --app=https://dn.se"
 alias gmail="google-chrome-beta -user-data-dir=${HOME}/.config/gmail --no-default-browser-check --no-first-run --app=https://mail.google.com"
@@ -251,11 +251,10 @@ alias lobste.rs="_CHROME-POLISHER-tmp lobste.rs https://lobste.rs"
 alias svtplay="_CHROME-POLISHER-tmp lobste.rs https://svtplay.se"
 alias which="command -v"
 alias ssh="_MEASURE=0;ssh"
-{
 unalias google-chrome
 unalias chrome
 pidof chrome || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome"
-} &>/dev/null
+
 function _CHROME-POLISHER
 {
     local DIR=/run/user/${UID}/_CHROME-POLISHER-${USER}
@@ -297,15 +296,22 @@ alias scp=_SCP
 
 function _DEDUPE ()
 (
-    command yes 1 | command jdupes --delete --omit-first "${XDG_DOWNLOAD_DIR-/dev/null}" ~/Downloads &>/dev/null
+    command yes 1 | command jdupes --delete --omit-first "${XDG_DOWNLOAD_DIR-/dev/null}" ~/Downloads
 )
 
 function c ()
 {
     _CHDIR_ALL_THE_THINGS "$@" && {
         local TMP="/run/user/${UID}/ls-${RANDOM}.txt"
+        local FILE
+        for FILE in README.md README.txt README README.doc README.rst
+        do
+        if [ -f "${FILE}" ];then command _DOGEVIEW --color=yes "${FILE}"|grep -a -v ^$|head -n3; command echo
+        break
+        fi
+        done
         local MAXLINES=$((LINES - 5))
-        _LS_HIDDEN --hyperlink=always -C -w${COLUMNS} | command tee "${TMP}" | command head -n${MAXLINES}
+        _LS_HIDDEN -C -w${COLUMNS} | command tee "${TMP}" | command head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
         [ ${LS_LINES} -gt ${MAXLINES} ] && command echo "..."
         if [ ${LS_LINES} = 0 ]
@@ -318,7 +324,7 @@ function c ()
         done
         if [ ${COUNT} -gt 2 ]
         then
-        _LS_HIDDEN --hyperlink=always -A -C -w${COLUMNS} | command tee "${TMP}" | command tee "${TMP}" | command head -n${MAXLINES}
+        _LS_HIDDEN -A -C -w${COLUMNS} | command tee "${TMP}" | command tee "${TMP}" | command head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
         [ ${LS_LINES} -gt ${MAXLINES} ] && command echo "..."
         else
@@ -498,7 +504,7 @@ local item
 for item in $(cat ~/.config/gtk-3.0/bookmarks | grep -v file:// | cut -d" " -f1)
 do
 gio mount "${item}" &
-done &>/dev/null
+done
 }
 
 function kill_tracker 
@@ -522,5 +528,6 @@ mkdir -p "${GOPATH}"
 ln -sf "${DOTFILESDIR}/home.hidden" ~/.hidden
 mount_shares
 }
-background_startup_tasks &>/dev/null &
+background_startup_tasks &
 )
+} &>/dev/null
