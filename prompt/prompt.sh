@@ -107,11 +107,11 @@ function _PROMPT_COMMAND ()
     # initial prompt
     CR_FIRST=1
     CR_LEVEL=0
-    CTRLC=""
+    _PROMPT_CTRLC=""
     :
   elif [[ $HISTCMD_before_last = "$HISTCMD_previous" ]]; then
     # cancelled prompt
-    if [ -z "$CR_FIRST" -a "$?" = 0 -a -z "$CTRLC" ]; then
+    if [ -z "$CR_FIRST" -a "$?" = 0 -a -z "$_PROMPT_CTRLC" ]; then
         case "${CR_LEVEL}" in
         0)
         _LS_HIDDEN -w${COLUMNS}
@@ -143,10 +143,10 @@ function _PROMPT_COMMAND ()
     _FASD_PROMPT_FUNC
     esac
   fi
-  CTRLC=""
+  _PROMPT_CTRLC=""
   HISTCMD_before_last=$HISTCMD_previous
-  trap "CTRLC=1;command echo -n" INT
-  trap "CTRLC=1;command echo -n" ERR
+  trap "_PROMPT_CTRLC=1;command echo -n" INT
+  trap "_PROMPT_CTRLC=1;command echo -n" ERR
   stty echo 2>/dev/null
   history -a
   [ -n "${GNOME_TERMINAL_SCREEN}" ] && command echo -ne "\033]11;#FFF9F0\007\033]10;#312D2A\007\033]12;#312D2A\007"

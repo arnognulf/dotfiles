@@ -94,7 +94,7 @@ function _MOAR
         ;;
         *git)
         case "$2" in
-        log|status|remote|branch)
+        log|status|remote|branch|diff)
         shift
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
@@ -294,12 +294,16 @@ fc-list \
 systemctl \
 last \
 ss \
+tldr \
 ip
 do
-if type -P "${CMD##*/}" &>/dev/null 
+if type -P "${CMD}" &>/dev/null 
 then
     local BASECMD="${CMD##*/}"
     eval "alias \"${BASECMD}\"=\"_MOAR \\\"${BASECMD}\\\"\""
+elif [ $(type -t "${CMD}") = "builtin" ]
+then
+    eval "alias \"${CMD}\"=\"_MOAR \\\"${CMD}\\\"\""
 fi
 done
 eval "function _MOAR_d { _MOAR \"\${FUNCNAME/_MOAR_/}\" \"\$@\";}"

@@ -1,4 +1,5 @@
 #!/bin/bash
+function _dotfiles_main ()
 {
 if [ -n "$PS1" ]
 then
@@ -91,7 +92,7 @@ function . { _SOURCED=1 command . "$@";}
 function source { _SOURCED=1 command . "$@";}
 PATH=${PATH}:~/.local/share/ParaView/bin:~/.local/share/android-studio/bin:~/.local/bin:/usr/share/code-insiders/resources/app/node_modules.asar.unpacked/vscode-ripgrep/bin/
 
-DOTFILESDIR=$(readlink "${HOME}/.bashrc")
+local DOTFILESDIR=$(readlink "${HOME}/.bashrc")
 DOTFILESDIR=${DOTFILESDIR%/*}
 export GOPATH=${HOME}/.local/share/go
 
@@ -231,8 +232,7 @@ alias task_bug="🐛 Bug"
 alias trash="gio trash"
 #alias cp='rsync --append-verify --checksum --info=progress2'
 alias xargs="xargs -d'\n'"
-export MOSH_TITLE_NOPREFIX=1
-alias mosh="_MEASURE=0; mosh"
+alias mosh="_MEASURE=0; MOSH_TITLE_NOPREFIX=1 mosh"
 alias adb="_MEASURE=0;adb"
 alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
@@ -477,6 +477,7 @@ function back
 )
 
 
+local FILE
 for FILE in /*
 do
 eval "function $FILE { echo \"C-comment paste detected. Press CTRL+C to continue\";cat;}"
@@ -530,4 +531,6 @@ mount_shares
 }
 background_startup_tasks &
 )
-} &>/dev/null
+}
+_dotfiles_main &>/dev/null
+unset -f _dotfiles_main

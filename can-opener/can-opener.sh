@@ -562,7 +562,7 @@ function _FLATPAK_PARSER ()
 local APPLICATION
 for APPLICATION in /var/lib/flatpak/exports/bin/* ~/.local/share/flatpak/exports/bin/* 
 do
-CMD=${APPLICATION,,}
+local CMD=${APPLICATION,,}
 CMD=${CMD##*.}
 eval "alias ${CMD##*/}=\"o ${APPLICATION}\""
 done
