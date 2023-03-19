@@ -102,14 +102,14 @@ function _PROMPT_COMMAND ()
   command printf "%$((COLUMNS-1))s\\r"
  # https://unix.stackexchange.com/questions/226909/tell-if-last-command-was-empty-in-prompt-command
   HISTCONTROL=
-  HISTCMD_previous=$(fc -l -1); HISTCMD_previous=${HISTCMD_previous%%$'[\t ]'*}
+  _PROMPT_HISTCMD_PREV=$(fc -l -1); _PROMPT_HISTCMD_PREV=${_PROMPT_HISTCMD_PREV%%$'[\t ]'*}
   if [[ -z $HISTCMD_before_last ]]; then
     # initial prompt
     CR_FIRST=1
     CR_LEVEL=0
     _PROMPT_CTRLC=""
     :
-  elif [[ $HISTCMD_before_last = "$HISTCMD_previous" ]]; then
+  elif [[ $HISTCMD_before_last = "$_PROMPT_HISTCMD_PREV" ]]; then
     # cancelled prompt
     if [ -z "$CR_FIRST" -a "$?" = 0 -a -z "$_PROMPT_CTRLC" ]; then
         case "${CR_LEVEL}" in
@@ -135,7 +135,7 @@ function _PROMPT_COMMAND ()
     unset CR_FIRST
     CR_LEVEL=0
     # only append to fasd if any non navigational command is executed in cwd
-    case "${HISTCMD_previous}" in
+    case "${_PROMPT_HISTCMD_PREV}" in
     c|cd|find|ls|l|ll)
     :
     ;;
@@ -144,7 +144,7 @@ function _PROMPT_COMMAND ()
     esac
   fi
   _PROMPT_CTRLC=""
-  HISTCMD_before_last=$HISTCMD_previous
+  HISTCMD_before_last=$_PROMPT_HISTCMD_PREV
   trap "_PROMPT_CTRLC=1;command echo -n" INT
   trap "_PROMPT_CTRLC=1;command echo -n" ERR
   stty echo 2>/dev/null
@@ -197,7 +197,7 @@ local DURATION_S
 local CURRENT_SECONDS
 local DURATION
 CURRENT_SECONDS=${SECONDS}
-DIFF=$((CURRENT_SECONDS - _START_SECONDS))
+local DIFF=$((CURRENT_SECONDS - _START_SECONDS))
 case "${_TIMER_CMD%% *}" in
 top|htop|vim|nano|sudo|ssh|man|info)
 :
