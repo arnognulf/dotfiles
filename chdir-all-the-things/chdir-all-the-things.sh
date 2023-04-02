@@ -106,7 +106,7 @@ function _TMP_ALL_THE_THINGS
         done
         [ ${FOUND} = 1 ] && break
     done
-    command echo -n "${CHAR1}${CHAR2}${CHAR3}_$(date +%Y-%m-%d_%H-%M-%S)"
+    command echo -n "${CHAR1}${CHAR2}${CHAR3}_tmp_$(date +%Y-%m-%d_%H-%M-%S)"
     command echo -n "_"
     if [ -z "$*" ]
     then
@@ -498,12 +498,12 @@ function _CHDIR_ALL_THE_THINGS ()
     fi
     return 0
 }
-function bookmark ()
+function mark ()
 {
 local BOOKMARKDIR=~/.config/bookmark-all-the-things/
 mkdir -p "${BOOKMARKDIR}"
 case "${1}" in
--l)
+-l"")
 for FILE in ${BOOKMARKDIR}/*
 do
 if [ -L "${FILE}" ]
@@ -515,13 +515,23 @@ done
 -d)
 rm "${BOOKMARKDIR}${2##*/}" 2>/dev/null
 ;;
-"")
-ln -s "${PWD}" "${BOOKMARKDIR}${PWD##*/}"
-;;
 *)
+rm "${BOOKMARKDIR}${1##*/}"
 ln -s "${PWD}" "${BOOKMARKDIR}${1##*/}"
 esac
 }
+
+function _CATT_BOOKMARK_INIT ()
+{
+local BOOKMARK
+local BOOKMARKDIR=~/.config/bookmark-all-the-things/
+for BOOKMARK in "${BOOKMARKDIR}"/*
+do
+eval "${BOOKMARK##*/}="${BOOKMARK}"
+done
+unset -f function _CATT_BOOKMARK_INIT
+}
+
 if [[ -t 0 || -p /dev/stdin ]]
 then
 :

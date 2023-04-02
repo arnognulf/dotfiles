@@ -8,16 +8,19 @@ then
 (
 setup_tmux ()
 {
-set -g status off
-bind -n S-Pageup copy-mode -u
-bind -n S-Up copy-mode -u
-set-option -g set-titles on
-set-option -g set-titles-string "#T"
-set-window-option -g mode-keys vi
-bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
-bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
-bind-key p paste-buffer
-set -g status off
+tmux set -g status off
+tmux set-option -g set-titles-string "#T"
+tmux set-option -g set-titles on
+tmux bind -n S-Pageup copy-mode -u
+tmux bind -n S-Up copy-mode -u
+tmux set-window-option -g mode-keys vi
+tmux bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
+tmux bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
+tmux bind-key p paste-buffer
+for i in $(seq 1 9)
+do
+tmux bind-key -n M-$i select-window -t $i
+done
 }
 setup_tmux &
 )
@@ -132,12 +135,12 @@ function _EDITOR
         *.kt|*.java) type -P studio.sh &>/dev/null && _CAN_OPENER studio.sh "${PWD}/${FILE}" ; return
         esac
     done
-    if [ -z "$SSH_CLIENT" ] && [ "${UID}" -gt 0 ] && [ -n "${DISPLAY}" ]
-    then
-        $(type -P "code-insiders"||type -P "vim" ||type -P "vi") "${@}"
-    else
-        $(type -P "vim" ||type -P "vi") "${@}"
-    fi
+    #if [ -z "$SSH_CLIENT" ] && [ "${UID}" -gt 0 ] && [ -n "${DISPLAY}" ]
+    #then
+    #    $(type -P "code-insiders"||type -P "vim" ||type -P "vi") "${@}"
+    #else
+    $(type -P "vim" ||type -P "vi") "${@}"
+    #fi
 )
 
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
@@ -153,7 +156,12 @@ alias loimpress='o loimpress --norestore --view'
 alias lowriter='o lowriter --norestore --view'
 alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
-alias chrome='o google-chrome'
+alias tar='nice -n 19 tar'
+if [ -n "$WAYLAND_DISPLAY" ]
+then
+local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
+fi
+alias chrome='o google-chrome-beta ${WAYLAND_OPTS}'
 alias code-insiders='o code-insiders'
 alias code='o code-insiders'
 alias gd='git diff --color-moved --no-prefix'
@@ -238,13 +246,13 @@ alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
 #alias p=_PANKY
 alias grep="_MOAR grep -a"
-alias willys="o google-chrome-beta --enable-features=UseOzonePlatform --ozone-platform=wayland -user-data-dir=${HOME}/.config/willys --no-default-browser-check --no-first-run --app=https://willys.se"
-alias hbo="google-chrome-beta -user-data-dir=${HOME}/.config/hbo --no-default-browser-check --no-first-run --app=https://www.hbomax.com"
-alias dn="google-chrome-beta -user-data-dir=${HOME}/.config/dn --no-default-browser-check --no-first-run --app=https://dn.se"
-alias gmail="google-chrome-beta -user-data-dir=${HOME}/.config/gmail --no-default-browser-check --no-first-run --app=https://mail.google.com"
-alias facebook="google-chrome-beta -user-data-dir=${HOME}/.config/facebook --no-default-browser-check --no-first-run --app=https://facebook.com"
-alias lwn="google-chrome-beta -user-data-dir=${HOME}/.config/lwn --no-default-browser-check --no-first-run --app=https://lwn.net"
-alias linkedin="google-chrome-beta -user-data-dir=${HOME}/.config/linkedin --no-default-browser-check --no-first-run --app=https://linkedin.com"
+alias willys="o google-chrome-beta  ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/willys --no-default-browser-check --no-first-run --app=https://willys.se"
+alias hbo="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/hbo --no-default-browser-check --no-first-run --app=https://www.hbomax.com"
+alias dn="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/dn --no-default-browser-check --no-first-run --app=https://dn.se"
+alias gmail="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/gmail --no-default-browser-check --no-first-run --app=https://mail.google.com"
+alias facebook="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/facebook --no-default-browser-check --no-first-run --app=https://facebook.com"
+alias lwn="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/lwn --no-default-browser-check --no-first-run --app=https://lwn.net"
+alias linkedin="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/linkedin --no-default-browser-check --no-first-run --app=https://linkedin.com"
 alias newsy="_CHROME-POLISHER-tmp newsy https://news.ycombinator.com"
 alias youtube="_CHROME-POLISHER-tmp youtube https://youtube.com"
 alias lobste.rs="_CHROME-POLISHER-tmp lobste.rs https://lobste.rs"
@@ -257,18 +265,26 @@ pidof chrome || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/
 
 function _CHROME-POLISHER
 {
+if [ -n "$WAYLAND_DISPLAY" ]
+then
+local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
+fi
     local DIR=/run/user/${UID}/_CHROME-POLISHER-${USER}
     pidof chrome &>/dev/null || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
     command mkdir -p "${DIR}" &>/dev/null
-    _CAN_OPENER google-chrome-beta --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
+    _CAN_OPENER google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
 }
 function _CHROME-POLISHER-tmp
 {
+if [ -n "$WAYLAND_DISPLAY" ]
+then
+local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
+fi
     local DIR="/run/user/${UID}/_CHROME-POLISHER-${USER}/${1}"
     pidof chrome &>/dev/null || command rm -rf "${DIR}"
     command mkdir -p ${DIR}
     shift
-    _CAN_OPENER google-chrome-beta --disable-notifications --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}" --app="${*}"
+    _CAN_OPENER google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}" --app="${*}"
 }
 alias chromium=_CHROME-POLISHER
 alias google-chrome=_CHROME-POLISHER
@@ -304,9 +320,13 @@ function c ()
     _CHDIR_ALL_THE_THINGS "$@" && {
         local TMP="/run/user/${UID}/ls-${RANDOM}.txt"
         local FILE
-        for FILE in README.md README.txt README README.doc README.rst
+        for FILE in README.md README.txt README README.doc README.rst README.android README.*
         do
-        if [ -f "${FILE}" ];then command _DOGEVIEW --color=yes "${FILE}"|grep -a -v ^$|head -n3; command echo
+        if [ -f "${FILE}" ]
+        then
+        command echo -ne "\n   \033[1;4m"
+        command grep -v ^$ "${FILE}" | command sed -e 's/# //g' | command head -n1
+        command echo -e "\033[0m"
         break
         fi
         done
@@ -360,7 +380,7 @@ function retry
 (
     function retry_watchdog
     (
-        command echo $$ >"/run/${UID}/retry.pid"
+        command echo $$ >"/run/user/${UID}/retry.pid"
         sleep 3
         command printf '\007'
     )
@@ -373,7 +393,7 @@ function retry
     ( retry_watchdog & )
     until "$@"
     do
-    kill -9 $(command cat /run/${UID}/retry.pid &>/dev/null)
+    kill -9 $(command cat /run/user/${UID}/retry.pid &>/dev/null)
     sleep 1
     let COUNT=1+${COUNT}
     if [ ${COUNT} -gt 10 ]

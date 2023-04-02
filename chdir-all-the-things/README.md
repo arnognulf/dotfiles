@@ -5,7 +5,7 @@ Usage:
 
 c <directory>
 -------------
-Recurse cd into all single subdirectories if no other files exists - handy when entering java packages.
+cd into a directory
 
 c ..
 ----

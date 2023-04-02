@@ -168,19 +168,25 @@ local CHAR="#"
 local CHAR=">"
 esac
 (
-function print_title
 {
-local LINE="\033]0;${CHAR}  ${_TIMER_CMD} in ${PWD##*/} at "$(date +%H:%M)
+case "${_TIMER_CMD}" in
+"nano "*|"emacs "*|"vim "*|"v "*)
+DOC=${_TIMER_CMD#  }
+DOC=${DOC#* }
+DOC=${DOC##*/}
+LINE="📝  ${DOC}"
+;;
+*)
+LINE="${CHAR}  ${_TIMER_CMD} in ${PWD##*/} at "$(date +%H:%M)
+esac
 if [ -n "$SSH_CLIENT" ]
 then
 local SHORT_HOSTNAME=${HOSTNAME%%.*}
 SHORT_HOSTNAME=${SHORT_HOSTNAME,,}
 LINE="${LINE} on ${SHORT_HOSTNAME}"
 fi
-LINE="${LINE}\007"
-command echo -ne "$LINE"
-}
-print_title &
+command echo -ne "\033]0;$LINE\007"
+} &
 )
 esac
 _MEASURE=1
