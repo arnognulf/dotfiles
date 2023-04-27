@@ -157,6 +157,11 @@ alias lowriter='o lowriter --norestore --view'
 alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
 alias tar='nice -n 19 tar'
+alias adb='_MEASURE=0 retry adb'
+scrcpy ()
+{
+    ( retry $(type -P scrcpy) &>/dev/null & )
+}
 if [ -n "$WAYLAND_DISPLAY" ]
 then
 local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
@@ -378,32 +383,29 @@ function untilfail
 
 function retry
 (
-    function retry_watchdog
-    (
-        command echo $$ >"/run/user/${UID}/retry.pid"
-        sleep 3
-        command printf '\007'
-    )
     if [ "${#@}" = 0 ] 
     then
         _NO
         return 255
     fi
-    COUNT=0
-    ( retry_watchdog & )
+    command printf '\n\0337     '
+    local a=0
     until "$@"
     do
-    kill -9 $(command cat /run/user/${UID}/retry.pid &>/dev/null)
-    sleep 1
-    let COUNT=1+${COUNT}
-    if [ ${COUNT} -gt 10 ]
-    then
-        echo "=== "$(date +%H:%M:%S)" ==="
-        COUNT=0
-    fi
-    ( retry_watchdog & )
+        command printf '\033[?25l\0338\033[A'
+        case $a in
+        0) command printf ' .  ';;
+        1) command printf ' .. ';;
+        2) command printf ' ...';;
+        3) command printf '  ..';;
+        4) command printf '   .';;
+        5) command printf '    ';;
+        esac
+        let a++
+        [ $a -gt 5 ] && a=0
+    sleep 0.25
+    printf '\033[?25h '
     done
-    command rm -f /run/${UID}/retry.pid &>/dev/null
 )
 
 function _NO
