@@ -40,7 +40,7 @@ error ()
 }
 print_objects ()
 {
-    REPO_DIR=../.${NAME}/${PWD##*}/
+    REPO_DIR=../.${NAME}/${PWD##*/}/
     COMMIT_DIRS=""
     for COMMIT_DIR in "${REPO_DIR}/objects"/*
     do
@@ -60,11 +60,11 @@ print_objects ()
 
 goto_repo_dir ()
 {
-    REPO_DIR=../.${NAME}/${PWD##*}/
+    REPO_DIR=../.${NAME}/${PWD##*/}/
     while [ ! -d "${REPO_DIR}" ] && [ "$OLDPWD" != "${PWD}" ]
     do
         cd ..
-        REPO_DIR=../.${NAME}/${PWD##*}/
+        REPO_DIR=../.${NAME}/${PWD##*/}/
     done
     if  [ ! -d "${REPO_DIR}" ]
     then
@@ -80,7 +80,7 @@ NAME=hog
 
 trap "goto_repo_dir &>/dev/null && chmod -r \".hog\" 2>/dev/null" EXIT
 
-REPO_DIR=../${NAME}/${PWD##*}/
+REPO_DIR=../.${NAME}/${PWD##*/}/
 
 case "${1-}" in
 init)
