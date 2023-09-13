@@ -70,5 +70,10 @@ set directory=~/.cache/vim/swp/
 
 set noswapfile
 set autoread
-autocmd CursorHold * checkTime
+autocmd CursorHold * checktime
 autocmd TextChanged,TextChangedI <buffer> silent write
+set undofile
+set undodir=$HOME/.cache/vim/undo
+set undolevels=100000
+set undoreload=10000000
+
