@@ -68,3 +68,7 @@ set backupdir=~/.cache/vim/backup/
 set directory=~/.cache/vim/swp/
 "set undo=~/.cache/vim/undo
 
+set noswapfile
+set autoread
+autocmd CursorHold * checkTime
+autocmd TextChanged,TextChangedI <buffer> silent write

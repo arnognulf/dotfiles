@@ -498,12 +498,15 @@ function _CHDIR_ALL_THE_THINGS ()
     fi
     return 0
 }
-function mark ()
+function bookmark ()
 {
 local BOOKMARKDIR=~/.config/bookmark-all-the-things/
 mkdir -p "${BOOKMARKDIR}"
 case "${1}" in
--l"")
+-d"")
+rm -f "${BOOKMARKDIR}${2##*/}"
+;;
+"")
 for FILE in ${BOOKMARKDIR}/*
 do
 if [ -L "${FILE}" ]
@@ -516,7 +519,7 @@ done
 rm "${BOOKMARKDIR}${2##*/}" 2>/dev/null
 ;;
 *)
-rm "${BOOKMARKDIR}${1##*/}"
+rm -f "${BOOKMARKDIR}${1##*/}"
 ln -s "${PWD}" "${BOOKMARKDIR}${1##*/}"
 esac
 }
@@ -528,6 +531,8 @@ local BOOKMARKDIR=~/.config/bookmark-all-the-things/
 for BOOKMARK in "${BOOKMARKDIR}"/*
 do
 eval "${BOOKMARK##*/}="${BOOKMARK}"
+eval "${BOOKMARK##*/} () { local DIR=\"\$(redlink '${BOOKMARK}')\"; if [ -n \"\$1\" ]; then ( cd \"$DIR\" || { _NO; exit 42;}; \"$@\";); else cd \"\$DIR\"fi;}"
+
 done
 unset -f function _CATT_BOOKMARK_INIT
 }

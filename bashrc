@@ -139,13 +139,14 @@ function _EDITOR
     #then
     #    $(type -P "code-insiders"||type -P "vim" ||type -P "vi") "${@}"
     #else
-    $(type -P "vim" ||type -P "vi") "${@}"
+    $(type -P "vim" ||type -P "vi") -p "${@}"
     #fi
 )
 
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
+alias vim='vim -p'
 alias dd='dd status=progress'
 alias dl=_UBER_FOR_MV
 alias octave=octave-cli
@@ -158,10 +159,6 @@ alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
 alias tar='nice -n 19 tar'
 alias adb='_MEASURE=0 retry adb'
-scrcpy ()
-{
-    ( retry $(type -P scrcpy) &>/dev/null & )
-}
 if [ -n "$WAYLAND_DISPLAY" ]
 then
 local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
@@ -172,7 +169,7 @@ alias code='o code-insiders'
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
-type -P fdfind && alias fd='fdfind'
+type -P fdfind && alias fd='fdfind -H'
 alias hog='~/.config/dotfiles/hog/hog.sh'
 function _GREP
 (
@@ -210,8 +207,7 @@ alias r='repo status'
 alias -- -='c -'
 alias ..='c ..'
 alias rud='repo upload -d'
-#alias vim=_EDITOR
-#alias vi=_EDITOR
+alias man='MANWIDTH=$((COLUMNS > 80 ? 80 : COLUMNS)) man'
 alias v=_EDITOR
 alias keepass='o keepassxc'
 alias kp=keepassxc
@@ -325,7 +321,7 @@ function c ()
     _CHDIR_ALL_THE_THINGS "$@" && {
         local TMP="/run/user/${UID}/ls-${RANDOM}.txt"
         local FILE
-        for FILE in README.md README.txt README README.doc README.rst README.android README.*
+        for FILE in README.md README.txt README README.doc README.rst README.android README.* "READ *" "Read *" "Read *"
         do
         if [ -f "${FILE}" ]
         then
@@ -413,6 +409,8 @@ function _NO
     command echo "COMPUTER SAYS NO" 1>&2 | command tee 1>/dev/null
 )
 
+# loop is an xscreensaver module 
+unalias loop
 function loop
 {
     if [ "${#@}" = 0 ] 
@@ -420,17 +418,24 @@ function loop
         _NO
         return 255
     fi
-    _MEASURE=0
-    local COUNT=0
-    while sleep 1
+    command printf '\n\0337'
+    local a=0
+    while true
     do
-    "${@}"
-    let COUNT=1+${COUNT}
-    if [ ${COUNT} -gt 10 ]
-    then
-        command echo "=== "$(date +%H:%M:%S)" ==="
-        COUNT=0
-    fi
+        command printf '\033[?25l\0338\033[A'
+        "$@"
+        case $a in
+        0) command printf ' .   ';;
+        1) command printf ' ..  ';;
+        2) command printf ' ... ';;
+        3) command printf '  .. ';;
+        4) command printf '   . ';;
+        5) command printf '     ';;
+        esac
+        let a++
+        sleep 0.25
+        [ $a -gt 5 ] && a=0
+        printf '\033[?25h\033[A '
     done
 }
 
@@ -554,5 +559,13 @@ mount_shares
 background_startup_tasks &
 )
 }
+if [ -f ~/.bashrc.statistics ]
+then
+time _dotfiles_main &>/dev/null
+elif [ -f ~/bashrc.debug ]
+then
+_dotfiles_main
+else
 _dotfiles_main &>/dev/null
+fi
 unset -f _dotfiles_main

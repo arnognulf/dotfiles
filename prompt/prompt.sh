@@ -150,6 +150,7 @@ function _PROMPT_COMMAND ()
   stty echo 2>/dev/null
   history -a
   [ -n "${GNOME_TERMINAL_SCREEN}" ] && command echo -ne "\033]11;#FFF9F0\007\033]10;#312D2A\007\033]12;#312D2A\007"
+  [ -n "${GNOME_TERMINAL_SCREEN}" ] && command echo -ne "\033]11;#FFFFFF\007\033]10;#312D2A\007\033]12;#312D2A\007"
 }
 function _PREEXEC ()
 {
@@ -175,6 +176,9 @@ DOC=${_TIMER_CMD#  }
 DOC=${DOC#* }
 DOC=${DOC##*/}
 LINE="📝  ${DOC}"
+;;
+"serial"*)
+LINE="💻  serial"
 ;;
 *)
 LINE="${CHAR}  ${_TIMER_CMD} in ${PWD##*/} at "$(date +%H:%M)

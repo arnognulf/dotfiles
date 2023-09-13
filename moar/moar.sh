@@ -137,7 +137,7 @@ function _MOAR
             command "$@" 2>${_MOAR_STDERR_FILE} | _EMOJIFY | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            command "$@"| _EMOJIFY
+            command "$@"
             RETURN=$?
         fi
     ;;
@@ -295,6 +295,7 @@ systemctl \
 last \
 ss \
 tldr \
+freecad \
 ip
 do
 if type -P "${CMD}" &>/dev/null 

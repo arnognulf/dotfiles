@@ -40,8 +40,9 @@ error ()
 }
 print_objects ()
 {
+    REPO_DIR=../.${NAME}/${PWD##*}/
     COMMIT_DIRS=""
-    for COMMIT_DIR in ".${NAME}/objects"/*
+    for COMMIT_DIR in "${REPO_DIR}/objects"/*
     do
         COMMIT_DIRS="${COMMIT_DIR} ${COMMIT_DIRS}"
     done
@@ -59,16 +60,17 @@ print_objects ()
 
 goto_repo_dir ()
 {
-    while [ ! -d ".${NAME}" ] && [ "$OLDPWD" != "${PWD}" ]
+    REPO_DIR=../.${NAME}/${PWD##*}/
+    while [ ! -d "${REPO_DIR}" ] && [ "$OLDPWD" != "${PWD}" ]
     do
         cd ..
+        REPO_DIR=../.${NAME}/${PWD##*}/
     done
-    if  [ ! -d ".${NAME}" ]
+    if  [ ! -d "${REPO_DIR}" ]
     then
         error "not a ${NAME} repository"
         return 1
     fi
-    REPO_DIR=".${NAME}"
     chmod +r "${REPO_DIR}"
     chmod +w "${REPO_DIR}"
     chmod +x "${REPO_DIR}"
@@ -78,12 +80,10 @@ NAME=hog
 
 trap "goto_repo_dir &>/dev/null && chmod -r \".hog\" 2>/dev/null" EXIT
 
-REPO_DIR=".${NAME}" 
+REPO_DIR=../${NAME}/${PWD##*}/
 
 case "${1-}" in
 init)
-#goto_repo_dir
-#REPO_DIR=".${NAME}" 
 if [ "${2-}" = "-f" ]
 then
 chmod +r "${REPO_DIR}"
@@ -99,10 +99,10 @@ then
 :
 elif [ "${2-}" != "-f" ]
 then
-        rm -rf ".${NAME}" 
+        rm -rf "${REPO_DIR}"
         error "reflinks are not supported on this filesystem, use a filesystem such as XFS, BTRFS, F2FS, or BCACHEFS, or use -f to force creation using non-reflink files"
 fi
-stdout "Initialized empty ${NAME} repository in $PWD/.${NAME}/"
+stdout "Initialized empty ${NAME} repository in ${REPO_DIR}/"
 ;;
 commit)
 goto_repo_dir
@@ -131,7 +131,6 @@ for ITEM in * .*
 do
     [ "${ITEM}" = "." ] && continue
     [ "${ITEM}" = ".." ] && continue
-    [ "${ITEM}" = ".${NAME}" ] && continue
     cp --preserve=all --reflink=auto -rdf "${ITEM}" "${SNAPSHOT_DIR}" &
 done
 while fg &>/dev/null
@@ -146,15 +145,14 @@ goto_repo_dir
 [ ! -d "${REPO_DIR}/objects/${2-}" ] && error "no such commit"
 COMMIT_DIR="${REPO_DIR}/objects/${2-}"
 SNAPSHOT_DIR="${COMMIT_DIR}/snapshot"
-mkdir -p ".${NAME}/tmp" || error "couldn\'t create temp dir=${PWD}/.${NAME}/tmp"
+mkdir -p "${REPO_DIR}/tmp" || error "couldn\'t create temp dir=${REPO_DIR}/tmp"
 for ITEM in * .*
 do
-    [ "${ITEM}" = ".${NAME}" ] && continue
     case "${ITEM}" in
     "."|".."|*"/."|*"/..") :;;
     *)
-    mv "${ITEM}" ".${NAME}/tmp" || true 
-    ( exec rm -rf ".${NAME}/tmp/${ITEM}" &>/dev/null & )
+    mv "${ITEM}" "${REPO_DIR}/tmp" || true 
+    ( exec rm -rf "${REPO_DIR}/tmp/${ITEM}" &>/dev/null & )
     esac
 done
 

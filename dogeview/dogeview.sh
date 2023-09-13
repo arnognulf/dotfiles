@@ -188,6 +188,12 @@ function _DOGE_DECODE
             {
             local _DOGE_MIME=$(command file -L --mime-type "${FILE}")
             case "${_DOGE_MIME}" in
+            *" "application/gzip*)
+            gzip -cd "${FILE}"
+            ;;
+            *" "application/x-xz*)
+            xz -cd "${FILE}"
+            ;;
             *" "application/x-sqlite3)
             for TABLE in $(command sqlite3 "${FILE}" "SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%';")
             do
