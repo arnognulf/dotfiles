@@ -169,7 +169,7 @@ alias code='o code-insiders'
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
-type -P fdfind && alias fd='fdfind -H'
+type -P fdfind && alias fd='fdfind -H -I'
 alias hog='~/.config/dotfiles/hog/hog.sh'
 function _GREP
 (
@@ -516,7 +516,8 @@ export LS_COLORS
 test -f ~/.bashrc.local && . ~/.bashrc.local
 unset _SOURCED
 bind 'set bell-style none'
-
+BGCOLOR="#FFFAF1"
+FGCOLOR="#312D2A"
 fi
 
 (
@@ -552,8 +553,10 @@ kill_tracker
 bash ~/.config/dotfiles/deal-with-it/deal-with-it.sh &
 mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo/
 mkdir -p "${GOPATH}"
+
 # hide files from nautilus and ls
 ln -sf "${DOTFILESDIR}/home.hidden" ~/.hidden
+ln -sf "${DOTFILESDIR}/home.xscreensaver" ~/.xscreensaver
 mount_shares
 }
 background_startup_tasks &

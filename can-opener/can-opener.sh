@@ -547,7 +547,7 @@ if type -P "${CMD}"
 then
 case "${CMD}" in
 /usr/*/xscreensaver/*)
-eval "alias ${CMD##*/}=\"o nice -n 19 ${CMD/}\""
+eval "alias ${CMD##*/}=\"PATH=$PATH:${CMD%/*} o nice -n 19 ${CMD/}\""
 ;;
 *)
 eval "alias ${CMD##*/}=\"o ${CMD##*/}\""

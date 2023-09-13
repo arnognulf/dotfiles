@@ -149,8 +149,7 @@ function _PROMPT_COMMAND ()
   trap "_PROMPT_CTRLC=1;command echo -n" ERR
   stty echo 2>/dev/null
   history -a
-  [ -n "${GNOME_TERMINAL_SCREEN}" ] && command echo -ne "\033]11;#FFF9F0\007\033]10;#312D2A\007\033]12;#312D2A\007"
-  [ -n "${GNOME_TERMINAL_SCREEN}" ] && command echo -ne "\033]11;#FFFFFF\007\033]10;#312D2A\007\033]12;#312D2A\007"
+  [ -n "${GNOME_TERMINAL_SCREEN}" ] && command echo -ne "\033]11;${BGCOLOR}\007\033]10;${FGCOLOR}\007\033]12;#312D2A\007"
 }
 function _PREEXEC ()
 {
