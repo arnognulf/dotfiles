@@ -87,7 +87,7 @@ export HISTFILESIZE=100000               # big big history
 _SOURCED=1
 shopt -s globstar
 function . { _SOURCED=1 command . "$@";}
-
+export BAT_THEME=GitHub
 #function xcp () {
 #    command tar -cf - "$@"|command pv|command pixz|command ssh server 'command tar -Ipixz -tf -'
 #}
@@ -146,7 +146,9 @@ function _EDITOR
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
-alias vim='vim -p'
+alias delta='delta --light'
+alias cp='cp --reflink=auto'
+alias v='_NO'
 alias dd='dd status=progress'
 alias dl=_UBER_FOR_MV
 alias octave=octave-cli
@@ -239,7 +241,6 @@ alias task_flash='task "⚡ FLASH ⚡"'
 alias task_bake='task "🍞 Bake"'
 alias task_bug="🐛 Bug"
 alias trash="gio trash"
-#alias cp='rsync --append-verify --checksum --info=progress2'
 alias xargs="xargs -d'\n'"
 alias mosh="_MEASURE=0; MOSH_TITLE_NOPREFIX=1 mosh"
 alias adb="_MEASURE=0;adb"
