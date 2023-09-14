@@ -171,7 +171,7 @@ alias code='o code-insiders'
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
-type -P fdfind && alias fd='fdfind -H -I'
+type -P fdfind && alias fd='_MOAR fdfind --color=always -H -I'
 alias hog='~/.config/dotfiles/hog/hog.sh'
 function _GREP
 (

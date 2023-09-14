@@ -92,7 +92,7 @@ chmod +x "${REPO_DIR}"
 rm -rf "${REPO_DIR}"
 mkdir -p "${REPO_DIR}"
 fi
-mkdir "${REPO_DIR}" &>/dev/null || error "repository alread initialized"
+mkdir -p "${REPO_DIR}" &>/dev/null || error "repository alread initialized"
 echo 1 > "${REPO_DIR}"/version
 if cp --reflink=always -rdf "${REPO_DIR}"/version "${REPO_DIR}"/reflink_supported &>/dev/null 
 then

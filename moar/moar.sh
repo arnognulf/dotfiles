@@ -28,194 +28,6 @@
 # * Pipes are not affected by moar (except for conversion)
 # * Moar-ified commands can be disabled by prepending backslash: '\' : eg. \grep
 
-function _MOAR
-(
-    if [ "${#@}" = 0 ]; then yes 'MOAR!';fi
-    command rm -rf /tmp/.MOAR* &>/dev/null
-    local PIPEFAIL_ENABLED
-    if set -o|command egrep -q "pipefail(.*)off"
-    then
-        set -o pipefail
-        PIPEFAIL_ENABLED=0
-    else
-        PIPEFAIL_ENABLED=1
-    fi
-
-    local RETURN
-    local _MOAR_STDERR_FILE=/tmp/.MOAR_STDERR."${RANDOM}"
-    _MEASURE=0
-    if [ -z "${_SOURCED}" ]
-    then
-    if [ -t 1 ]
-    then
-        local _MOAR_STDOUT=1 
-    else
-        local _MOAR_STDOUT=0 
-    fi
-    case "${1}" in
-        *grep)
-        local CMD="$1"
-        shift
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
-            RETURN=$?
-        else
-            command "${CMD}" "$@"
-            RETURN=$?
-        fi
-        ;;
-        apt)
-        case "${2}" in
-        list)
-            if [ "${_MOAR_STDOUT}" = 1 ]
-            then
-                command socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} |tail -n +2| command less -Q -R -X -F -K -S
-                RETURN=$?
-            else
-                command "$@"
-                RETURN=$?
-            fi
-        ;;
-        search)
-            if [ "${_MOAR_STDOUT}" = 1 ]
-            then
-                command "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
-                RETURN=$?
-            else
-                command "$@"
-                RETURN=$?
-            fi
-        ;;
-        *)
-            command "$@"
-            RETURN=$?
-        esac
-        ;;
-        *git)
-        case "$2" in
-        log|status|remote|branch|diff)
-        shift
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command git -c color.ui=always "${@}"  2>${_MOAR_STDERR_FILE} | _EMOJIFY | command less -Q -R -X -F -K -S
-            RETURN=$?
-        else
-            command git -c color.ui=never "${@}" | _EMOJIFY
-            RETURN=$?
-        fi
-        ;;
-        *)
-            command "$@"
-            RETURN=$?
-        esac
-    ;;
-    less|more)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command "$@"
-            RETURN=$?
-        else
-            shift
-            command cat "${@}"
-            RETURN=$?
-        fi
-        ;;
-    find|od|hexdump|declare)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
-            RETURN=$?
-        else
-            command "$@"
-            RETURN=$?
-        fi
-    ;;
-    echo)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command "$@" 2>${_MOAR_STDERR_FILE} | _EMOJIFY | command less -Q -R -X -F -K -S
-            RETURN=$?
-        else
-            command "$@"
-            RETURN=$?
-        fi
-    ;;
-    rg)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command "$@" --color=always 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
-            RETURN=$?
-        else
-            command "$@" --color=never
-            RETURN=$?
-        fi
-    ;;
-    systemctl)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command "$@" --no-pager 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
-            RETURN=$?
-        else
-            command "$@" --color=never
-            RETURN=$?
-        fi
-    ;;
- 
-    rga)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command "$@" --color=always 2>/dev/null | command less -Q -R -X -F -K -S
-            RETURN=$?
-        else
-            command "$@" --color=never 2>/dev/null
-            RETURN=$?
-        fi
-    ;;
-
-    fd|fdfind)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command "$@" --color always 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
-            RETURN=$?
-        else
-            command "$@" --color never
-            RETURN=$?
-        fi
-    ;;
-    *)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
-            RETURN=$?
-        else
-            command "$@"
-            RETURN=$?
-        fi
-    esac
-    if [ -s "${_MOAR_STDERR_FILE}" ]
-    then
-        local STDERR_LINES=$(wc -l "${_MOAR_STDERR_FILE}")
-        STDERR_LINES=${STDERR_LINES% *}
-        if [ ${STDERR_LINES} -gt ${LINES} ]
-        then
-            command less -Q -R -X -F -K -S "${_MOAR_STDERR_FILE}"
-        else
-            command cat "${_MOAR_STDERR_FILE}"
-        fi
-        command rm ${_MOAR_STDERR_FILE}
-    fi
-else
-    command "$@"
-    RETURN=$?
-fi
-    if [ "${PIPEFAIL_ENABLED}" = 0 ]
-    then
-        set +o pipefail
-    fi
-    return ${RETURN}
-)
-
 _MOAR_DEFINE ()
 {
 local CMD
@@ -295,13 +107,18 @@ systemctl \
 last \
 ss \
 tldr \
-freecad \
 ip
 do
 if type -P "${CMD}" &>/dev/null 
 then
     local BASECMD="${CMD##*/}"
+    case ${BASECMD} in
+    *" "*)
     eval "alias \"${BASECMD}\"=\"_MOAR \\\"${BASECMD}\\\"\""
+    ;;
+    *)
+    eval "alias \"${BASECMD}\"=\"_MOAR ${BASECMD}\""
+    esac
 elif [ $(type -t "${CMD}") = "builtin" ]
 then
     eval "alias \"${CMD}\"=\"_MOAR \\\"${CMD}\\\"\""
@@ -311,3 +128,4 @@ eval "function _MOAR_d { _MOAR \"\${FUNCNAME/_MOAR_/}\" \"\$@\";}"
 }
 _MOAR_DEFINE
 unset -f _MOAR_DEFINE
+_MOAR true || PATH=$PATH:${DOTFILESDIR}/moar

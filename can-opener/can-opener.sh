@@ -41,7 +41,7 @@ function _CAN_OPENER_ALL ()
     for FILE in "$@"
     do
         (
-            MIME=$(file -L --mime-type "${FILE}")
+            MIME=$(command file -L --mime-type "${FILE}")
             case "${MIME}" in
             *" "application/vnd.apple.keynote|*" "application/vnd.wordperfect|*" "application/rtf|*" "application/vnd.oasis.opendocument.text|*" "application/vnd.openxmlformats-officedocument.*|*" "application/doc|*" "application/ms-doc|*" "application/msword)
             exec loffice --norestore --view "${FILE}" &>/dev/null &
@@ -49,7 +49,13 @@ function _CAN_OPENER_ALL ()
             *" "application/x-pie-executable|*" "application/x-sharedlib|*" "application/x-executable|*" "text/x-perl|*" "text/x-shellscript|*" "text/x-script.python|*" "text/x-lisp|*" "text/x-java|*" "text/x-ruby)
             if [ -x "${FILE}" ]
             then
+                case "$1" in
+                    /usr/*/xscreensaver/*)
+                        PATH=$PATH:${1%/*} exec nice -n 19 "$@" &>/dev/null &
+            ;;
+            *)
                 exec "${FILE}" &>/dev/null &
+            esac
             else
                 exec xdg-open "${FILE}" &>/dev/null &
             fi
@@ -253,6 +259,7 @@ emacs \
 ephoto \
 Eterm \
 freemat \
+freecad \
 gdebi \
 gedit \
 ghidra \
@@ -546,8 +553,10 @@ do
 if type -P "${CMD}"
 then
 case "${CMD}" in
+/usr/*/xscreensaver/xscreensaver-*)
+;;
 /usr/*/xscreensaver/*)
-eval "alias ${CMD##*/}=\"PATH=$PATH:${CMD%/*} o nice -n 19 ${CMD/}\""
+eval "alias ${CMD##*/}=\"o ${CMD/}\""
 ;;
 *)
 eval "alias ${CMD##*/}=\"o ${CMD##*/}\""
