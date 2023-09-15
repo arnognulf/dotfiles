@@ -24,7 +24,7 @@ done
 }
 setup_tmux &
 )
-elif [ -z "${WAYLAND_DISPLAY}" ] && [ -z "${DISPLAY}" ]
+elif [ -z "${WAYLAND_DISPLAY}" ] && [ -z "${DISPLAY}" ] && [ -z "${SCHROOT_SESSION_ID}" ] && [ -x "/usr/bin/tmux" ]
 then
 read NUM < /run/user/${UID}/tmux-session
 NUM=${NUM-0}
@@ -171,7 +171,7 @@ alias code='o code-insiders'
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
-type -P fdfind && alias fd='_MOAR fdfind --color=always -H -I'
+type -P fdfind && alias fd='_MOAR fdfind -H -I'
 alias hog='~/.config/dotfiles/hog/hog.sh'
 function _GREP
 (
@@ -566,7 +566,7 @@ background_startup_tasks &
 if [ -f ~/.bashrc.statistics ]
 then
 time _dotfiles_main &>/dev/null
-elif [ -f ~/bashrc.debug ]
+elif [ -f ~/.bashrc.debug ]
 then
 _dotfiles_main
 else

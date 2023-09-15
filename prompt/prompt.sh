@@ -165,7 +165,7 @@ sudo*)
 local CHAR="#"
 ;;
 *)
-local CHAR=">"
+local CHAR="🌈"
 esac
 (
 {
@@ -187,6 +187,10 @@ then
 local SHORT_HOSTNAME=${HOSTNAME%%.*}
 SHORT_HOSTNAME=${SHORT_HOSTNAME,,}
 LINE="${LINE} on ${SHORT_HOSTNAME}"
+fi
+if [ -n "${SCHROOT_ALIAS_NAME}" ]
+then
+LINE="${LINE} on ${SCHROOT_ALIAS_NAME}"
 fi
 command echo -ne "\033]0;$LINE\007"
 } &
@@ -274,6 +278,11 @@ _PROMPT ()
     SHORT_HOSTNAME=${SHORT_HOSTNAME,,}
     TITLE="${TITLE} on ${SHORT_HOSTNAME}"
   fi
+  if [ -n "${SCHROOT_ALIAS_NAME}" ]
+  then
+    TITLE="${TITLE} on ${SCHROOT_ALIAS_NAME}"
+  fi
+
   unset _PROMPT_LONGRUNNING
   return 0
   fi
@@ -306,12 +315,20 @@ then
     then
         TITLE="${TITLE} on ${SHORT_HOSTNAME}"
     fi 
+    if [ -n "${SCHROOT_ALIAS_NAME}" ]
+    then
+        TITLE="${TITLE} on ${SCHROOT_ALIAS_NAME}"
+    fi
 elif [ -n "${_PROMPT_GIT_PS1}" ]
 then
     TITLE="🚧  ${PWD##*/}"
     if [ -n "$SSH_CLIENT" ]
     then
         TITLE="${TITLE} on ${SHORT_HOSTNAME}"
+    fi
+    if [ -n "${SCHROOT_ALIAS_NAME}" ]
+    then
+        TITLE="${TITLE} on ${SCHROOT_ALIAS_NAME}"
     fi
 else
 case "${PWD}" in
@@ -337,12 +354,21 @@ ${XDG_VIDEOS_DIR}|${XDG_VIDEOS_DIR}/*) TITLE="🎬  ${PWD##*/}";;
 esac
 case "${_PROMPT_REALPWD}" in
 ${HOME}) 
-TITLE="🏠  ${SHORT_HOSTNAME}"
+    if [ -n "${SCHROOT_ALIAS_NAME}" ]
+    then
+        TITLE="🏠  ${SCHROOT_ALIAS_NAME}"
+    else
+        TITLE="🏠  ${SHORT_HOSTNAME}"
+    fi
 ;;
 *)
 if [ -n "$SSH_CLIENT" ]
 then
 TITLE="${TITLE} on ${SHORT_HOSTNAME}"
+fi
+if [ -n "${SCHROOT_ALIAS_NAME}" ]
+then
+TITLE="${TITLE} on ${SCHROOT_ALIAS_NAME}"
 fi
 esac
 fi
