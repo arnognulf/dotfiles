@@ -146,6 +146,7 @@ function _EDITOR
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
+alias vim='vim -p'
 alias delta='delta --light'
 alias cp='cp --reflink=auto'
 alias v='_NO'

@@ -28,6 +28,18 @@
 # * Pipes are not affected by moar (except for conversion)
 # * Moar-ified commands can be disabled by prepending backslash: '\' : eg. \grep
 
+_MOAR_BUILTIN ()
+{
+    if [ -t 1 ];then
+        command "$@" | command less -Q -R -X -F -K -S 
+    else
+        command "$@"
+    fi
+
+}
+alias declare="_MOAR_BUILTIN declare"
+alias set="_MOAR_BUILTIN set"
+
 _MOAR_DEFINE ()
 {
 local CMD
@@ -87,8 +99,6 @@ rg \
 rga \
 fd \
 fdfind \
-declare \
-set \
 objdump \
 /usr/bin/*-objdump \
 nm \
