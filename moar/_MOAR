@@ -67,6 +67,22 @@ function _MOAR
             RETURN=$?
         fi
         ;;
+        tail)
+            if [ "${_MOAR_STDOUT}" = 1 ]
+            then
+                if [ "$1" = "-f" ]
+                then
+                    shift 2
+                    command less -Q -R -X -F -K -S +F "$@"
+                    RETURN=$?
+                else
+                    command nice -n 19 "$@" | less -Q -R -X -F -K -S 
+                fi
+            else
+                command nice -n 19 "$@"
+                RETURN=$?
+            fi
+        ;;
         apt)
         case "${2}" in
         list)

@@ -96,7 +96,7 @@ function _PROMPT_MAGIC_SHELLBALL ()
 function _PROMPT_COMMAND ()
 {
   # disconnect other clients and resize window to current size
-  ( [ -n "$TMUX" ] && { tmux detach-client -a;tmux resize-window -A; } &>/dev/null & )
+  ( [ -n "$TMUX" ] && { tmux detach-client -a;for CLIENT in 1 2 3; do tmux -L "$CLIENT" resize-window -A; done; } &>/dev/null & )
   local _SOURCED=1
   # add trailing newline for last command if missing
   command printf "%$((COLUMNS-1))s\\r"
@@ -162,10 +162,10 @@ case "${_TIMER_CMD}" in
 *)
 case "${_TIMER_CMD}" in
 sudo*)
-local CHAR="#"
+local CHAR="⚠️"
 ;;
 *)
-local CHAR="🌈"
+local CHAR="▶️"
 esac
 (
 {

@@ -117,6 +117,7 @@ systemctl \
 last \
 ss \
 tldr \
+freecad \
 ip
 do
 if type -P "${CMD}" &>/dev/null 
