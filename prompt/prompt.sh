@@ -179,6 +179,8 @@ _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\w')/\\\\\w}"
 _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\x')/\\\\\x}"
 _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\y')/\\\\\y}"
 _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\z')/\\\\\z}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\033')/<ESC>}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\007')/<BEL>}"
 case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;
 *)
@@ -191,7 +193,6 @@ local CHAR="▶️"
 esac
 (
 {
-echo "\"$_TIMER_CMD\""
 case "${_TIMER_CMD}" in
 "nano "*|"emacs "*|"vim "*|"v "*)
 DOC=${_TIMER_CMD#  }
@@ -205,8 +206,23 @@ LINE="🐱  ${_TIMER_CMD}"
 "top"*|"nload"*|"htop"*)
 LINE="📈  ${_TIMER_CMD}"
 ;;
+"rm"*|"trash"*|"gio trash"*|"jdupes"*)
+LINE="♻️  ${_TIMER_CMD}"
+;;
+"rg"*|"grep"*)
+LINE="🔎 ${_TIMER_CMD}"
+;;
+"man"*)
+LINE="📖 ${_TIMER_CMD}"
+;;
+"git"*)
+LINE="🪣 ${_TIMER_CMD}"
+;;
 "serial"*)
 LINE="💻  serial"
+;;
+"d "*|"more"*|"less"*)
+LINE="📜 ${_TIMER_CMD}"
 ;;
 *)
 LINE="${CHAR}  ${_TIMER_CMD} in ${PWD##*/} at "$(date +%H:%M)
