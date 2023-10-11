@@ -153,10 +153,32 @@ function _PROMPT_COMMAND ()
 }
 function _PREEXEC ()
 {
-_TIMER_CMD="${1/$(command echo -ne '\\\\033')/<ESC>}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\e')/<ESC>}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\007')/<BEL>}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\a')/<BEL>}"
+_TIMER_CMD="${1/$(command echo -ne '\\\\a')/\\\\\a}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\b')/\\\\\b}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\c')/\\\\\c}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\d')/\\\\\d}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\e')/\\\\\e}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\f')/\\\\\f}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\g')/\\\\\g}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\h')/\\\\\h}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\i')/\\\\\i}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\j')/\\\\\j}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\k')/\\\\\k}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\l')/\\\\\l}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\m')/\\\\\m}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\n')/\\\\\n}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\o')/\\\\\o}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\p')/\\\\\p}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\q')/\\\\\q}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\r')/\\\\\r}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\s')/\\\\\s}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\t')/\\\\\t}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\u')/\\\\\u}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\v')/\\\\\v}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\w')/\\\\\w}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\x')/\\\\\x}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\y')/\\\\\y}"
+_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\z')/\\\\\z}"
 case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;
 *)
@@ -169,12 +191,19 @@ local CHAR="▶️"
 esac
 (
 {
+echo "\"$_TIMER_CMD\""
 case "${_TIMER_CMD}" in
 "nano "*|"emacs "*|"vim "*|"v "*)
 DOC=${_TIMER_CMD#  }
 DOC=${DOC#* }
 DOC=${DOC##*/}
 LINE="📝  ${DOC}"
+;;
+"cat"*|"adb logcat"*|"logcat"*)
+LINE="🐱  ${_TIMER_CMD}"
+;;
+"top"*|"nload"*|"htop"*)
+LINE="📈  ${_TIMER_CMD}"
 ;;
 "serial"*)
 LINE="💻  serial"
