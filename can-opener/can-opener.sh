@@ -548,6 +548,7 @@ gtklp \
 mtpaint \
 rgbpaint \
 doublecmd \
+gource \
 slack
 do
 if type -P "${CMD}"
