@@ -151,8 +151,10 @@ function _PROMPT_COMMAND ()
   history -a
   [ -n "${GNOME_TERMINAL_SCREEN}" ] && command echo -ne "\033]11;${BGCOLOR}\007\033]10;${FGCOLOR}\007\033]12;#312D2A\007"
 }
+
 function _PREEXEC ()
 {
+(
 _TIMER_CMD="${1/$(command echo -ne '\\\\a')/\\\\\a}"
 _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\b')/\\\\\b}"
 _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\c')/\\\\\c}"
@@ -184,48 +186,14 @@ _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\007')/<BEL>}"
 case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;
 *)
-case "${_TIMER_CMD}" in
-sudo*)
-local CHAR="⚠️"
-;;
-*)
 local CHAR="▶️"
 esac
-(
-{
 case "${_TIMER_CMD}" in
-"nano "*|"emacs "*|"vim "*|"v "*)
-DOC=${_TIMER_CMD#  }
-DOC=${DOC#* }
-DOC=${DOC##*/}
-LINE="📝  ${DOC}"
-;;
-"cat"*|"adb logcat"*|"logcat"*)
-LINE="🐱  ${_TIMER_CMD}"
-;;
-"top"*|"nload"*|"htop"*)
-LINE="📈  ${_TIMER_CMD}"
-;;
-"rm"*|"trash"*|"gio trash"*|"jdupes"*)
-LINE="♻️  ${_TIMER_CMD}"
-;;
-"rg"*|"grep"*)
-LINE="🔎 ${_TIMER_CMD}"
-;;
-"man"*)
-LINE="📖 ${_TIMER_CMD}"
-;;
-"git"*)
-LINE="🪣 ${_TIMER_CMD}"
-;;
 "serial"*)
 LINE="💻  serial"
 ;;
-"d "*|"more"*|"less"*)
-LINE="📜 ${_TIMER_CMD}"
-;;
 *)
-LINE="${CHAR}  ${_TIMER_CMD} in ${PWD##*/} at "$(date +%H:%M)
+LINE="${CHAR}  ${_TIMER_CMD}"
 esac
 if [ -n "$SSH_CLIENT" ]
 then
@@ -237,10 +205,22 @@ if [ -n "${SCHROOT_ALIAS_NAME}" ]
 then
 LINE="${LINE} on ${SCHROOT_ALIAS_NAME}"
 fi
-command echo -ne "\033]0;$LINE\007"
-} &
+CUSTOM_TITLE=0
+local CMD=${_TIMER_CMD%% *}
+local CMD=${CMD%%;*}
+alias ${CMD} &>/dev/null && CUSTOM_TITLE=1
+for COMMAND in ${CUSTOM_TITLE_COMMANDS[@]}
+do
+if [ "${COMMAND}" = "${_TIMER_CMD:0:${#COMMAND}}" ]
+then
+CUSTOM_TITLE=1
+fi
+done
+if [ ${CUSTOM_TITLE} = 0 ]
+then
+_title "$LINE"
+fi
 )
-esac
 _MEASURE=1
 _START_SECONDS=$SECONDS
 }
@@ -426,12 +406,41 @@ PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
 PS1="\[\r\e]0;"'${TITLE}'"\a\e[0;4m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")\]$(_PROMPT_LINE)'"
 \[\e(1\e[0;7m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")'"\] ${_PROMPTHOSTDOT}"'$(_PROMPT_PWD_BASENAME)'""'${_PROMPT_GIT_PS1}'" "'$([ $UID = 0 ] && echo "# ")'"\[\e[0m\e[?25h\] "
 
-function name ()
+TTY=$(tty)
+_title ()
+{
+[ -n "$*" ] && [ -t 0 ] && command echo -ne "\033]0;$* in ${PWD##*/} at $(date +%H:%M)\007" &>${TTY}
+}
+
+_ICON ()
+{
+local ICON="$1"
+shift
+local FIRST_ARG="${1}"
+(
+local FIRST_NON_OPTION="${2}"
+while [ "${FIRST_NON_OPTION:0:1}" = '-' ]
+do
+shift
+local FIRST_NON_OPTION="${2}"
+done
+
+if [ -z "$FIRST_NON_OPTION" ]
+then
+_title "${ICON}  ${FIRST_ARG}"
+else
+_title "${ICON}  ${FIRST_NON_OPTION}"
+fi
+)
+"$@"
+}
+
+name ()
 {
 NAME="$*"
 }
 
-function task ()
+task ()
 {
 title "$*"
 

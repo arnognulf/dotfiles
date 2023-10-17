@@ -389,4 +389,4 @@ function _DOGEVIEW
     fi
     return ${RETURN}
 )
-alias d="_DOGEVIEW"
+alias d="_ICON 📜 _DOGEVIEW"

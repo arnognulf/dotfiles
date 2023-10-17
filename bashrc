@@ -135,22 +135,18 @@ function _EDITOR
         *.kt|*.java) type -P studio.sh &>/dev/null && _CAN_OPENER studio.sh "${PWD}/${FILE}" ; return
         esac
     done
-    #if [ -z "$SSH_CLIENT" ] && [ "${UID}" -gt 0 ] && [ -n "${DISPLAY}" ]
-    #then
-    #    $(type -P "code-insiders"||type -P "vim" ||type -P "vi") "${@}"
-    #else
     $(type -P "vim" ||type -P "vi") -p "${@}"
-    #fi
 )
 
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
-alias vim='vim -p'
+alias vim='_ICON 📝 vim -p'
+alias v='_ICON 📝  vim -p'
+alias cat="_ICON 🐱 cat"
 alias delta='delta --light'
-alias cp='cp --reflink=auto'
-alias v='_NO'
-alias dd='dd status=progress'
+alias cp='_ICON 💽 cp --reflink=auto'
+alias dd='_ICON 💽 dd status=progress'
 alias dl=_UBER_FOR_MV
 alias octave=octave-cli
 alias excel='o localc --norestore --view'
@@ -160,7 +156,7 @@ alias loimpress='o loimpress --norestore --view'
 alias lowriter='o lowriter --norestore --view'
 alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
-alias tar='nice -n 19 tar'
+alias tar='_ICON 📼 nice -n 19 tar'
 alias adb='_MEASURE=0 retry adb'
 if [ -n "$WAYLAND_DISPLAY" ]
 then
@@ -169,21 +165,24 @@ fi
 alias chrome='o google-chrome-beta ${WAYLAND_OPTS}'
 alias code-insiders='o code-insiders'
 alias code='o code-insiders'
+alias git="_ICON 🪣 git"
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
-type -P fdfind && alias fd='_MOAR fdfind -H -I'
+type -P fdfind && alias fd='_ICON 🔎 _MOAR fdfind -H -I'
+alias find='_ICON 🔎 _MOAR find'
+alias rga='_ICON 🔎 _MOAR rga'
+alias rg='_ICON 🔎 _MOAR rg'
+alias sudo='_ICON ⚠️"  sudo'
+alias top='_ICON 📈 top'
+alias ntop='_ICON 📈 ntop'
+alias htop='_ICON 📈 htop'
+alias nload='_ICON 📈 nload'
+alias rm='_ICON ♻️   rm'
+alias trash='_ICON ♻️   gio trash'
+alias jdupes='_ICON ♻️   ionice --class idle nice -n 19 jdupes --dedupe -R'
 alias hog='~/.config/dotfiles/hog/hog.sh'
-function _GREP
-(
-    if [ "${#@}" = 0 ]
-    then
-        command status
-    else
-        egrep "$@"
-    fi
-)
-alias g=_GREP
+alias g="egrep"
 alias gv="grep -v"
 
 function repo
@@ -198,6 +197,7 @@ function repo
 
 export LESS='-Q -R'
 alias gl="LESS='-Q -R --pattern ^(commit|diff)' git log -p"
+alias git="_ICON 🪣  git"
 alias ga='git add -p'
 alias gr='git reflog'
 alias gx='git checkout'
@@ -210,7 +210,7 @@ alias r='repo status'
 alias -- -='c -'
 alias ..='c ..'
 alias rud='repo upload -d'
-alias man='MANWIDTH=$((COLUMNS > 80 ? 80 : COLUMNS)) man'
+alias man='MANWIDTH=$((COLUMNS > 80 ? 80 : COLUMNS)) _ICON 📓 man'
 alias v=_EDITOR
 alias keepass='o keepassxc'
 alias kp=keepassxc
@@ -235,13 +235,19 @@ _MOAR ls "${hide[@]}" --color=always "$@"
 esac
 }
 
+b ()
+(
+_title "🐙  Branchy McBranchFace"
+BRANCH=$({ command git branch -a|cut -c3-1024; command git reflog;}|fzf)||exit 1
+command git switch ${BRANCH% *}
+)
+
 alias ll='ls -al --color=always'
 alias l='_LS_HIDDEN -C'
 alias ls='_LS_HIDDEN -C'
 alias task_flash='task "⚡ FLASH ⚡"'
 alias task_bake='task "🍞 Bake"'
 alias task_bug="🐛 Bug"
-alias trash="gio trash"
 alias xargs="xargs -d'\n'"
 alias mosh="_MEASURE=0; MOSH_TITLE_NOPREFIX=1 mosh"
 alias adb="_MEASURE=0;adb"
@@ -504,7 +510,6 @@ function back
     done
     command echo "${FILE}"
 )
-
 
 local FILE
 for FILE in /*
