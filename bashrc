@@ -173,7 +173,6 @@ type -P fdfind && alias fd='_ICON 🔎 _MOAR fdfind -H -I'
 alias find='_ICON 🔎 _MOAR find'
 alias rga='_ICON 🔎 _MOAR rga'
 alias rg='_ICON 🔎 _MOAR rg'
-alias sudo='_ICON ⚠️"  sudo'
 alias top='_ICON 📈 top'
 alias ntop='_ICON 📈 ntop'
 alias htop='_ICON 📈 htop'
@@ -235,12 +234,14 @@ _MOAR ls "${hide[@]}" --color=always "$@"
 esac
 }
 
-b ()
+_BRANCHY_MCBRANCHFACE ()
 (
+command git rev-parse --show-toplevel &>/dev/null || { _NO; return 1;}
 _title "🐙  Branchy McBranchFace"
 BRANCH=$({ command git branch -a|cut -c3-1024; command git reflog;}|fzf)||exit 1
-command git switch ${BRANCH% *}
+command git switch ${BRANCH%% *}
 )
+alias b=_BRANCHY_MCBRANCHFACE
 
 alias ll='ls -al --color=always'
 alias l='_LS_HIDDEN -C'
@@ -250,7 +251,7 @@ alias task_bake='task "🍞 Bake"'
 alias task_bug="🐛 Bug"
 alias xargs="xargs -d'\n'"
 alias mosh="_MEASURE=0; MOSH_TITLE_NOPREFIX=1 mosh"
-alias adb="_MEASURE=0;adb"
+alias adb="_MEASURE=0;_ICON 🐱 adb"
 alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
 #alias p=_PANKY
@@ -299,7 +300,7 @@ alias chromium=_CHROME-POLISHER
 alias google-chrome=_CHROME-POLISHER
 alias chrome=_CHROME-POLISHER
 alias dos="bash ${DOTFILESDIR}/dos/sh-dos.sh"
-alias sudo="\echo -ne \"\033]10;#DD2222\007\033]11;#000000\007\033]12;#DD2222\007\";sudo"
+alias sudo="\echo -ne \"\033]10;#DD2222\007\033]11;#000000\007\033]12;#DD2222\007\";_ICON ⚠️" sudo"
 function _SCP
 {
 local ARG
