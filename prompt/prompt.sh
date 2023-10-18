@@ -418,11 +418,17 @@ local ICON="$1"
 shift
 local FIRST_ARG="${1}"
 (
-local FIRST_NON_OPTION="${2}"
-while [ "${FIRST_NON_OPTION:0:1}" = '-' ]
+if [ "${FIRST_ARG}" = "nice" ]
+then
+shift 3
+fi
+FIRST_ARG="${1}"
+
+FIRST_NON_OPTION="${2}"
+while [ "${FIRST_NON_OPTION:0:1}" = '-' ] || [ "${FIRST_NON_OPTION:0:1}" = '_' ]
 do
 shift
-local FIRST_NON_OPTION="${2}"
+FIRST_NON_OPTION="${2}"
 done
 
 if [ -z "$FIRST_NON_OPTION" ]

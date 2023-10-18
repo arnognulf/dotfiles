@@ -171,7 +171,7 @@ alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
 type -P fdfind && alias fd='_ICON 🔎 _MOAR fdfind -H -I'
 alias find='_ICON 🔎 _MOAR find'
-alias rga='_ICON 🔎 _MOAR rga'
+alias rga='_ICON 🔎 _MOAR rga --color=always'
 alias rg='_ICON 🔎 _MOAR rg'
 alias top='_ICON 📈 top'
 alias ntop='_ICON 📈 ntop'
@@ -300,7 +300,7 @@ alias chromium=_CHROME-POLISHER
 alias google-chrome=_CHROME-POLISHER
 alias chrome=_CHROME-POLISHER
 alias dos="bash ${DOTFILESDIR}/dos/sh-dos.sh"
-alias sudo="\echo -ne \"\033]10;#DD2222\007\033]11;#000000\007\033]12;#DD2222\007\";_ICON ⚠️" sudo"
+alias sudo="\echo -ne \"\033]10;#DD2222\007\033]11;#000000\007\033]12;#DD2222\007\";_ICON ⚠️  sudo"
 function _SCP
 {
 local ARG
