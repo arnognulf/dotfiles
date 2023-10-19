@@ -127,7 +127,9 @@ EDITOR="vim"
 export EDITOR
 
 function _EDITOR
-(
+{
+    _MEASURE=0
+    local FILE
     for FILE in "$@"
     do
         case "${FILE,,}" in
@@ -136,7 +138,7 @@ function _EDITOR
         esac
     done
     $(type -P "vim" ||type -P "vi") -p "${@}"
-)
+}
 
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
@@ -170,12 +172,12 @@ _GIT ()
 _ICON 🪣
 case "$1" in
 clone|push)
-:
+command git "$@"
 ;;
 *)
 _MEASURE=0
+_MOAR git "$@"
 esac
-command git "$@"
 }
 alias git="_GIT"
 alias gd='git diff --color-moved --no-prefix'
@@ -221,7 +223,7 @@ alias r='repo status'
 alias -- -='c -'
 alias ..='c ..'
 alias rud='repo upload -d'
-alias man='MANWIDTH=$((COLUMNS > 80 ? 80 : COLUMNS)) _ICON 📓 man'
+alias man='_MEASURE=0;MANWIDTH=$((COLUMNS > 80 ? 80 : COLUMNS)) _ICON 📓 man'
 alias v=_EDITOR
 alias keepass='o keepassxc'
 alias kp=keepassxc
