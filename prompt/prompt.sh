@@ -154,7 +154,6 @@ function _PROMPT_COMMAND ()
 
 function _PREEXEC ()
 {
-(
 _TIMER_CMD="${1/$(command echo -ne '\\\\a')/\\\\\a}"
 _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\b')/\\\\\b}"
 _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\c')/\\\\\c}"
@@ -183,6 +182,7 @@ _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\y')/\\\\\y}"
 _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\z')/\\\\\z}"
 _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\033')/<ESC>}"
 _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\007')/<BEL>}"
+(
 case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;
 *)

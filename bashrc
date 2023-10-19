@@ -165,7 +165,19 @@ fi
 alias chrome='o google-chrome-beta ${WAYLAND_OPTS}'
 alias code-insiders='o code-insiders'
 alias code='o code-insiders'
-alias git="_ICON 🪣 git"
+_GIT ()
+{
+_ICON 🪣
+case "$1" in
+clone|push)
+:
+;;
+*)
+_MEASURE=0
+esac
+command git "$@"
+}
+alias git="_GIT"
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
@@ -239,7 +251,7 @@ _BRANCHY_MCBRANCHFACE ()
 command git rev-parse --show-toplevel &>/dev/null || { _NO; return 1;}
 _title "🐙  Branchy McBranchFace"
 BRANCH=$({ command git branch -a|cut -c3-1024; command git reflog;}|fzf)||exit 1
-command git switch ${BRANCH%% *}
+command git checkout ${BRANCH%% *}
 )
 alias b=_BRANCHY_MCBRANCHFACE
 
@@ -521,7 +533,7 @@ done
 
 LS_COLORS='di=01';
 export LS_COLORS
-test -f ~/.bashrc.local && . ~/.bashrc.local
+. ~/.bashrc.local
 unset _SOURCED
 bind 'set bell-style none'
 BGCOLOR="#FFFAF1"
