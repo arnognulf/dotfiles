@@ -186,7 +186,17 @@ _TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\007')/<BEL>}"
 case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;
 *)
-local CHAR="▶️"
+local DATE=$(date +%m-%d)
+case ${DATE} in
+10-2*|10-3*)
+local CHAR=🎃
+;;
+12-2*)
+local CHAR=🎄
+;;
+*)
+local CHAR=▶️
+esac
 esac
 case "${_TIMER_CMD}" in
 "serial"*)
