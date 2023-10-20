@@ -418,6 +418,11 @@ local ICON="$1"
 shift
 local FIRST_ARG="${1}"
 (
+if [ "${FIRST_ARG}" = "ionice" ]
+then
+shift 3
+fi
+
 if [ "${FIRST_ARG}" = "nice" ]
 then
 shift 3
@@ -425,7 +430,7 @@ fi
 FIRST_ARG="${1}"
 
 FIRST_NON_OPTION="${2}"
-while [ "${FIRST_NON_OPTION:0:1}" = '-' ] || [ "${FIRST_NON_OPTION:0:1}" = '_' ]
+while [ "${FIRST_NON_OPTION:0:1}" = '-' ] || [ "${FIRST_NON_OPTION:0:1}" = '_' ]|| [ "${FIRST_NON_OPTION}" = '.' ]
 do
 shift
 FIRST_NON_OPTION="${2}"

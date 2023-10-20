@@ -76,4 +76,5 @@ set undofile
 set undodir=$HOME/.cache/vim/undo
 set undolevels=100000
 set undoreload=10000000
-
+" when adding ' in front of dd or dw, contents is sent to the blackhole register and not in the default register
+noremap ' "_
