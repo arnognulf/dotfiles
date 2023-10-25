@@ -273,31 +273,6 @@ _MEASURE=0
   } 2>/dev/null
 }
 
-function _PROMPT_LINE ()
-(
-local LINE=""
-if [ ${TERM} = linux ]
-then
-local CHAR="_"
-command echo -ne "\e[0m"
-else
-local CHAR=" "
-fi
-while [ ${#LINE} -lt ${COLUMNS} ]
-do
-LINE="${LINE}${CHAR}"
-done
-command echo -n "${LINE}"
-)
-function _PROMPT_PWD_BASENAME ()
-{
-local PWD_BASENAME="${PWD##*/}"
-[ -z "${PWD_BASENAME}" ] && PWD_BASENAME=/
-case ${PWD} in
-${HOME}) command echo -n "~";;
-*) command echo "${NAME-${PWD_BASENAME}}"
-esac
-}
 function title ()
 {
 TITLE_OVERRIDE="$*"
@@ -410,11 +385,71 @@ fi
 else
 TITLE="${TITLE_OVERRIDE}"
 fi
+#if [ ${TERM} = linux ]
+#then
+#local CHAR="_"
+#command echo -ne "\e[0m"
+#else
+local CHAR=" "
+#fi
+
+
+_PROMPT_TRANS_COLORS ()
+{
+unset _PROMPT_LUT
+_PROMPT_LUT[0]="91;206;250"
+_PROMPT_LUT[1]="245;169;184"
+_PROMPT_LUT[2]="255;255;255"
+_PROMPT_LUT[3]="${_PROMPT_LUT[1]}"
+_PROMPT_LUT[4]="${_PROMPT_LUT[0]}"
+}
+
+_PROMPT_PRIDE_COLORS ()
+{
+unset _PROMPT_LUT
+_PROMPT_LUT[0]="229;00;00"
+_PROMPT_LUT[1]="255;141;00"
+_PROMPT_LUT[2]="255;238;00"
+_PROMPT_LUT[3]="02;129;33"
+_PROMPT_LUT[4]="00;76;255"
+_PROMPT_LUT[5]="119;00;136"
+}
+_PROMPT_PRIDE_COLORS
+
+_PROMPT_LINE="${REVERSE}"
+
+local ESC=$(command echo -e '\033')
+local PRE="${ESC}[38;2;"
+local POST="m"
+local INDEX=0
+local REVERSE="${ESC}[4m"
+while [ ${INDEX} -lt ${COLUMNS} ]
+do
+_PROMPT_LINE="${_PROMPT_LINE}${PRE}${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}${CHAR}"
+let INDEX++
+done
+local PWD_BASENAME="${PWD##*/}"
+[ -z "${PWD_BASENAME}" ] && PWD_BASENAME=/
+case ${PWD} in
+${HOME}) _PROMPT_PWD_BASENAME="~";;
+*) _PROMPT_PWD_BASENAME="${NAME-${PWD_BASENAME}}"
+esac
+local PROMPT_TEXT=" ${_PROMPTHOSTDOT}${_PROMPT_PWD_BASENAME}${_PROMPT_GIT_PS1} "$([ $UID = 0 ] && echo "# ")
+
+_PROMPT_TEXT=""
+local INDEX=0
+while [ ${INDEX} -lt ${#PROMPT_TEXT} ]
+do
+_PROMPT_TEXT="${_PROMPT_TEXT}\[${PRE}${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}\]${PROMPT_TEXT:${INDEX}:1}"
+let INDEX++
+done
+
+PS1="\[\r\e]0;"'${TITLE}'"\a\e[0;4m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")\]${_PROMPT_LINE}'"
+\[\e(1\e[0;7m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")'"\]${_PROMPT_TEXT}\[\e[0m\e[?25h\] "
 }
 
 PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
-PS1="\[\r\e]0;"'${TITLE}'"\a\e[0;4m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")\]$(_PROMPT_LINE)'"
-\[\e(1\e[0;7m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")'"\] ${_PROMPTHOSTDOT}"'$(_PROMPT_PWD_BASENAME)'""'${_PROMPT_GIT_PS1}'" "'$([ $UID = 0 ] && echo "# ")'"\[\e[0m\e[?25h\] "
+
 
 TTY=$(tty)
 _title ()
