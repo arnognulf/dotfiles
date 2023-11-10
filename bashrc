@@ -145,7 +145,7 @@ function _EDITOR
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
 alias vim='_ICON 📝 vim -p'
 alias v='_ICON 📝  vim -p'
-alias cat="_ICON 🐱 cat"
+alias cat="_ICON 🐱  _MOAR cat"
 alias delta='delta --light'
 alias cp='_ICON 💽 cp --reflink=auto'
 alias dd='_ICON 💽 dd status=progress'
@@ -197,7 +197,17 @@ alias jdupes='_ICON ♻️   ionice --class idle nice -n 19 jdupes --dedupe -R'
 alias hog='~/.config/dotfiles/hog/hog.sh'
 alias g="egrep"
 alias gv="grep -v"
-
+function fclones
+{
+[ -z "$(type -P fclones)" ] && { _NO; return 255;}
+_ICON ♻️   fclones
+if [ -z "$1" ]
+then
+ionice -c idle nice -n 19 $(type -P fclones) group "$PWD" | ionice -c idle nice -n 19 $(type -P fclones) dedupe
+else
+ionice -c idle nice -n 19 $(type -P fclones) "$@"
+fi
+}
 function repo
 {
     if [ -z "$SSH_AUTH_SOCK" ]
@@ -354,7 +364,11 @@ function c ()
         break
         fi
         done
-        local MAXLINES=$((LINES - 5))
+        if [ -d .git ]; then
+        local MAXLINES=$((LINES - 8))
+        else
+        local MAXLINES=$((LINES - 6))
+        fi
         _LS_HIDDEN -C -w${COLUMNS} | command tee "${TMP}" | command head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
         [ ${LS_LINES} -gt ${MAXLINES} ] && command echo "..."
@@ -375,6 +389,7 @@ function c ()
         command echo "<empty>"
         fi
         fi
+        [ -d ".git" ] && { builtin echo ""; PAGER= $(type -P git) log --oneline -1 --color=never 2>/dev/null;}
         ( command rm -f "${TMP}" &>/dev/null & )
     }
     ( _DEDUPE &>/dev/null & )

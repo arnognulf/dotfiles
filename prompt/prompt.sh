@@ -483,9 +483,9 @@ done
 
 if [ -z "$FIRST_NON_OPTION" ]
 then
-_title "${ICON}  ${FIRST_ARG}"
+_title "${ICON}  ${FIRST_ARG##*/}"
 else
-_title "${ICON}  ${FIRST_NON_OPTION}"
+_title "${ICON}  ${FIRST_NON_OPTION##*/}"
 fi
 )
 "$@"
