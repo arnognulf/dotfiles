@@ -46,6 +46,7 @@ set -g status off
 EOF
 
 tmux -L ${NUM} attach-session || tmux -L ${NUM}
+sleep 30
 clear
 command echo -ne "\0337\n"
 command echo -ne "\0338................                              \n"
@@ -200,7 +201,7 @@ alias gv="grep -v"
 function fclones
 {
 [ -z "$(type -P fclones)" ] && { _NO; return 255;}
-_ICON ♻️   fclones
+title ♻️   fclones
 if [ -z "$1" ]
 then
 ionice -c idle nice -n 19 $(type -P fclones) group "$PWD" | ionice -c idle nice -n 19 $(type -P fclones) dedupe

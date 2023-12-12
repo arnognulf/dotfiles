@@ -191,7 +191,7 @@ case ${DATE} in
 10-2*|10-3*)
 local CHAR=🎃
 ;;
-12-2*)
+12*)
 local CHAR=🎄
 ;;
 *)
@@ -425,7 +425,13 @@ local INDEX=0
 local REVERSE="${ESC}[4m"
 while [ ${INDEX} -lt ${COLUMNS} ]
 do
+# 16M colors broken in mosh
+if [ -n "$SSH_CLIENT" ]
+then
+_PROMPT_LINE="${_PROMPT_LINE}${CHAR}"
+else
 _PROMPT_LINE="${_PROMPT_LINE}${PRE}${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}${CHAR}"
+fi
 let INDEX++
 done
 local PWD_BASENAME="${PWD##*/}"
@@ -440,7 +446,12 @@ _PROMPT_TEXT=""
 local INDEX=0
 while [ ${INDEX} -lt ${#PROMPT_TEXT} ]
 do
+if [ -n "$SSH_CLIENT" ]
+then
+_PROMPT_TEXT="${_PROMPT_TEXT}${PROMPT_TEXT:${INDEX}:1}"
+else
 _PROMPT_TEXT="${_PROMPT_TEXT}\[${PRE}${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}\]${PROMPT_TEXT:${INDEX}:1}"
+fi
 let INDEX++
 done
 

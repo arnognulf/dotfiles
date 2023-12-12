@@ -58,31 +58,24 @@ float deltaL;
 float deltaA;
 float deltaB;
 
-if (labA.L < labB.L)
+
+deltaL = abs(labA.L - labB.L)/ kLutSize;
+deltaA = abs(labA.a - labB.a)/ kLutSize;
+deltaB = abs(labA.b - labB.b)/ kLutSize;
+
+if (labA.L > labB.L)
 {
-    deltaL = (labA.L - labB.L)/ kLutSize;
-}
-else
-{
-    deltaL = (labB.L - labA.L)/ kLutSize;
-}
-if (labA.a < labB.a)
-{
-    deltaA = (labA.a - labB.a)/ kLutSize;
-}
-else
-{
-    deltaA = (labB.a - labA.a)/ kLutSize;
+deltaL *= -1.0f;
 }
 
-if (labA.b < labB.b)
+if (labA.a > labB.a)
 {
-    deltaB = (labA.b - labB.b)/ kLutSize;
+deltaA *= -1.0f;
 }
-else
-{
-    deltaB = (labB.b - labA.b)/ kLutSize;
 
+if (labA.b > labB.b)
+{
+deltaB *= -1.0f;
 }
 
 
