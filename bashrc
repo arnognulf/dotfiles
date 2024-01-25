@@ -542,6 +542,19 @@ function back
     command echo "${FILE}"
 )
 
+function _LOG
+{
+local LOG="$*"
+LOG="${LOG// /_}.log"
+local ARG
+local TEMP=$(mktemp)
+for ARG in "$@"
+do
+builtin echo -n "\"${ARG}\" " >>"${TEMP}"
+done
+script -q -c "bash \"${TEMP}\"" "${LOG}"
+}
+
 local FILE
 for FILE in /*
 do
