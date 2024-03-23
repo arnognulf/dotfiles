@@ -30,8 +30,8 @@ read NUM < /run/user/${UID}/tmux-session
 NUM=${NUM-0}
 NUM=$((NUM + 1))
 NUM=$((NUM % 3))
-command echo ${NUM} > /run/user/${UID}/tmux-session
-command cat >~/.tmux.conf << EOF
+\echo ${NUM} > /run/user/${UID}/tmux-session
+\cat >~/.tmux.conf << EOF
 set-option -g history-limit 10000
 set -g status off
 bind -n S-Pageup copy-mode -u
@@ -48,18 +48,18 @@ EOF
 tmux -L ${NUM} attach-session || tmux -L ${NUM}
 sleep 30
 clear
-command echo -ne "\0337\n"
-command echo -ne "\0338................                              \n"
+\echo -ne "\0337\n"
+\echo -ne "\0338................                              \n"
 sleep 0.1
-command echo -ne "\0338...............                              \n"
+\echo -ne "\0338...............                              \n"
 sleep 0.1
-command echo -ne "\0338..............                              \n"
+\echo -ne "\0338..............                              \n"
 sleep 0.1
-command echo -ne "\0338.............                              \n"
+\echo -ne "\0338.............                              \n"
 sleep 0.1
-command echo -ne "\0338............                              \n"
+\echo -ne "\0338............                              \n"
 sleep 0.1
-command echo -ne "\0338...........                              \n"
+\echo -ne "\0338...........                              \n"
 sleep 0.1
 command echo -ne "\0338..........                              \n"
 sleep 0.1
@@ -87,13 +87,10 @@ export HISTSIZE=100000                   # big big history
 export HISTFILESIZE=100000               # big big history
 _SOURCED=1
 shopt -s globstar
-function . { _SOURCED=1 command . "$@";}
+#function . { _SOURCED=1 command . "$@";}
 export BAT_THEME=GitHub
-#function xcp () {
-#    command tar -cf - "$@"|command pv|command pixz|command ssh server 'command tar -Ipixz -tf -'
-#}
 
-function source { _SOURCED=1 command . "$@";}
+#function source { _SOURCED=1 command . "$@";}
 PATH=${PATH}:~/.local/share/ParaView/bin:~/.local/share/android-studio/bin:~/.local/bin:/usr/share/code-insiders/resources/app/node_modules.asar.unpacked/vscode-ripgrep/bin/
 
 local DOTFILESDIR=$(readlink "${HOME}/.bashrc")
@@ -144,6 +141,7 @@ function _EDITOR
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
+alias make='_ICON 🛠️ nice -n 19 make -j$(nproc)'
 alias vim='_ICON 📝 vim -p'
 alias v='_ICON 📝  vim -p'
 alias cat="_ICON 🐱  _MOAR cat"
@@ -160,7 +158,7 @@ alias lowriter='o lowriter --norestore --view'
 alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
 alias tar='_ICON 📼 nice -n 19 tar'
-alias adb='_MEASURE=0 retry adb'
+alias adb='_MEASURE=0 _ICON 🤖 _RETRY _LOG adb'
 if [ -n "$WAYLAND_DISPLAY" ]
 then
 local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
@@ -173,7 +171,7 @@ _GIT ()
 _ICON 🪣
 case "$1" in
 clone|push)
-command git "$@"
+\git "$@"
 ;;
 *)
 _MEASURE=0
@@ -216,7 +214,7 @@ function repo
         eval $(ssh-agent)
         ssh-add
     fi
-    command repo "$@"
+    \repo "$@"
 }
 
 export LESS='-Q -R'
@@ -261,10 +259,10 @@ esac
 
 _BRANCHY_MCBRANCHFACE ()
 (
-command git rev-parse --show-toplevel &>/dev/null || { _NO; return 1;}
+\git rev-parse --show-toplevel &>/dev/null || { _NO; return 1;}
 _title "🐙  Branchy McBranchFace"
-BRANCH=$({ command git branch -a|cut -c3-1024; command git reflog;}|fzf)||exit 1
-command git checkout ${BRANCH%% *}
+BRANCH=$({ \git branch -a|cut -c3-1024; \git reflog;}|fzf)||exit 1
+\git checkout ${BRANCH%% *}
 )
 alias b=_BRANCHY_MCBRANCHFACE
 
@@ -276,7 +274,6 @@ alias task_bake='task "🍞 Bake"'
 alias task_bug="🐛 Bug"
 alias xargs="xargs -d'\n'"
 alias mosh="_MEASURE=0; MOSH_TITLE_NOPREFIX=1 mosh"
-alias adb="_MEASURE=0;_ICON 🐱 adb"
 alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
 #alias p=_PANKY
@@ -416,32 +413,34 @@ function untilfail
     done
 )
 
-function retry
+function _RETRY
 (
     if [ "${#@}" = 0 ] 
     then
         _NO
         return 255
     fi
-    command printf '\n\0337     '
+    \printf '\n\0337     '
     local a=0
     until "$@"
     do
         command printf '\033[?25l\0338\033[A'
         case $a in
-        0) command printf ' .  ';;
-        1) command printf ' .. ';;
-        2) command printf ' ...';;
-        3) command printf '  ..';;
-        4) command printf '   .';;
-        5) command printf '    ';;
+        0) \printf ' .  ';;
+        1) \printf ' .. ';;
+        2) \printf ' ...';;
+        3) \printf '  ..';;
+        4) \printf '   .';;
+        5) \printf '    ';;
         esac
         let a++
         [ $a -gt 5 ] && a=0
     sleep 0.25
-    printf '\033[?25h '
+    \printf '\033[?25h '
     done
 )
+
+alias retry=_RETRY
 
 function _NO
 (
@@ -550,9 +549,9 @@ local ARG
 local TEMP=$(mktemp)
 for ARG in "$@"
 do
-builtin echo -n "\"${ARG}\" " >>"${TEMP}"
+\echo -n "\"${ARG}\" " >>"${TEMP}"
 done
-script -q -c "bash \"${TEMP}\"" "${LOG}"
+script -q -e -c "bash \"${TEMP}\"" "${LOG}"
 }
 
 local FILE

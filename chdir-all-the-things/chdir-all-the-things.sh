@@ -305,7 +305,7 @@ function _CHDIR_ALL_THE_THINGS ()
         type -p unzip &>/dev/null || { command echo "missing unzip" 2>&1| command tee 1>/dev/null;}
         type -p unar &>/dev/null || { command echo "missing unar" 2>&1| command tee 1>/dev/null;}
         type -p 7z &>/dev/null || { command echo "missing 7z" 2>&1| command tee 1>/dev/null;}
-        command tar xf "${ORIG_FILE}" &>/dev/null || unzip -X -o "${ORIG_FILE}" &>/dev/null || 7z x -pDUMMY_PASSWORD -y "${ORIG_FILE}" &>/dev/null || unar -force-rename -no-directory -password DUMMY_PASSWORD "${ORIG_FILE}" &>/dev/null || { command simg2img "${ORIG_FILE}" "${ORIG_FILE}.nonsparse" &>/dev/null && command 7z x "${ORIG_FILE}.nonsparse" &>/dev/null;}  || SUCCESS=0;
+        nice -n 19 tar xf "${ORIG_FILE}" &>/dev/null || nice -n 19 unzip -X -o "${ORIG_FILE}" &>/dev/null || nice -n 19 unsquashfs "${ORIG_FILE}" &>/dev/null || nice -n 19 7z x -pDUMMY_PASSWORD -y "${ORIG_FILE}" &>/dev/null || nice -n 19 unar -force-rename -no-directory -password DUMMY_PASSWORD "${ORIG_FILE}" &>/dev/null || { nice -n 19 simg2img "${ORIG_FILE}" "${ORIG_FILE}.nonsparse" &>/dev/null && nice -n 19 7z x "${ORIG_FILE}.nonsparse" &>/dev/null;}  || SUCCESS=0;
         [ -f "${ORIG_FILE}.nonsparse" ] && command rm -f "${ORIG_FILE}.nonsparse"  &>/dev/null
         # shellcheck disable=SC2046
         kill -9 $(<"${SPINNER_PID_FILE}") &>/dev/null
@@ -322,7 +322,7 @@ function _CHDIR_ALL_THE_THINGS ()
             fi
         fi
         if [ ${SUCCESS} = 0 ] && [ ${RETRY} = 1 ]; then
-            7z x -y "${ORIG_FILE}";
+            nice -n 19 7z x -y "${ORIG_FILE}";
         fi;
         local FILE="";
         local LAST_ENTRY="";

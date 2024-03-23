@@ -29,8 +29,8 @@ XDG_MUSIC_DIR="$HOME/Music"
 XDG_PICTURES_DIR="$HOME/Pictures"
 XDG_VIDEOS_DIR="$HOME/Videos"
 
-[[ -f ~/.config/user-dirs.dirs ]] || xdg-user-dirs-update 2>/dev/null
-. ~/.config/user-dirs.dirs &>/dev/null
+[[ -f ~/.config/user-dirs.dirs ]] || xdg-user-dirs-update
+. ~/.config/user-dirs.dirs
 
 function _PROMPT_ALERT ()
 {
@@ -154,34 +154,34 @@ function _PROMPT_COMMAND ()
 
 function _PREEXEC ()
 {
-_TIMER_CMD="${1/$(command echo -ne '\\\\a')/\\\\\a}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\b')/\\\\\b}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\c')/\\\\\c}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\d')/\\\\\d}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\e')/\\\\\e}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\f')/\\\\\f}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\g')/\\\\\g}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\h')/\\\\\h}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\i')/\\\\\i}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\j')/\\\\\j}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\k')/\\\\\k}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\l')/\\\\\l}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\m')/\\\\\m}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\n')/\\\\\n}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\o')/\\\\\o}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\p')/\\\\\p}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\q')/\\\\\q}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\r')/\\\\\r}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\s')/\\\\\s}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\t')/\\\\\t}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\u')/\\\\\u}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\v')/\\\\\v}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\w')/\\\\\w}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\x')/\\\\\x}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\y')/\\\\\y}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\z')/\\\\\z}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\033')/<ESC>}"
-_TIMER_CMD="${_TIMER_CMD/$(command echo -ne '\\\\007')/<BEL>}"
+_TIMER_CMD="${1/$(\echo -ne '\\\\a')/\\\\\a}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\b')/\\\\\b}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\c')/\\\\\c}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\d')/\\\\\d}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\e')/\\\\\e}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\f')/\\\\\f}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\g')/\\\\\g}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\h')/\\\\\h}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\i')/\\\\\i}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\j')/\\\\\j}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\k')/\\\\\k}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\l')/\\\\\l}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\m')/\\\\\m}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\n')/\\\\\n}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\o')/\\\\\o}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\p')/\\\\\p}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\q')/\\\\\q}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\r')/\\\\\r}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\s')/\\\\\s}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\t')/\\\\\t}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\u')/\\\\\u}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\v')/\\\\\v}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\w')/\\\\\w}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\x')/\\\\\x}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\y')/\\\\\y}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\z')/\\\\\z}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\033')/<ESC>}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\007')/<BEL>}"
 (
 case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;
@@ -311,7 +311,7 @@ _PROMPT ()
     fi
     _PROMPT_PWD="${_PROMPT_PWD%/*}"
   done
-    _PROMPT_GIT_PS1=$(__git_ps1 2>/dev/null)
+    _PROMPT_GIT_PS1=$(__git_ps1)
   esac
 
 if [ "${TITLE_OVERRIDE}" = "" ]
@@ -414,7 +414,6 @@ _PROMPT_LUT[3]="02;129;33"
 _PROMPT_LUT[4]="00;76;255"
 _PROMPT_LUT[5]="119;00;136"
 }
-_PROMPT_PRIDE_COLORS
 
 _PROMPT_LINE="${REVERSE}"
 

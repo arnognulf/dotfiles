@@ -158,6 +158,7 @@ return
 fi
 local CMD
 for CMD in \
+/usr/local/*/xscreensaver/* \
 /usr/*/xscreensaver/* \
 /usr/bin/gnome-* \
 loffice \
