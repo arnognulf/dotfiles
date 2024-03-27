@@ -551,6 +551,7 @@ function back
 function _LOG
 {
 local LOG="$*"
+LOG="${LOG//\//_}"
 LOG="${LOG// /_}.log"
 touch "${LOG}" || { mkdir -p ~/.cache/logs/; LOG="~/.cache/${LOG}";}
 local ARG
