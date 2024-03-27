@@ -158,6 +158,7 @@ alias lowriter='o lowriter --norestore --view'
 alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
 alias tar='_ICON 📼 nice -n 19 tar'
+alias scrcpy='o _RETRY scrcpy'
 alias adb='_MEASURE=0 _ICON 🤖 _RETRY _LOG adb'
 if [ -n "$WAYLAND_DISPLAY" ]
 then
@@ -199,12 +200,11 @@ alias gv="grep -v"
 function fclones
 {
 [ -z "$(type -P fclones)" ] && { _NO; return 255;}
-title ♻️   fclones
 if [ -z "$1" ]
 then
-ionice -c idle nice -n 19 $(type -P fclones) group "$PWD" | ionice -c idle nice -n 19 $(type -P fclones) dedupe
+_ICON ♻️  ionice -c idle nice -n 19 $(type -P fclones) group "$PWD" | ionice -c idle nice -n 19 $(type -P fclones) dedupe
 else
-ionice -c idle nice -n 19 $(type -P fclones) "$@"
+_ICON ♻️  ionice -c idle nice -n 19 $(type -P fclones) "$@"
 fi
 }
 function repo
@@ -356,8 +356,8 @@ function c ()
         do
         if [ -f "${FILE}" ]
         then
-        command echo -ne "\n   \033[1;4m"
-        command grep -v ^$ "${FILE}" | command sed -e 's/# //g' | command head -n1
+        \echo -ne "\n   \033[1;4m"
+        \grep -v ^$ "${FILE}" | command sed -e 's/# //g' | command head -n1
         command echo -e "\033[0m"
         break
         fi
@@ -367,7 +367,7 @@ function c ()
         else
         local MAXLINES=$((LINES - 6))
         fi
-        _LS_HIDDEN -C -w${COLUMNS} | command tee "${TMP}" | command head -n${MAXLINES}
+        _LS_HIDDEN -C -w${COLUMNS} | \tee "${TMP}" | command head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
         [ ${LS_LINES} -gt ${MAXLINES} ] && command echo "..."
         if [ ${LS_LINES} = 0 ]
@@ -380,7 +380,7 @@ function c ()
         done
         if [ ${COUNT} -gt 2 ]
         then
-        _LS_HIDDEN -A -C -w${COLUMNS} | command tee "${TMP}" | command tee "${TMP}" | command head -n${MAXLINES}
+        _LS_HIDDEN -A -C -w${COLUMNS} | \tee "${TMP}" | \tee "${TMP}" | command head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
         [ ${LS_LINES} -gt ${MAXLINES} ] && command echo "..."
         else
@@ -420,23 +420,26 @@ function _RETRY
         _NO
         return 255
     fi
-    \printf '\n\0337     '
+    \printf '\n\0337' 1>&2 | \tee 1>&2
     local a=0
     until "$@"
     do
-        command printf '\033[?25l\0338\033[A'
+        {
+        \printf '\033[?25l\0338\033[2A'
         case $a in
-        0) \printf ' .  ';;
-        1) \printf ' .. ';;
-        2) \printf ' ...';;
-        3) \printf '  ..';;
-        4) \printf '   .';;
-        5) \printf '    ';;
+        0) \printf '.  ';;
+        1) \printf '.. ';;
+        2) \printf '...';;
+        3) \printf ' ..';;
+        4) \printf '  .';;
+        5) \printf '   ';;
         esac
+        \printf '\n'
         let a++
         [ $a -gt 5 ] && a=0
-    sleep 0.25
-    \printf '\033[?25h '
+        sleep 0.25
+        \printf '\033[?25h'
+        } 1>&2 | \tee 1>&2
     done
 )
 
@@ -444,38 +447,42 @@ alias retry=_RETRY
 
 function _NO
 (
-    command echo "COMPUTER SAYS NO" 1>&2 | command tee 1>/dev/null
+    \echo "COMPUTER SAYS NO" 1>&2 | \tee 1>/dev/null
 )
 
 # loop is an xscreensaver module 
 unalias loop
-function loop
+function _LOOP
 {
     if [ "${#@}" = 0 ] 
     then
         _NO
         return 255
     fi
-    command printf '\n\0337'
+    \printf '\n\0337' 1>&2 | \tee 1>&2
     local a=0
     while true
     do
-        command printf '\033[?25l\0338\033[A'
+        {
+        \printf '\033[?25l\0338\033[2A'
         "$@"
         case $a in
-        0) command printf ' .   ';;
-        1) command printf ' ..  ';;
-        2) command printf ' ... ';;
-        3) command printf '  .. ';;
-        4) command printf '   . ';;
-        5) command printf '     ';;
+        0) \printf ' .   ';;
+        1) \printf ' ..  ';;
+        2) \printf ' ... ';;
+        3) \printf '  .. ';;
+        4) \printf '   . ';;
+        5) \printf '     ';;
         esac
+        \printf '\n'
         let a++
         sleep 0.25
         [ $a -gt 5 ] && a=0
-        printf '\033[?25h\033[A '
+        \printf '\033[?25h'
+        } 1>&2 | \tee 1>&2
     done
 }
+alias loop=_LOOP
 
 function now
 (
@@ -545,6 +552,7 @@ function _LOG
 {
 local LOG="$*"
 LOG="${LOG// /_}.log"
+touch "${LOG}" || { mkdir -p ~/.cache/logs/; LOG="~/.cache/${LOG}";}
 local ARG
 local TEMP=$(mktemp)
 for ARG in "$@"
@@ -580,7 +588,7 @@ exec sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
 function mount_shares
 {
 local item
-for item in $(cat ~/.config/gtk-3.0/bookmarks | grep -v file:// | cut -d" " -f1)
+for item in $(\cat ~/.config/gtk-3.0/bookmarks | \grep -v file:// | \cut -d" " -f1)
 do
 gio mount "${item}" &
 done

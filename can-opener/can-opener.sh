@@ -116,12 +116,12 @@ function _CAN_OPENER ()
     then
     command "$@"
     else
-    if [ "$1" = mplayer ] && command mplayer -vo null -ao null -identify -frames 0 "$2" 2>/dev/null|command grep "Video: no video" &>/dev/null
+    if [ "$1" = mplayer ] && command mplayer -vo null -ao null -identify -frames 0 "$2" 2>/dev/null|\grep "Video: no video" &>/dev/null
     then
         command "$@"
         return $?
     else
-        ( exec "$@" &>/dev/null & )
+        ( trap "" SIGINT; "$@" &>/dev/null & )
         fi
         fi
     elif [ -n "$1" ]
@@ -550,6 +550,7 @@ mtpaint \
 rgbpaint \
 doublecmd \
 gource \
+xaos \
 slack
 do
 if type -P "${CMD}"
@@ -586,11 +587,11 @@ function _APP_PARSER ()
 local DESKTOP_FILE
 for DESKTOP_FILE in /usr/share/applications/*.desktop
 do
-if grep Terminal=false "${DESKTOP_FILE}"
+if \grep Terminal=false "${DESKTOP_FILE}"
 then
-    local NAME=$(grep "^Name=" "${DESKTOP_FILE}"|sed -e 's/Name=//g' -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|head -n1)
-    local NAME_LOCALIZED=$(grep "^Name\[${LANG%%_*}\]=" "${DESKTOP_FILE}"|cut -d= -f2|sed -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|head -n1)
-    local COMMAND=$(grep "^Exec=" "${DESKTOP_FILE}"|sed -e 's/Exec=//g' -e 's/\%f//g' -e 's/\%F//g' -e 's/\%u//g' -e 's/\%U//g'|head -n1)
+    local NAME=$(\grep "^Name=" "${DESKTOP_FILE}"|\sed -e 's/Name=//g' -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|\head -n1)
+    local NAME_LOCALIZED=$(\grep "^Name\[${LANG%%_*}\]=" "${DESKTOP_FILE}"|cut -d= -f2|sed -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|head -n1)
+    local COMMAND=$(\grep "^Exec=" "${DESKTOP_FILE}"|sed -e 's/Exec=//g' -e 's/\%f//g' -e 's/\%F//g' -e 's/\%u//g' -e 's/\%U//g'|head -n1)
     eval alias \""${NAME}"\"=\"o ${COMMAND}\"
     test -n "${NAME_LOCALIZED}" && { eval alias \""${NAME_LOCALIZED}"\"=\"o ${COMMAND}\"; }
     NAME=""
