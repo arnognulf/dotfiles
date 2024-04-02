@@ -553,14 +553,17 @@ function _LOG
 local LOG="$*"
 LOG="${LOG//\//_}"
 LOG="${LOG// /_}.log"
-touch "${LOG}" || { mkdir -p ~/.cache/logs/; LOG="~/.cache/${LOG}";}
+\mkdir -p ~/.cache/logs/; LOG="${HOME}/.cache/${LOG}"
 local ARG
-local TEMP=$(mktemp)
+local TEMP=$(\mktemp)
 for ARG in "$@"
 do
 \echo -n "\"${ARG}\" " >>"${TEMP}"
 done
 script -q -e -c "bash \"${TEMP}\"" "${LOG}"
+local RETURN=$?
+\rm -f "${TEMP}"
+return ${RETURN}
 }
 
 local FILE
