@@ -141,13 +141,17 @@ function _EDITOR
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
-alias make='_ICON 🛠️ nice -n 19 make -j$(nproc)'
+alias clang='_ICON 🛠️ _LOG ionice --class idle nice -n 19 clang'
+alias gcc='_ICON 🛠️ _LOG ionice --class idle nice -n 19 gcc'
+alias g++='_ICON 🛠️ _LOG ionice --class idle nice -n 19 g++'
+alias ninja='_ICON 🛠️ _LOG ionice --class idle nice -n 19 ninja'
+alias make='_ICON 🛠️ _LOG ionice --class idle nice -n 19 make -j$(nproc)'
 alias vim='_ICON 📝 vim -p'
 alias v='_ICON 📝  vim -p'
 alias cat="_ICON 🐱  _MOAR cat"
 alias delta='delta --light'
-alias cp='_ICON 💽 cp --reflink=auto'
-alias dd='_ICON 💽 dd status=progress'
+alias cp='_ICON 💽 ionice --class idle nice -n 19 cp --reflink=auto'
+alias dd='_ICON 💽 ionice --class idle nice -n 19 dd status=progress'
 alias dl=_UBER_FOR_MV
 alias octave=octave-cli
 alias excel='o localc --norestore --view'
@@ -157,8 +161,8 @@ alias loimpress='o loimpress --norestore --view'
 alias lowriter='o lowriter --norestore --view'
 alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
-alias tar='_ICON 📼 nice -n 19 tar'
-alias scrcpy='o _RETRY scrcpy'
+alias tar='_ICON 📼 ionice --class idle nice -n 19 tar'
+alias scrcpy='_RETRY scrcpy'
 alias adb='_MEASURE=0 _ICON 🤖 _RETRY _LOG adb'
 if [ -n "$WAYLAND_DISPLAY" ]
 then
@@ -172,11 +176,11 @@ _GIT ()
 _ICON 🪣
 case "$1" in
 clone|push)
-\git "$@"
+_LOG \git "$@"
 ;;
 *)
 _MEASURE=0
-_MOAR git "$@"
+_LOG _MOAR git "$@"
 esac
 }
 alias git="_GIT"
@@ -184,14 +188,14 @@ alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
 type -P fdfind && alias fd='_ICON 🔎 _MOAR fdfind -H -I'
-alias find='_ICON 🔎 _MOAR find'
-alias rga='_ICON 🔎 _MOAR rga --color=always'
-alias rg='_ICON 🔎 _MOAR rg'
+alias find=' _ICON 🔎 _LOG _MOAR find'
+alias rga='_ICON 🔎 _LOG _MOAR rga --color=always'
+alias rg='_ICON 🔎 _LOG _MOAR rg'
 alias top='_ICON 📈 top'
 alias ntop='_ICON 📈 ntop'
 alias htop='_ICON 📈 htop'
 alias nload='_ICON 📈 nload'
-alias rm='_ICON ♻️   rm'
+alias rm='_ICON ♻️   ionice --class idle nice -n 19 rm'
 alias trash='_ICON ♻️   gio trash'
 alias jdupes='_ICON ♻️   ionice --class idle nice -n 19 jdupes --dedupe -R'
 alias hog='~/.config/dotfiles/hog/hog.sh'
@@ -207,7 +211,7 @@ else
 _ICON ♻️  ionice -c idle nice -n 19 $(type -P fclones) "$@"
 fi
 }
-function repo
+function _REPO
 {
     if [ -z "$SSH_AUTH_SOCK" ]
     then
@@ -216,10 +220,10 @@ function repo
     fi
     \repo "$@"
 }
+alias repo="_ICON 🪣 _LOG repo"
 
 export LESS='-Q -R'
 alias gl="LESS='-Q -R --pattern ^(commit|diff)' git log -p"
-alias git="_ICON 🪣  git"
 alias ga='git add -p'
 alias gr='git reflog'
 alias gx='git checkout'
@@ -550,10 +554,10 @@ function back
 
 function _LOG
 {
-local LOG="$*"
-LOG="${LOG//\//_}"
-LOG="${LOG// /_}.log"
-\mkdir -p ~/.cache/logs/; LOG="${HOME}/.cache/${LOG}"
+local LOG="${TTY//\//_}"
+local LOGDIR="${HOME}/.cache/logs"
+\mkdir -p "${LOGDIR}"; 
+LOG="${LOGDIR}/${LOG}"
 local ARG
 local TEMP=$(\mktemp)
 for ARG in "$@"

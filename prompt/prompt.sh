@@ -477,10 +477,17 @@ if [ "${FIRST_ARG}" = "ionice" ]
 then
 shift 3
 fi
+local FIRST_ARG="${1}"
 
 if [ "${FIRST_ARG}" = "nice" ]
 then
 shift 3
+fi
+FIRST_ARG="${1}"
+
+if [ "${FIRST_ARG}" = "_LOG" ]
+then
+shift
 fi
 FIRST_ARG="${1}"
 

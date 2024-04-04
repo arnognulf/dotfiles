@@ -115,7 +115,7 @@ function _DOGE_DECODE_DOC
         return 0
         ;;
         *": iso-8859-1")
-        command iconv -f CP437 -t UTF-8 "${1}"
+        command iconv -f CP437 -t UTF-8 "${1}" | command pv --force -q -L 300
         return 0
         esac #end case3
         esac
@@ -278,7 +278,7 @@ function _DOGE_DECODE
             reset
             ;;
             *)
-            command iconv -f CP437 -t UTF-8 "${FILE}"
+            command iconv -f CP437 -t UTF-8 "${FILE}"|pv -q -L 300 --force
             esac
             ;;
             *" "application/pdf)
@@ -329,7 +329,12 @@ function _DOGEVIEW
     _MEASURE=0
     if [ "${#@}" = 0 ]
     then
-        command echo "WOW! Such view! Many formats! Much decode!" 1>&2 | tee /dev/null 1>/dev/null
+        if [ -f ~/.cache/logs/${TTY//\//_} ]
+        then
+            command less ~/.cache/logs/${TTY//\//_}
+        else
+            command echo "WOW! Such view! Many formats! Much decode!" 1>&2 | tee /dev/null 1>/dev/null
+        fi
         return 1
     elif [ "${#@}" -gt 1 ]
     then

@@ -92,6 +92,7 @@ lsusb \
 netstat \
 strings \
 nmap \
+pstree \
 ps \
 iconv \
 xargs \
