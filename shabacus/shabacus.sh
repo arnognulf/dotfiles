@@ -20,6 +20,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+_shabacus_help_conversions ()
+{
+echo "
+Mass conversions
+----------------
+x UNIT in UNIT - where UNIT are any of [kg,lb,g,oz]
+
+Velocity conversions
+--------------------
+x UNIT in UNIT - where UNIT are any of [mph,km/h,m/s]
+
+Angle conversions
+-----------------
+x UNIT in UNIT - where UNIT are any of [deg,rad]
+
+Temperature conversions
+-----------------------
+x UNIT in UNIT - where UNIT are any of [F,C,K]
+
+Distance conversions
+--------------------
+x UNIT in UNIT - where UNIT are any of [cm,m,km,ft,in,yd,miles,mil]
+" 1>&2 | tee /dev/null 1>/dev/null
+}
+
 function _shabacus ()
 {
 local INDEX=0
@@ -127,26 +152,8 @@ xor x y  - bitwise XOR of x and y
 not x    - bitwise NOT of x
 bitrev x - bitwise reverse x
 
-Mass conversions
-----------------
-x UNIT in UNIT - where UNIT are any of [kg,lb,g,oz]
-
-Velocity conversions
---------------------
-x UNIT in UNIT - where UNIT are any of [mph,km/h,m/s]
-
-Angle conversions
------------------
-x UNIT in UNIT - where UNIT are any of [deg,rad]
-
-Temperature conversions
------------------------
-x UNIT in UNIT - where UNIT are any of [F,C,K]
-
-Distance conversions
---------------------
-x UNIT in UNIT - where UNIT are any of [cm,m,km,ft,in,yd]
 " 1>&2 | tee /dev/null 1>/dev/null
+_shabacus_help_conversions;
 return 1
 esac
 
@@ -234,7 +241,7 @@ case "${4}" in
 F) EXPR="(9/5*${EXPR}+32)+273.15";;
 K) EXPR="${EXPR}";;
 C) EXPR="${EXPR}+273.15";;
-*) echo "FUNCNAME[0]}: unsupported conversion from ${2} to ${4}" >&2 | tee /dev/null >/dev/null; return 1
+*) _shabacus_help_conversions; return 1
 esac
 ;;
 
@@ -250,11 +257,11 @@ kg) EXPR="${EXPR}";;
 g) EXPR="${EXPR}/1000";;
 lb) EXPR="${EXPR}*2.205";;
 oz) EXPR="${EXPR}*35.274";;
-*) echo "FUNCNAME[0]}: unsupported conversion from ${2} to ${4}" >&2 | tee /dev/null >/dev/null; return 1
+*) _shabacus_help_conversions; return 1
 esac
 ;;
 
-cm|m|km|ft|in|yd)
+cm|m|km|ft|in|yd|miles|mil)
 case "${2}" in
 mm) EXPR="${1}/1000";; 
 cm) EXPR="${1}/100";; 
@@ -263,6 +270,8 @@ m) EXPR="${1}";;
 ft) EXPR="${1}/3.281";; 
 in) EXPR="${1}/39.37";; 
 yd) EXPR="${1}/1.094";; 
+miles) EXPR="${1}*1609.344";; 
+mil) EXPR="${1}*10000";; 
 esac
 case "${4}" in
 mm) EXPR="${EXPR}*1000";; 
@@ -272,7 +281,9 @@ m) EXPR="${EXPR}";;
 ft) EXPR="${EXPR}*3.281";; 
 in) EXPR="${EXPR}*39.37";; 
 yd) EXPR="${EXPR}*1.094";; 
-*) echo "FUNCNAME[0]}: unsupported conversion from ${2} to ${4}" >&2 | tee /dev/null >/dev/null; return 1
+miles) EXPR="${EXPR}/1609.344";; 
+mil) EXPR="${EXPR}/10000";; 
+*) _shabacus_help_conversions; return 1
 esac
 ;;
 
@@ -286,7 +297,7 @@ case "${4}" in
 km/h) EXPR="${EXPR}*3.6";;
 mph) EXPR="${EXPR}*2.237";;
 m/s) EXPR="${EXPR}";;
-*) echo "FUNCNAME[0]}: unsupported conversion from ${2} to ${4}" >&2 | tee /dev/null >/dev/null; return 1
+*) _shabacus_help_conversions; return 1
 esac
 ;;
 
@@ -298,12 +309,12 @@ esac
 case "${4}" in
 deg) EXPR="${EXPR}/pi*180";;
 rad) EXPR="${EXPR}";;
-*) echo "FUNCNAME[0]}: unsupported conversion from ${2} to ${4}" >&2 | tee /dev/null >/dev/null; return 1
+*) _shabacus_help_conversions; return 1
 esac
 ;;
 
 *)
-echo "FUNCNAME[0]}: unsupported conversion from ${2} to ${4}" >&2 | tee /dev/null >/dev/null; return 1
+_shabacus_help_conversions; return 1
 esac
 fi
 case "${EXPR}" in

@@ -329,9 +329,10 @@ function _DOGEVIEW
     _MEASURE=0
     if [ "${#@}" = 0 ]
     then
-        if [ -f ~/.cache/logs/${TTY//\//_} ]
+        local FILE=$(_LATEST $HOME/.cache/logs/*)
+        if [ -f "${FILE}" ]
         then
-            command less ~/.cache/logs/${TTY//\//_}
+            command less +G ~/.cache/logs/${FILE}
         else
             command echo "WOW! Such view! Many formats! Much decode!" 1>&2 | tee /dev/null 1>/dev/null
         fi

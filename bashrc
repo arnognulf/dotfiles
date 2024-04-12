@@ -121,7 +121,7 @@ export VIMRUNTIME=${DOTFILESDIR}/vim
 . "${DOTFILESDIR}"/dogeview/dogeview.sh
 
 
-EDITOR="vim"
+EDITOR="nvim"
 export EDITOR
 
 function _EDITOR
@@ -135,7 +135,7 @@ function _EDITOR
         *.kt|*.java) type -P studio.sh &>/dev/null && _CAN_OPENER studio.sh "${PWD}/${FILE}" ; return
         esac
     done
-    $(type -P "vim" ||type -P "vi") -p "${@}"
+    $(type -P "nvim" ||type -P "vi") -p "${@}"
 }
 
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
@@ -146,8 +146,8 @@ alias gcc='_ICON 🛠️ _LOG ionice --class idle nice -n 19 gcc'
 alias g++='_ICON 🛠️ _LOG ionice --class idle nice -n 19 g++'
 alias ninja='_ICON 🛠️ _LOG ionice --class idle nice -n 19 ninja'
 alias make='_ICON 🛠️ _LOG ionice --class idle nice -n 19 make -j$(nproc)'
-alias vim='_ICON 📝 vim -p'
-alias v='_ICON 📝  vim -p'
+alias vim='_ICON 📝 nvim -p'
+alias v='_ICON 📝  nvim -p'
 alias cat="_ICON 🐱  _MOAR cat"
 alias delta='delta --light'
 alias cp='_ICON 💽 ionice --class idle nice -n 19 cp --reflink=auto'
@@ -180,7 +180,7 @@ _LOG \git "$@"
 ;;
 *)
 _MEASURE=0
-_LOG _MOAR git "$@"
+_MOAR git "$@"
 esac
 }
 alias git="_GIT"
@@ -188,14 +188,18 @@ alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
 type -P fdfind && alias fd='_ICON 🔎 _MOAR fdfind -H -I'
-alias find=' _ICON 🔎 _LOG _MOAR find'
-alias rga='_ICON 🔎 _LOG _MOAR rga --color=always'
-alias rg='_ICON 🔎 _LOG _MOAR rg'
+alias find=' _ICON 🔎 _MOAR find'
+alias rga='_ICON 🔎 _MOAR rga --color=always'
+alias rg='_ICON 🔎 _MOAR rg'
 alias top='_ICON 📈 top'
 alias ntop='_ICON 📈 ntop'
 alias htop='_ICON 📈 htop'
 alias nload='_ICON 📈 nload'
-alias rm='_ICON ♻️   ionice --class idle nice -n 19 rm'
+rm()
+{
+    _ICON ♻️  ionice --class idle nice -n 19 rm "$@"
+}
+alias rm='_ICON ♻️  _ERMAHGERD'
 alias trash='_ICON ♻️   gio trash'
 alias jdupes='_ICON ♻️   ionice --class idle nice -n 19 jdupes --dedupe -R'
 alias hog='~/.config/dotfiles/hog/hog.sh'
@@ -220,7 +224,7 @@ function _REPO
     fi
     \repo "$@"
 }
-alias repo="_ICON 🪣 _LOG repo"
+alias repo="_ICON 🪣 repo"
 
 export LESS='-Q -R'
 alias gl="LESS='-Q -R --pattern ^(commit|diff)' git log -p"
@@ -564,7 +568,7 @@ for ARG in "$@"
 do
 \echo -n "\"${ARG}\" " >>"${TEMP}"
 done
-script -q -e -c "bash \"${TEMP}\"" "${LOG}"
+script -q -e -a -c "bash \"${TEMP}\"" "${LOG}"
 local RETURN=$?
 \rm -f "${TEMP}"
 return ${RETURN}
@@ -624,6 +628,7 @@ mkdir -p "${GOPATH}"
 ln -sf "${DOTFILESDIR}/home.hidden" ~/.hidden
 ln -sf "${DOTFILESDIR}/home.xscreensaver" ~/.xscreensaver
 mount_shares
+rm -f "~/.cache/logs/${TTY//\//_}"
 }
 background_startup_tasks &
 )
