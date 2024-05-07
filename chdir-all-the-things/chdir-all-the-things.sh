@@ -106,11 +106,11 @@ function _TMP_ALL_THE_THINGS
         done
         [ ${FOUND} = 1 ] && break
     done
-    command echo -n "${CHAR1}${CHAR2}${CHAR3}_tmp_$(date +%Y-%m-%d_%H-%M-%S)"
-    command echo -n "_"
+    \echo -n "${CHAR1}${CHAR2}${CHAR3}_tmp_$(date +%Y-%m-%d_%H-%M-%S)"
+    \echo -n "_"
     if [ -z "$*" ]
     then
-        command echo $(gzip -cd /usr/share/ispell/american.mwl.gz |command iconv -f ISO8859-15 -t UTF-8|command cut -d/ -f1|command tail -n$RANDOM|command head -n1)-$(command gzip -cd /usr/share/ispell/american.mwl.gz |iconv -f ISO8859-15 -t UTF-8|cut -d/ -f1|tail -n$RANDOM|head -n1)-$(gzip -cd /usr/share/ispell/american.mwl.gz |iconv -f ISO8859-15 -t UTF-8|cut -d/ -f1|tail -n$RANDOM|head -n1)
+        \echo $(gzip -cd /usr/share/ispell/american.mwl.gz |command iconv -f ISO8859-15 -t UTF-8|command cut -d/ -f1|command tail -n$RANDOM|command head -n1)-$(command gzip -cd /usr/share/ispell/american.mwl.gz |iconv -f ISO8859-15 -t UTF-8|cut -d/ -f1|tail -n$RANDOM|head -n1)-$(gzip -cd /usr/share/ispell/american.mwl.gz |iconv -f ISO8859-15 -t UTF-8|cut -d/ -f1|tail -n$RANDOM|head -n1)
     else
     echo "$*"
     fi
@@ -206,8 +206,12 @@ function _CHDIR_ALL_THE_THINGS ()
         return 0
     fi
     case "${ARG}" in
+    *'$')
+    	builtin cd $(\fdfind ${ARG})
+	return $?
+    ;;
     */*)
-    case $(command file --mime-type -L "${ARG}" 2>/dev/null) in
+    case $(\file --mime-type -L "${ARG}" 2>/dev/null) in
     *" "application/x-7z*|*" "application/x-xz|*" "application/x-rar|*" "application/x-tar|*" "application/x-bz2) :;;
     *" "application/x-*|*" "application/vnd.openxmlformats*)
         if [ -n "${ARG%/*}" -a "${ARG%/*}" != "${ARG}" ]
@@ -276,19 +280,19 @@ function _CHDIR_ALL_THE_THINGS ()
             (
                  function spinner ()
                  {
-                 command printf "\\e[?25l"
+                 \printf "\\e[?25l"
                  while sleep 0.05; do
-                 command printf "\\e[99D   "
+                 \printf "\\e[99D   "
                  sleep 0.04
-                 command printf "\\e[99D.  "
+                 \printf "\\e[99D.  "
                  sleep 0.04
-                 command printf "\\e[99D.. "
+                 \printf "\\e[99D.. "
                  sleep 0.04
-                 command printf "\\e[99D..."
+                 \printf "\\e[99D..."
                  sleep 0.04
-                 command printf "\\e[99D .."
+                 \printf "\\e[99D .."
                  sleep 0.04
-                 command printf "\\e[99D  ."
+                 \printf "\\e[99D  ."
                  done
                  };
                  if [[ -t 0 || -p /dev/stdin ]]
@@ -297,19 +301,19 @@ function _CHDIR_ALL_THE_THINGS ()
                  else
                     zenity --progress --no-cancel --pulsate &
                  fi
-                 command echo $! > "${SPINNER_PID_FILE}"
+                 \echo $! > "${SPINNER_PID_FILE}"
             )
         fi
         local SUCCESS=1;
         # some files can be decompressed with Info-Zip, others with 7z
-        type -p unzip &>/dev/null || { command echo "missing unzip" 2>&1| command tee 1>/dev/null;}
-        type -p unar &>/dev/null || { command echo "missing unar" 2>&1| command tee 1>/dev/null;}
-        type -p 7z &>/dev/null || { command echo "missing 7z" 2>&1| command tee 1>/dev/null;}
+        type -p unzip &>/dev/null || { \echo "missing unzip" 2>&1| command tee 1>/dev/null;}
+        type -p unar &>/dev/null || { \echo "missing unar" 2>&1| command tee 1>/dev/null;}
+        type -p 7z &>/dev/null || { \echo "missing 7z" 2>&1| command tee 1>/dev/null;}
         nice -n 19 tar xf "${ORIG_FILE}" &>/dev/null || nice -n 19 unzip -X -o "${ORIG_FILE}" &>/dev/null || nice -n 19 unsquashfs "${ORIG_FILE}" &>/dev/null || nice -n 19 7z x -pDUMMY_PASSWORD -y "${ORIG_FILE}" &>/dev/null || nice -n 19 unar -force-rename -no-directory -password DUMMY_PASSWORD "${ORIG_FILE}" &>/dev/null || { nice -n 19 simg2img "${ORIG_FILE}" "${ORIG_FILE}.nonsparse" &>/dev/null && nice -n 19 7z x "${ORIG_FILE}.nonsparse" &>/dev/null;}  || SUCCESS=0;
-        [ -f "${ORIG_FILE}.nonsparse" ] && command rm -f "${ORIG_FILE}.nonsparse"  &>/dev/null
+        [ -f "${ORIG_FILE}.nonsparse" ] && \rm -f "${ORIG_FILE}.nonsparse"  &>/dev/null
         # shellcheck disable=SC2046
         kill -9 $(<"${SPINNER_PID_FILE}") &>/dev/null
-        command echo -e "\\e[D "
+        \echo -e "\\e[D "
         $(type -P rm) "${SPINNER_PID_FILE}" &>/dev/null
         printf '\033[99D    \033[99D'
         if [ ${SUCCESS} = 0 ]
@@ -399,19 +403,19 @@ function _CHDIR_ALL_THE_THINGS ()
             (
                  function spinner ()
                  {
-                 command printf "\\e[?25l"
+                 \printf "\\e[?25l"
                  while sleep 0.05; do
-                 command printf "\\e[99D   "
+                 \printf "\\e[99D   "
                  sleep 0.04
-                 command printf "\\e[99D.  "
+                 \printf "\\e[99D.  "
                  sleep 0.04
-                 command printf "\\e[99D.. "
+                 \printf "\\e[99D.. "
                  sleep 0.04
-                 command printf "\\e[99D..."
+                 \printf "\\e[99D..."
                  sleep 0.04
-                 command printf "\\e[99D .."
+                 \printf "\\e[99D .."
                  sleep 0.04
-                 command printf "\\e[99D  ."
+                 \printf "\\e[99D  ."
                  done
                  };
                  if [[ -t 0 || -p /dev/stdin ]]
@@ -441,7 +445,7 @@ function _CHDIR_ALL_THE_THINGS ()
             local SHARE="${SHARE%%/*}"
             local DIR="${DIR#*/}"
             local DIR="${DIR#*/}"
-            test -d "/run/user/${UID}/gvfs/smb-share\:server\=${SERVER}\,share\=${SHARE}/" || command gio mount "smb://${SERVER}/${SHARE}"
+            test -d "/run/user/${UID}/gvfs/smb-share\:server\=${SERVER}\,share\=${SHARE}/" || \gio mount "smb://${SERVER}/${SHARE}"
             _CHDIR_ALL_THE_THINGS "/run/user/${UID}/gvfs/smb-share\:server\=${SERVER}\,share\=${SHARE}/${DIR}"
             return 0
         ;;
@@ -463,7 +467,7 @@ function _CHDIR_ALL_THE_THINGS ()
             local BOOKMARKDIR=~/.config/bookmark-all-the-things/
             if [ -d "${1%%/*}" ]
             then
-                command mkdir -p "${1}" || { 
+                \mkdir -p "${1}" || { 
                     _NO
                     return 1
                 }
@@ -488,7 +492,7 @@ function _CHDIR_ALL_THE_THINGS ()
                 XDIR="${XDIR// /_}"
                 # delete all non-printing characters
                 #XDIR=$(echo "${XDIR}"|tr -dc '[:print:]')
-                command mkdir "${XDIR}" &>/dev/null
+                \mkdir "${XDIR}" &>/dev/null
                 _CHDIR_ALL_THE_THINGS_CD "${XDIR}" &>/dev/null
             fi
         fi

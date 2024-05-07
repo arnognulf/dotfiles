@@ -121,9 +121,16 @@ _UBER_FOR_MV ()
         esac
     done
     done
+    case "${NEWEST_FILE}" in
+    *.crdownload|*.part)
+    	_NO
+	return 1
+    ;;
+    *)
     echo -e "${NEWEST_FILE##*/}\n\nNext: ${SECOND_NEWEST_FILE##*/}"
     mv "${NEWEST_FILE}" .
     ((COUNT++))
+    esac
     done
     return 0
 }

@@ -53,7 +53,16 @@ function _DOGE_DECODE_DOC
             command batcat --theme=GitHub -pp --color always -l json "${1}" || command cat "${1}"
             return 0
         fi
-
+	;;
+    *.json)
+        if [ "${_DOGE_STDOUT}" = 1 ]
+        then
+            command jq . -C "${1}" || command cat "${1}"
+            return 0
+	else
+            command jq . -M "${1}" || command cat "${1}"
+            return 0
+        fi
     esac
 
     case $(command file -L "${1}") in #case2
@@ -225,7 +234,7 @@ function _DOGE_DECODE
             [ "${_DOGE_STDOUT}" = 1 ] && command chafa -s ${COLUMNS}x$((LINES-3)) "${FILE}"
             command tesseract "${FILE}" - 2>/dev/null
             ;;
-            *" text/"*|*" "application/vnd.apple.keynote|*" "application/vnd.wordperfect|*" "application/rtf|*" "application/vnd.oasis.opendocument.text|*" "application/vnd.openxmlformats-officedocument.presentationml.presentation|*" "application/vnd.openxmlformats-officedocument.wordprocessingml.document|*" "application/vnd.openxmlformats-officedocument.presentationml.presentation|*" "application/doc|*" "application/ms-doc|*" "application/msword)
+            *" text/"*|*" "application/vnd.apple.keynote|*" "application/vnd.wordperfect|*" "application/rtf|*" "application/vnd.oasis.opendocument.text|*" "application/vnd.openxmlformats-officedocument.presentationml.presentation|*" "application/vnd.openxmlformats-officedocument.wordprocessingml.document|*" "application/vnd.openxmlformats-officedocument.presentationml.presentation|*" "application/doc|*" "application/ms-doc|*" "application/msword|*" "application/json)
             _DOGE_DECODE_DOC "${FILE}"
             ;;
             *" "application/x-sharedlib|*" "application/x-pie-executable|*" "application/x-executable|*" application/x-dosexec")

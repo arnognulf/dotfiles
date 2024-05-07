@@ -121,7 +121,16 @@ export VIMRUNTIME=${DOTFILESDIR}/vim
 . "${DOTFILESDIR}"/dogeview/dogeview.sh
 
 
+if type -P vim
+then
 EDITOR="nvim"
+alias vim='_ICON 📝 nvim -p'
+alias v='_ICON 📝  nvim -p'
+else
+EDITOR="vim"
+alias vim='_ICON 📝 vim -p'
+alias v='_ICON 📝  vim -p'
+fi
 export EDITOR
 
 function _EDITOR
@@ -135,10 +144,10 @@ function _EDITOR
         *.kt|*.java) type -P studio.sh &>/dev/null && _CAN_OPENER studio.sh "${PWD}/${FILE}" ; return
         esac
     done
-    $(type -P "nvim" ||type -P "vi") -p "${@}"
+    $(type -P "nvim" &>/dev/null||type -P "vim" &>/dev/null ||type -P "vi" &>/dev/null ) -p "${@}"
 }
 
-[ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ~/.local/share/android-studio/bin/studio.sh'
+[ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ionice --class idle nice -n 19 ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
 alias clang='_ICON 🛠️ _LOG ionice --class idle nice -n 19 clang'
@@ -146,10 +155,8 @@ alias gcc='_ICON 🛠️ _LOG ionice --class idle nice -n 19 gcc'
 alias g++='_ICON 🛠️ _LOG ionice --class idle nice -n 19 g++'
 alias ninja='_ICON 🛠️ _LOG ionice --class idle nice -n 19 ninja'
 alias make='_ICON 🛠️ _LOG ionice --class idle nice -n 19 make -j$(nproc)'
-alias vim='_ICON 📝 nvim -p'
-alias v='_ICON 📝  nvim -p'
-alias cat="_ICON 🐱  _MOAR cat"
-alias delta='delta --light'
+alias cat="_ICON 🐱  _MOAR ionice --class idle nice -n 19 cat"
+alias delta='ionice --class idle nice -n 19 delta --light'
 alias cp='_ICON 💽 ionice --class idle nice -n 19 cp --reflink=auto'
 alias dd='_ICON 💽 ionice --class idle nice -n 19 dd status=progress'
 alias dl=_UBER_FOR_MV
@@ -222,9 +229,9 @@ function _REPO
         eval $(ssh-agent)
         ssh-add
     fi
-    \repo "$@"
+	\repo "$@"
 }
-alias repo="_ICON 🪣 repo"
+alias repo="_ICON 🪣 ionice --class idle nice -n 19 repo"
 
 export LESS='-Q -R'
 alias gl="LESS='-Q -R --pattern ^(commit|diff)' git log -p"
@@ -269,7 +276,7 @@ _BRANCHY_MCBRANCHFACE ()
 (
 \git rev-parse --show-toplevel &>/dev/null || { _NO; return 1;}
 _title "🐙  Branchy McBranchFace"
-BRANCH=$({ \git branch -a|cut -c3-1024; \git reflog;}|fzf)||exit 1
+BRANCH=$({ \git branch -a|cut -c3-1024; \git reflog;}|fzf --no-mouse)||exit 1
 \git checkout ${BRANCH%% *}
 )
 alias b=_BRANCHY_MCBRANCHFACE
