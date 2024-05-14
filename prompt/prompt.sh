@@ -43,12 +43,12 @@ function _FASD_PROMPT_FUNC ()
 }
 if [ -n "${SSH_CLIENT}" ]
 then
-case $((16#$(command echo -n "${HOSTNAME}"|command sum|command cut -c1))) in
-0|5) _PROMPTHOSTDOT="\[\033[102m\]• \[\033[0;7m\]";;
-1|6) _PROMPTHOSTDOT="\[\033[103m\]• \[\033[0;7m\]";;
-2|7) _PROMPTHOSTDOT="\[\033[104m\]• \[\033[0;7m\]";;
-3|8) _PROMPTHOSTDOT="\[\033[105m\]• \[\033[0;7m\]";;
-4|9) _PROMPTHOSTDOT="\[\033[106m\]• \[\033[0;7m\]";;
+case $((16#$(\echo -n "${HOSTNAME}"|\sum|\cut -c1))) in
+0|5) _PROMPTHOSTDOT="\[\e[102m\]• \[\e[0;7m\]";;
+1|6) _PROMPTHOSTDOT="\[\e[103m\]• \[\e[0;7m\]";;
+2|7) _PROMPTHOSTDOT="\[\e[104m\]• \[\e[0;7m\]";;
+3|8) _PROMPTHOSTDOT="\[\e[105m\]• \[\e[0;7m\]";;
+4|9) _PROMPTHOSTDOT="\[\e[106m\]• \[\e[0;7m\]";;
 esac
 fi
 function _PROMPT_MAGIC_SHELLBALL ()
@@ -90,7 +90,7 @@ function _PROMPT_MAGIC_SHELLBALL ()
   SPACES="${SPACES} "
   let i++
   done
-  command echo -e "\033[?25l\033[D \033[3A\033[994D\033[99D\033[K${SPACES}${ANSWER}                       \033[D "
+  \echo -e "\e[?25l\e[D \e[3A\e[994D\e[99D\e[K${SPACES}${ANSWER}                       \e[D "
 }
 
 function _PROMPT_COMMAND ()
@@ -99,7 +99,7 @@ function _PROMPT_COMMAND ()
   ( [ -n "$TMUX" ] && { tmux detach-client -a;for CLIENT in 1 2 3; do tmux -L "$CLIENT" resize-window -A; done; } &>/dev/null & )
   local _SOURCED=1
   # add trailing newline for last command if missing
-  command printf "%$((COLUMNS-1))s\\r"
+  \printf "%$((COLUMNS-1))s\\r"
  # https://unix.stackexchange.com/questions/226909/tell-if-last-command-was-empty-in-prompt-command
   HISTCONTROL=
   _PROMPT_HISTCMD_PREV=$(fc -l -1); _PROMPT_HISTCMD_PREV=${_PROMPT_HISTCMD_PREV%%$'[\t ]'*}
@@ -116,14 +116,14 @@ function _PROMPT_COMMAND ()
         0)
         _LS_HIDDEN -w${COLUMNS}
         CR_LEVEL=3;
-        if command git status &>/dev/null
+        if \git status &>/dev/null
         then
         CR_LEVEL=1
         else
-        command echo -ne "\033[D \n\n" 
+        \echo -ne "\e[D \n\n" 
         fi
         ;;
-            2) CR_LEVEL=3;command git -c color.status=always status |head -n$((LINES - 2)) | command head -n$((LINES - 4)); command echo -e "        ...\n\n";;
+            2) CR_LEVEL=3;\git -c color.status=always status |head -n$((LINES - 2)) | head -n$((LINES - 4)); \echo -e "        ...\n\n";;
             *) _PROMPT_MAGIC_SHELLBALL
         esac
         CR_LEVEL=$((CR_LEVEL + 1))
@@ -145,11 +145,11 @@ function _PROMPT_COMMAND ()
   fi
   _PROMPT_CTRLC=""
   HISTCMD_before_last=$_PROMPT_HISTCMD_PREV
-  trap "_PROMPT_CTRLC=1;command echo -n" INT
-  trap "_PROMPT_CTRLC=1;command echo -n" ERR
+  trap "_PROMPT_CTRLC=1;\echo -n" INT
+  trap "_PROMPT_CTRLC=1;\echo -n" ERR
   stty echo 2>/dev/null
   history -a
-  [ -n "${GNOME_TERMINAL_SCREEN}" ] && command echo -ne "\033]11;${BGCOLOR}\007\033]10;${FGCOLOR}\007\033]12;#312D2A\007"
+  [ -n "${GNOME_TERMINAL_SCREEN}" ] && \echo -ne "\e]11;${BGCOLOR}\007\e]10;${FGCOLOR}\007\e]12;#312D2A\007"
 }
 
 function _PREEXEC ()
@@ -180,7 +180,7 @@ _TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\w')/\\\\\w}"
 _TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\x')/\\\\\x}"
 _TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\y')/\\\\\y}"
 _TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\z')/\\\\\z}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\033')/<ESC>}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\e')/<ESC>}"
 _TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\007')/<BEL>}"
 (
 case "${_TIMER_CMD}" in
@@ -246,11 +246,6 @@ local CURRENT_SECONDS
 local DURATION
 CURRENT_SECONDS=${SECONDS}
 local DIFF=$((CURRENT_SECONDS - _START_SECONDS))
-case "${_TIMER_CMD%% *}" in
-top|htop|vim|nano|sudo|ssh|man|info)
-:
-;;
-*)
 if [ ${_MEASURE-0} -gt 0 -a ${DIFF} -gt 29 ]
 then
 SECONDS_M=$((DIFF % 3600))
@@ -258,17 +253,16 @@ SECONDS_M=$((DIFF % 3600))
 DURATION_H=$((DIFF / 3600))
 DURATION_M=$((SECONDS_M / 60))
 DURATION_S=$((SECONDS_M % 60))
-command echo -ne "\n\007Command took "
+\echo -ne "\n\007Command took "
 DURATION=""
 [ ${DURATION_H} -gt 0 ] && DURATION="${DURATION}${DURATION_H}h "
 [ ${DURATION_M} -gt 0 ] && DURATION="${DURATION}${DURATION_M}m "
 DURATION="${DURATION}${DURATION_S}s, finished at "$(date +%H:%M).""
-command echo "${DURATION}"
+\echo "${DURATION}"
 ( exec notify-send -a "Completed ${_TIMER_CMD}" -i terminal "${_TIMER_CMD}" "Command took ${DURATION}" & )
 _PROMPT_ALERT
 _PROMPT_LONGRUNNING=1
 fi
-esac
 _MEASURE=0
   } 2>/dev/null
 }
@@ -417,7 +411,7 @@ _PROMPT_LUT[5]="119;00;136"
 
 _PROMPT_LINE="${REVERSE}"
 
-local ESC=$(command echo -e '\033')
+local ESC=$(command echo -e '\e')
 local PRE="${ESC}[38;2;"
 local POST="m"
 local INDEX=0
@@ -439,7 +433,7 @@ case ${PWD} in
 ${HOME}) _PROMPT_PWD_BASENAME="~";;
 *) _PROMPT_PWD_BASENAME="${NAME-${PWD_BASENAME}}"
 esac
-local PROMPT_TEXT=" ${_PROMPTHOSTDOT}${_PROMPT_PWD_BASENAME}${_PROMPT_GIT_PS1} "$([ $UID = 0 ] && echo "# ")
+local PROMPT_TEXT=" ${_PROMPTHOSTDOT}${_PROMPT_PWD_BASENAME}${_PROMPT_GIT_PS1} "$([ $UID = 0 ] && \echo "# ")
 
 _PROMPT_TEXT=""
 local INDEX=0
@@ -455,7 +449,7 @@ let INDEX++
 done
 
 PS1="\[\r\e]0;"'${TITLE}'"\a\e[0;4m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")\]${_PROMPT_LINE}'"
-\[\e(1\e[0;7m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")'"\]${_PROMPT_TEXT}\[\e[0m\e[?25h\] "
+\[\e(1\e[0;7m"'$([ ${UID} = 0 ] && \echo -e "\e[31m")'"\]${_PROMPT_TEXT}\[\e[0m\e[?25h\] "
 }
 
 PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
@@ -464,7 +458,7 @@ PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
 TTY=$(tty)
 _title ()
 {
-[ -n "$*" ] && [ -t 0 ] && command echo -ne "\033]0;$* in ${PWD##*/} at $(date +%H:%M)\007" &>${TTY}
+[ -n "$*" ] && [ -t 0 ] && command echo -ne "\e]0;$* in ${PWD##*/} at $(date +%H:%M)\007" &>${TTY}
 }
 
 _ICON ()

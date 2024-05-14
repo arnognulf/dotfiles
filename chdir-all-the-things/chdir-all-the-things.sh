@@ -276,34 +276,7 @@ function _CHDIR_ALL_THE_THINGS ()
         _CHDIR_ALL_THE_THINGS_CD "${DEST_DIR}"
         local TTY
         local SPINNER_PID_FILE
-        if TTY=$(tty) && SPINNER_PID_FILE=$(mktemp); then
-            (
-                 function spinner ()
-                 {
-                 \printf "\\e[?25l"
-                 while sleep 0.05; do
-                 \printf "\\e[99D   "
-                 sleep 0.04
-                 \printf "\\e[99D.  "
-                 sleep 0.04
-                 \printf "\\e[99D.. "
-                 sleep 0.04
-                 \printf "\\e[99D..."
-                 sleep 0.04
-                 \printf "\\e[99D .."
-                 sleep 0.04
-                 \printf "\\e[99D  ."
-                 done
-                 };
-                 if [[ -t 0 || -p /dev/stdin ]]
-                 then
-                    spinner "${TTY}" &
-                 else
-                    zenity --progress --no-cancel --pulsate &
-                 fi
-                 \echo $! > "${SPINNER_PID_FILE}"
-            )
-        fi
+        _SPINNER_START
         local SUCCESS=1;
         # some files can be decompressed with Info-Zip, others with 7z
         type -p unzip &>/dev/null || { \echo "missing unzip" 2>&1| \tee >/dev/null;}
@@ -311,11 +284,7 @@ function _CHDIR_ALL_THE_THINGS ()
         type -p 7z &>/dev/null || { \echo "missing 7z" 2>&1| \tee >/dev/null;}
         nice -n 19 tar xf "${ORIG_FILE}" &>/dev/null || nice -n 19 unzip -X -o "${ORIG_FILE}" &>/dev/null || nice -n 19 unsquashfs "${ORIG_FILE}" &>/dev/null || nice -n 19 7z x -pDUMMY_PASSWORD -y "${ORIG_FILE}" &>/dev/null || nice -n 19 unar -force-rename -no-directory -password DUMMY_PASSWORD "${ORIG_FILE}" &>/dev/null || { nice -n 19 simg2img "${ORIG_FILE}" "${ORIG_FILE}.nonsparse" &>/dev/null && nice -n 19 7z x "${ORIG_FILE}.nonsparse" &>/dev/null;}  || SUCCESS=0;
         [ -f "${ORIG_FILE}.nonsparse" ] && \rm -f "${ORIG_FILE}.nonsparse"  &>/dev/null
-        # shellcheck disable=SC2046
-        kill -9 $(<"${SPINNER_PID_FILE}") &>/dev/null
-        \echo -e "\\e[D "
-        $(type -P rm) "${SPINNER_PID_FILE}" &>/dev/null
-        printf '\033[99D    \033[99D'
+	_SPINNER_STOP
         if [ ${SUCCESS} = 0 ]
         then
             if pdftk "${ORIG_FILE}" unpack_files &>/dev/null
@@ -399,38 +368,9 @@ function _CHDIR_ALL_THE_THINGS ()
     elif [ -n "${ARG}" ]; then
         case "${ARG}" in
         "git clone "*|git://*|https://*|http://*|ssh://*)
-        if TTY=$(tty) && SPINNER_PID_FILE=$(mktemp); then
-            (
-                 function spinner ()
-                 {
-                 \printf "\\e[?25l"
-                 while sleep 0.05; do
-                 \printf "\\e[99D   "
-                 sleep 0.04
-                 \printf "\\e[99D.  "
-                 sleep 0.04
-                 \printf "\\e[99D.. "
-                 sleep 0.04
-                 \printf "\\e[99D..."
-                 sleep 0.04
-                 \printf "\\e[99D .."
-                 sleep 0.04
-                 \printf "\\e[99D  ."
-                 done
-                 };
-                 if [[ -t 0 || -p /dev/stdin ]]
-                 then
-                    spinner "${TTY}" &
-                 else
-                    zenity --progress --no-cancel --pulsate &
-                 fi
-                 echo $! > "${SPINNER_PID_FILE}"
-            )
-        fi
+        _SPINNER_START
         git clone --depth=1 --recursive "${ARG/git clone }" &>/dev/null
-        kill -9 $(<"${SPINNER_PID_FILE}") &>/dev/null
-        $(type -P rm) "${SPINNER_PID_FILE}" &>/dev/null
-        printf '\033[99D    \033[99D'
+	_SPINNER_STOP
         local XARG="${ARG##*/}"
         _CHDIR_ALL_THE_THINGS_CD "${XARG%.git}" &>/dev/null
         ;;

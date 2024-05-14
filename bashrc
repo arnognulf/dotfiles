@@ -62,25 +62,25 @@ sleep 0.1
 sleep 0.1
 \echo -ne "\e8...........                              \n"
 sleep 0.1
-command echo -ne "\e8..........                              \n"
+\echo -ne "\e8..........                              \n"
 sleep 0.1
-command echo -ne "\e8.........                              \n"
+\echo -ne "\e8.........                              \n"
 sleep 0.1
-command echo -ne "\e8........                              \n"
+\echo -ne "\e8........                              \n"
 sleep 0.1
-command echo -ne "\e8.......                              \n"
+\echo -ne "\e8.......                              \n"
 sleep 0.1
-command echo -ne "\e8......                              \n"
+\echo -ne "\e8......                              \n"
 sleep 0.1
-command echo -ne "\e8.....                              \n"
+\echo -ne "\e8.....                              \n"
 sleep 0.1
-command echo -ne "\e8....                              \n"
+\echo -ne "\e8....                              \n"
 sleep 0.1
-command echo -ne "\e8...                              \n"
+\echo -ne "\e8...                              \n"
 sleep 0.1
-command echo -ne "\e8..                              \n"
+\echo -ne "\e8..                              \n"
 sleep 0.1
-command echo -ne "\e8.                              \n"
+\echo -ne "\e8.                              \n"
 sleep 0.1
 exit 1
 fi
@@ -122,18 +122,24 @@ export VIMRUNTIME=${DOTFILESDIR}/vim
 . "${DOTFILESDIR}"/dogeview/dogeview.sh
 
 
-if type -P vim
+if type -P nvim
 then
 EDITOR="nvim"
-alias vim='_ICON 📝 nvim -p'
-alias v='_ICON 📝  nvim -p'
+alias vim='_NO_MEASURE _ICON 📝 nvim -p'
+alias v='_NO_MEASURE _ICON 📝  nvim -p'
+alias nano='_NO_MEASURE _ICON 📝 nvim -p'
 else
 EDITOR="vim"
-alias vim='_ICON 📝 vim -p'
-alias v='_ICON 📝  vim -p'
+alias vim='_NO_MEASURE _ICON 📝 vim -p'
+alias v='_NO_MEASURE _ICON 📝  vim -p'
+alias nano='_NO_MEASURE _ICON 📝 vim -p'
 fi
 export EDITOR
-
+_NO_MEASURE ()
+{
+    _MEASURE=0
+    "$@"
+}
 function _EDITOR
 {
     _MEASURE=0
@@ -156,7 +162,7 @@ alias gcc='_ICON 🛠️ _LOG ionice --class idle nice -n 19 gcc'
 alias g++='_ICON 🛠️ _LOG ionice --class idle nice -n 19 g++'
 alias ninja='_ICON 🛠️ _LOG ionice --class idle nice -n 19 ninja'
 alias make='_ICON 🛠️ _LOG ionice --class idle nice -n 19 make -j$(nproc)'
-alias cat="_ICON 🐱  _MOAR ionice --class idle nice -n 19 cat"
+alias cat="_NO_MEASURE  _ICON 🐱 _MOAR ionice --class idle nice -n 19 cat"
 alias delta='ionice --class idle nice -n 19 delta --light'
 alias cp='_ICON 💽 ionice --class idle nice -n 19 cp --reflink=auto'
 alias dd='_ICON 💽 ionice --class idle nice -n 19 dd status=progress'
@@ -171,7 +177,7 @@ alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
 alias tar='_ICON 📼 ionice --class idle nice -n 19 tar'
 alias scrcpy='_RETRY scrcpy'
-alias adb='_MEASURE=0 _ICON 🤖 _RETRY _LOG adb'
+alias adb='_NO_MEASURE  _ICON 🤖 _RETRY _LOG adb'
 if [ -n "$WAYLAND_DISPLAY" ]
 then
 local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
@@ -195,22 +201,22 @@ alias git="_GIT"
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
-type -P fdfind && alias fdfind='_ICON 🔎 _MOAR fdfind -H -I'
-type -P fdfind && alias fd='_ICON 🔎 _MOAR fdfind -H -I'
-alias find=' _ICON 🔎 _MOAR find'
-alias rga='_ICON 🔎 _MOAR rga --color=always'
-alias rg='_ICON 🔎 _MOAR rg'
-alias top='_ICON 📈 top'
-alias ntop='_ICON 📈 ntop'
-alias htop='_ICON 📈 htop'
-alias nload='_ICON 📈 nload'
+type -P fdfind && alias fdfind='_NO_MEASURE _ICON 🔎 _MOAR fdfind -H -I'
+type -P fdfind && alias fd='_NO_MEASURE _ICON 🔎 _MOAR fdfind -H -I'
+alias find='_NO_MEASURE _ICON 🔎 _MOAR find'
+alias rga='_NO_MEASURE _ICON 🔎 _MOAR rga --color=always'
+alias rg='_NO_MEASURE _ICON 🔎 _MOAR rg'
+alias top='_NO_MEASURE _ICON 📈 top'
+alias ntop='_NO_MEASURE _ICON 📈 ntop'
+alias htop='_NO_MEASURE _ICON 📈 htop'
+alias nload='_NO_MEASURE _ICON 📈 nload'
 rm()
 {
     _ICON ♻️  ionice --class idle nice -n 19 rm "$@"
 }
 alias rm='_ICON ♻️  _ERMAHGERD'
-alias trash='_ICON ♻️   gio trash'
-alias jdupes='_ICON ♻️   ionice --class idle nice -n 19 jdupes --dedupe -R'
+alias trash='_ICON ♻️  gio trash'
+alias jdupes='_ICON ♻️  ionice --class idle nice -n 19 jdupes --dedupe -R'
 alias hog='~/.config/dotfiles/hog/hog.sh'
 alias g="egrep"
 alias gv="grep -v"
@@ -249,7 +255,7 @@ alias r='repo status'
 alias -- -='c -'
 alias ..='c ..'
 alias rud='repo upload -d'
-alias man='_MEASURE=0;MANWIDTH=$((COLUMNS > 80 ? 80 : COLUMNS)) _ICON 📓 man'
+alias man='_NO_MEASURE MANWIDTH=$((COLUMNS > 80 ? 80 : COLUMNS)) _ICON 📓 man'
 alias v=_EDITOR
 alias keepass='o keepassxc'
 alias kp=keepassxc
@@ -290,11 +296,11 @@ alias task_flash='task "⚡ FLASH ⚡"'
 alias task_bake='task "🍞 Bake"'
 alias task_bug="🐛 Bug"
 alias xargs="xargs -d'\n'"
-alias mosh="_MEASURE=0; MOSH_TITLE_NOPREFIX=1 mosh"
+alias mosh="_NO_MEASURE  MOSH_TITLE_NOPREFIX=1 mosh"
 alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
 #alias p=_PANKY
-alias grep="_MOAR grep -a"
+alias grep="_NO_MEASURE  _MOAR grep -a"
 alias willys="o google-chrome-beta  ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/willys --no-default-browser-check --no-first-run --app=https://willys.se"
 alias hbo="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/hbo --no-default-browser-check --no-first-run --app=https://www.hbomax.com"
 alias dn="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/dn --no-default-browser-check --no-first-run --app=https://dn.se"
@@ -307,10 +313,10 @@ alias youtube="_CHROME-POLISHER-tmp youtube https://youtube.com"
 alias lobste.rs="_CHROME-POLISHER-tmp lobste.rs https://lobste.rs"
 alias svtplay="_CHROME-POLISHER-tmp lobste.rs https://svtplay.se"
 alias which="command -v"
-alias ssh="_MEASURE=0;ssh"
+alias ssh="_NO_MEASURE ssh"
 unalias google-chrome
 unalias chrome
-pidof chrome || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome"
+pidof chrome || \rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome"
 
 function _CHROME-POLISHER
 {
@@ -319,7 +325,7 @@ then
 local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
 fi
     local DIR=/run/user/${UID}/_CHROME-POLISHER-${USER}
-    pidof chrome &>/dev/null || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
+    pidof chrome &>/dev/null || \rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
     \mkdir -p "${DIR}" &>/dev/null
     _CAN_OPENER google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
 }
@@ -330,8 +336,8 @@ then
 local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
 fi
     local DIR="/run/user/${UID}/_CHROME-POLISHER-${USER}/${1}"
-    pidof chrome &>/dev/null || command rm -rf "${DIR}"
-    command mkdir -p ${DIR}
+    pidof chrome &>/dev/null || \rm -rf "${DIR}"
+    \mkdir -p ${DIR}
     shift
     _CAN_OPENER google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}" --app="${*}"
 }
@@ -354,14 +360,14 @@ SERVER=${ARG%%:*}
 SERVER=${SERVER#*@}
 esac
 done
-test -z "${SERVER}" && { echo "missing server argument"; return; }
+test -z "${SERVER}" && { \echo "missing server argument"; return; }
 /usr/bin/scp "${@}"
 }
 alias scp=_SCP
 
 function _DEDUPE ()
 {
-    command yes 1 | command jdupes --delete --omit-first "${XDG_DOWNLOAD_DIR-/dev/null}" ~/Downloads
+    \yes 1 | \jdupes --delete --omit-first "${XDG_DOWNLOAD_DIR-/dev/null}" ~/Downloads
 }
 
 function c ()
@@ -374,8 +380,8 @@ function c ()
         if [ -f "${FILE}" ]
         then
         \echo -ne "\n   \e[1;4m"
-        \grep -v ^$ "${FILE}" | command sed -e 's/# //g' | command head -n1
-        command echo -e "\e[0m"
+        \grep -v ^$ "${FILE}" | \sed -e 's/# //g' | \head -n1
+        \echo -e "\e[0m"
         break
         fi
         done
@@ -384,9 +390,9 @@ function c ()
         else
         local MAXLINES=$((LINES - 6))
         fi
-        _LS_HIDDEN -C -w${COLUMNS} | \tee "${TMP}" | command head -n${MAXLINES}
+        _LS_HIDDEN -C -w${COLUMNS} | \tee "${TMP}" | head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
-        [ ${LS_LINES} -gt ${MAXLINES} ] && command echo "..."
+        [ ${LS_LINES} -gt ${MAXLINES} ] && \echo "..."
         if [ ${LS_LINES} = 0 ]
         then
         local COUNT=0
@@ -397,15 +403,15 @@ function c ()
         done
         if [ ${COUNT} -gt 2 ]
         then
-        _LS_HIDDEN -A -C -w${COLUMNS} | \tee "${TMP}" | \tee "${TMP}" | command head -n${MAXLINES}
+        _LS_HIDDEN -A -C -w${COLUMNS} | \tee "${TMP}" | \tee "${TMP}" | \head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
-        [ ${LS_LINES} -gt ${MAXLINES} ] && command echo "..."
+        [ ${LS_LINES} -gt ${MAXLINES} ] && \echo "..."
         else
-        command echo "<empty>"
+        \echo "<empty>"
         fi
         fi
         [ -d ".git" ] && { builtin echo ""; PAGER= $(type -P git) log --oneline -1 --color=never 2>/dev/null;}
-        ( command rm -f "${TMP}" &>/dev/null & )
+        ( \rm -f "${TMP}" &>/dev/null & )
     }
     ( _DEDUPE &>/dev/null & )
 }
@@ -503,7 +509,7 @@ alias loop=_LOOP
 
 function now
 {
-    command date +%Y-%m-%d_%H-%M-%S
+    \date +%Y-%m-%d_%H-%M-%S
 }
 
 function jetzt
@@ -549,7 +555,7 @@ function front
     local FILE
     for FILE in "$@"
     do
-        command echo "${FILE}"
+        \echo "${FILE}"
         break
     done
 }
@@ -564,7 +570,7 @@ function back
     do
         :
     done
-    command echo "${FILE}"
+    \echo "${FILE}"
 }
 
 function _LOG
@@ -591,6 +597,40 @@ do
 eval "function $FILE { echo \"C-comment paste detected. Press CTRL+C to continue\";cat;}"
 break;
 done
+
+_SPINNER_START ()
+{
+_SPINNER_PID_FILE=$(mktemp)                         
+(
+SPINNER ()
+{
+\printf "\\e[?25l"
+while sleep 0.04; do
+\printf "\\e[99D   "
+sleep 0.04
+\printf "\\e[99D  ."
+sleep 0.04
+\printf "\\e[99D .."
+sleep 0.04
+\printf "\\e[99D..."
+sleep 0.04
+\printf "\\e[99D.. "
+sleep 0.04
+\printf "\\e[99D.  "
+done
+}
+SPINNER &
+\echo $! > "${_SPINNER_PID_FILE}"                               
+)
+}
+_SPINNER_STOP ()
+{
+{
+kill -9 $(<${_SPINNER_PID_FILE})
+( \rm -f ${_SPINNER_PID_FILE} & )
+unset _SPINNER_PID_FILE
+} &>/dev/null
+}
 
 LS_COLORS='di=01';
 export LS_COLORS
@@ -622,7 +662,7 @@ function kill_tracker
     systemctl --user mask tracker-store.service tracker-miner-fs.service tracker-miner-rss.service tracker-extract.service tracker-miner-apps.service tracker-writeback.service
     tracker3 daemon -k
     tracker daemon -k
-    command rm -rf ~/.cache/tracker* ~/.local/share/tracker*
+    \rm -rf ~/.cache/tracker* ~/.local/share/tracker*
 }
 # try to run one thread for non-blocking background tasks such that CPU and IO is not
 # stressed at shell startup, this way we will get to prompt faster

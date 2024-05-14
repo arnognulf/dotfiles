@@ -27,7 +27,7 @@ function _ERMAHGERD
 {
     if [ -n "${_SOURCED}" ]
     then
-        command rm "$@"
+        \rm "$@"
         return $?
     fi
 
@@ -98,11 +98,11 @@ function _DOH
 
     test -f "${NEWEST_FILE}" || test -d "${NEWEST_FILE}" || { echo "no files to restore"; return 1; }
 
-    DEST=$(command cat ${DIR}/../info/${NEWEST_FILE##*/}.trashinfo|command grep ^Path=)
+    DEST=$(\cat ${DIR}/../info/${NEWEST_FILE##*/}.trashinfo|\grep ^Path=)
     DEST=${DEST##*/}
     echo -e "Restored ${DEST}"
     test -n "${SECOND_NEWEST_FILE}" && echo -e "\nNext: ${SECOND_NEWEST_FILE##*/}"
-    command mv "${DIR}/${NEWEST_FILE##*/}" "${DEST}"
+    \mv "${DIR}/${NEWEST_FILE##*/}" "${DEST}"
 }
 
 alias doh=_DOH

@@ -9,4 +9,5 @@ features:
 * commands that do not write newline (eg. echo -n foo) gets appended a newline
 * title which display emoji icon and directory basename or running command
 * long running command gets timing statistics and a notification is sent with notify-send + sound is played
+  these can be disabled by setting '_MEASURE=0;' before running the command, note the semi-colon
 * pressing RETURN multiple times gives ls, git status and finally magic shellball answers
