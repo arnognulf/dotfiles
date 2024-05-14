@@ -25,7 +25,7 @@
 set -meou pipefail
 stderr ()
 {
-    echo "$*" 1>&2| tee 1>/dev/null
+    echo "$*" >&2| tee >/dev/null
 }
 
 stdout ()

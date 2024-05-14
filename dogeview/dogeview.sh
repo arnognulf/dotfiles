@@ -222,7 +222,7 @@ function _DOGE_DECODE
             *" "video/*)
                 local TEMP_GIF=$(mktemp /tmp/.DOGE.XXXXXXXXXXXX.gif)
                 ffmpeg -ss 00:00:00.000 -i "${FILE}" -vf "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1" -pix_fmt rgb8 -s 500x240 -t 00:00:5.000 "${TEMP_GIF}" &>/dev/null
-                chafa "${TEMP_GIF}" 1>${TTY}
+                chafa "${TEMP_GIF}" >${TTY}
                 command rm -f "${TEMP_GIF}" &>/dev/null
                 reset
             ;;
@@ -283,7 +283,7 @@ function _DOGE_DECODE
             command rm -f "${TEMP}"
             ;;
             *.psm|*.nsf)
-            DISPLAY="" command mplayer -really-quiet -vc null -vo null "${FILE}" 1>/dev/null
+            DISPLAY="" command mplayer -really-quiet -vc null -vo null "${FILE}" >/dev/null
             reset
             ;;
             *)
@@ -343,7 +343,7 @@ function _DOGEVIEW
         then
             command less +G ~/.cache/logs/${FILE}
         else
-            command echo "WOW! Such view! Many formats! Much decode!" 1>&2 | tee /dev/null 1>/dev/null
+            command echo "WOW! Such view! Many formats! Much decode!" >&2 | tee /dev/null >/dev/null
         fi
         return 1
     elif [ "${#@}" -gt 1 ]

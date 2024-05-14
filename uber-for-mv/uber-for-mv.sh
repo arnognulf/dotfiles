@@ -87,38 +87,10 @@ _UBER_FOR_MV ()
         fi
         case "${NEWEST_FILE}" in
         *.part|*.crdownload)
-        case ${SPINPOS} in
-        0)
-            command printf "\\e[99D   "
-            sleep 0.04
-            let SPINPOS++
-            ;;
-        1)
-            command printf "\\e[99D.  "
-            sleep 0.04
-            let SPINPOS++
-            ;;
-        2)
-            command printf "\\e[99D.. "
-            sleep 0.04
-            let SPINPOS++
-            ;;
-        3)
-            command printf "\\e[99D..."
-            sleep 0.04
-            let SPINPOS++
-            ;;
-        4)
-            command printf "\\e[99D .."
-            sleep 0.04
-            let SPINPOS++
-            ;;
-        *)
-            command printf "\\e[99D  ."
-            SPINPOS=0
-        esac
+	_START_SPINNER
         ;;
         *)
+	_STOP_SPINNER
         CAN_MOVE=1
         esac
     done

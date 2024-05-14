@@ -284,7 +284,7 @@ _BRANCHY_MCBRANCHFACE ()
 {
 \git rev-parse --show-toplevel &>/dev/null || { _NO; return 1;}
 _title "🐙  Branchy McBranchFace"
-BRANCH=$({ \git branch -a|cut -c3-1024; \git reflog;}|fzf --no-mouse)||exit 1
+BRANCH=$({ \git branch -a|\cut -c3-1024; \git reflog;}|fzf --no-mouse)||exit 1
 \git checkout ${BRANCH%% *}
 }
 alias b=_BRANCHY_MCBRANCHFACE
