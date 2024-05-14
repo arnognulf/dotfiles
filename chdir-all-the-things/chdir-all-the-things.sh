@@ -207,7 +207,7 @@ function _CHDIR_ALL_THE_THINGS ()
     fi
     case "${ARG}" in
     *'$')
-    	builtin _CHDIR_ALL_THE_THINGS $(\fdfind ${ARG})
+    	builtin _CHDIR_ALL_THE_THINGS $(\fdfind ${ARG}|\head -n1)
 	return $?
     ;;
     */*)

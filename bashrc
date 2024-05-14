@@ -195,6 +195,7 @@ alias git="_GIT"
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
+type -P fdfind && alias fdfind='_ICON 🔎 _MOAR fdfind -H -I'
 type -P fdfind && alias fd='_ICON 🔎 _MOAR fdfind -H -I'
 alias find=' _ICON 🔎 _MOAR find'
 alias rga='_ICON 🔎 _MOAR rga --color=always'
