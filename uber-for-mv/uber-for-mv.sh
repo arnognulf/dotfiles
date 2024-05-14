@@ -63,6 +63,8 @@ _LATEST ()
 
 _UBER_FOR_MV ()
 {
+    while true
+    do
     local COUNT=0
     local SECOND_NEWEST_FILE
     local NUMBER_OF_ITEMS=${1-1}
@@ -124,13 +126,14 @@ _UBER_FOR_MV ()
     case "${NEWEST_FILE}" in
     *.crdownload|*.part)
     	_NO
-	return 1
+	sleep 1
     ;;
     *)
     echo -e "${NEWEST_FILE##*/}\n\nNext: ${SECOND_NEWEST_FILE##*/}"
     mv "${NEWEST_FILE}" .
     ((COUNT++))
+    return 0
     esac
     done
-    return 0
+    done
 }

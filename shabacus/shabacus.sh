@@ -42,7 +42,7 @@ x UNIT in UNIT - where UNIT are any of [F,C,K]
 Distance conversions
 --------------------
 x UNIT in UNIT - where UNIT are any of [cm,m,km,ft,in,yd,miles,mil]
-" 1>&2 | tee /dev/null 1>/dev/null
+" >&2 | tee /dev/null >/dev/null
 }
 
 function _shabacus ()
@@ -152,7 +152,7 @@ xor x y  - bitwise XOR of x and y
 not x    - bitwise NOT of x
 bitrev x - bitwise reverse x
 
-" 1>&2 | tee /dev/null 1>/dev/null
+" >&2 | tee /dev/null >/dev/null
 _shabacus_help_conversions;
 return 1
 esac

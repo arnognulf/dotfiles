@@ -117,7 +117,7 @@ __bp_precmd_invoke_cmd() {
 
         # Only execute this function if it actually exists.
         # Test existence of functions with: declare -[Ff]
-        if type -t "$precmd_function" 1>/dev/null; then
+        if type -t "$precmd_function" >/dev/null; then
             __bp_set_ret_value "$__bp_last_ret_value" "$__bp_last_argument_prev_command"
             # Quote our function invocation to prevent issues with IFS
             "$precmd_function"
@@ -226,7 +226,7 @@ __bp_preexec_invoke_exec() {
 
         # Only execute each function if it actually exists.
         # Test existence of function with: declare -[fF]
-        if type -t "$preexec_function" 1>/dev/null; then
+        if type -t "$preexec_function" >/dev/null; then
             __bp_set_ret_value ${__bp_last_ret_value:-}
             # Quote our function invocation to prevent issues with IFS
             "$preexec_function" "$this_command"

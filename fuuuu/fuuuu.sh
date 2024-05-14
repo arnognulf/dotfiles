@@ -14,7 +14,7 @@ _FUUU ()
         let i++
     done
     command echo ""
-    } 1>&2 | command tee /dev/null 1>/dev/null
+    } >&2 | command tee /dev/null >/dev/null
     else
     case "${#*}" in
     3) command sed --unbuffered -e 's/\x1b\[[0-9;]*m//g' -e 's/\x1b\[K//g' | command awk -F"${1}" '{ print substr($0, index($0, $'"${2}"'), 2+index($0, $'"${3}"')) }';;

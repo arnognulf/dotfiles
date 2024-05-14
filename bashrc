@@ -1,4 +1,5 @@
 #!/bin/bash
+{
 function _dotfiles_main ()
 {
 if [ -n "$PS1" ]
@@ -48,38 +49,38 @@ EOF
 tmux -L ${NUM} attach-session || tmux -L ${NUM}
 sleep 30
 clear
-\echo -ne "\0337\n"
-\echo -ne "\0338................                              \n"
+\echo -ne "\e7\n"
+\echo -ne "\e8................                              \n"
 sleep 0.1
-\echo -ne "\0338...............                              \n"
+\echo -ne "\e8...............                              \n"
 sleep 0.1
-\echo -ne "\0338..............                              \n"
+\echo -ne "\e8..............                              \n"
 sleep 0.1
-\echo -ne "\0338.............                              \n"
+\echo -ne "\e8.............                              \n"
 sleep 0.1
-\echo -ne "\0338............                              \n"
+\echo -ne "\e8............                              \n"
 sleep 0.1
-\echo -ne "\0338...........                              \n"
+\echo -ne "\e8...........                              \n"
 sleep 0.1
-command echo -ne "\0338..........                              \n"
+command echo -ne "\e8..........                              \n"
 sleep 0.1
-command echo -ne "\0338.........                              \n"
+command echo -ne "\e8.........                              \n"
 sleep 0.1
-command echo -ne "\0338........                              \n"
+command echo -ne "\e8........                              \n"
 sleep 0.1
-command echo -ne "\0338.......                              \n"
+command echo -ne "\e8.......                              \n"
 sleep 0.1
-command echo -ne "\0338......                              \n"
+command echo -ne "\e8......                              \n"
 sleep 0.1
-command echo -ne "\0338.....                              \n"
+command echo -ne "\e8.....                              \n"
 sleep 0.1
-command echo -ne "\0338....                              \n"
+command echo -ne "\e8....                              \n"
 sleep 0.1
-command echo -ne "\0338...                              \n"
+command echo -ne "\e8...                              \n"
 sleep 0.1
-command echo -ne "\0338..                              \n"
+command echo -ne "\e8..                              \n"
 sleep 0.1
-command echo -ne "\0338.                              \n"
+command echo -ne "\e8.                              \n"
 sleep 0.1
 exit 1
 fi
@@ -273,12 +274,12 @@ esac
 }
 
 _BRANCHY_MCBRANCHFACE ()
-(
+{
 \git rev-parse --show-toplevel &>/dev/null || { _NO; return 1;}
 _title "🐙  Branchy McBranchFace"
 BRANCH=$({ \git branch -a|cut -c3-1024; \git reflog;}|fzf --no-mouse)||exit 1
 \git checkout ${BRANCH%% *}
-)
+}
 alias b=_BRANCHY_MCBRANCHFACE
 
 alias ll='ls -al --color=always'
@@ -318,7 +319,7 @@ local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
 fi
     local DIR=/run/user/${UID}/_CHROME-POLISHER-${USER}
     pidof chrome &>/dev/null || command rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
-    command mkdir -p "${DIR}" &>/dev/null
+    \mkdir -p "${DIR}" &>/dev/null
     _CAN_OPENER google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
 }
 function _CHROME-POLISHER-tmp
@@ -337,7 +338,7 @@ alias chromium=_CHROME-POLISHER
 alias google-chrome=_CHROME-POLISHER
 alias chrome=_CHROME-POLISHER
 alias dos="bash ${DOTFILESDIR}/dos/sh-dos.sh"
-alias sudo="\echo -ne \"\033]10;#DD2222\007\033]11;#000000\007\033]12;#DD2222\007\";_ICON ⚠️  sudo"
+alias sudo="\echo -ne \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\";_ICON ⚠️  sudo"
 function _SCP
 {
 local ARG
@@ -358,9 +359,9 @@ test -z "${SERVER}" && { echo "missing server argument"; return; }
 alias scp=_SCP
 
 function _DEDUPE ()
-(
+{
     command yes 1 | command jdupes --delete --omit-first "${XDG_DOWNLOAD_DIR-/dev/null}" ~/Downloads
-)
+}
 
 function c ()
 {
@@ -371,9 +372,9 @@ function c ()
         do
         if [ -f "${FILE}" ]
         then
-        \echo -ne "\n   \033[1;4m"
+        \echo -ne "\n   \e[1;4m"
         \grep -v ^$ "${FILE}" | command sed -e 's/# //g' | command head -n1
-        command echo -e "\033[0m"
+        command echo -e "\e[0m"
         break
         fi
         done
@@ -409,13 +410,13 @@ function c ()
 }
 
 function untilfail
-(
+{
     if [ "${#@}" = 0 ] 
     then
         _NO
         return 255
     fi
-    COUNT=0
+    local COUNT=0
     while "$@"
     do
     sleep 1
@@ -426,21 +427,21 @@ function untilfail
         COUNT=0
     fi
     done
-)
+}
 
 function _RETRY
-(
+{
     if [ "${#@}" = 0 ] 
     then
         _NO
         return 255
     fi
-    \printf '\n\0337' 1>&2 | \tee 1>&2
+    \printf '\n\e7' >&2 | \tee >&2
     local a=0
     until "$@"
     do
         {
-        \printf '\033[?25l\0338\033[2A'
+        \printf '\e[?25l\e8\e[2A'
         case $a in
         0) \printf '.  ';;
         1) \printf '.. ';;
@@ -453,17 +454,17 @@ function _RETRY
         let a++
         [ $a -gt 5 ] && a=0
         sleep 0.25
-        \printf '\033[?25h'
-        } 1>&2 | \tee 1>&2
+        \printf '\e[?25h'
+        } >&2 | \tee >&2
     done
-)
+}
 
 alias retry=_RETRY
 
 function _NO
-(
-    \echo "COMPUTER SAYS NO" 1>&2 | \tee 1>/dev/null
-)
+{
+    \printf "\rCOMPUTER SAYS NO\n" >&2 | \tee >/dev/null
+}
 
 # loop is an xscreensaver module 
 unalias loop
@@ -474,12 +475,12 @@ function _LOOP
         _NO
         return 255
     fi
-    \printf '\n\0337' 1>&2 | \tee 1>&2
+    \printf '\n\e7' >&2 | \tee >&2
     local a=0
     while true
     do
         {
-        \printf '\033[?25l\0338\033[2A'
+        \printf '\e[?25l\e8\e[2A'
         "$@"
         case $a in
         0) \printf ' .   ';;
@@ -493,75 +494,77 @@ function _LOOP
         let a++
         sleep 0.25
         [ $a -gt 5 ] && a=0
-        \printf '\033[?25h'
-        } 1>&2 | \tee 1>&2
+        \printf '\e[?25h'
+        } >&2 | \tee >&2
     done
 }
 alias loop=_LOOP
 
 function now
-(
+{
     command date +%Y-%m-%d_%H-%M-%S
-)
+}
 
 function jetzt
-(
+{
     now
-)
+}
 
 function /sbin/reboot
-(
+{
     _NO
     return 255
-)
+}
 
 function reboot
-(
+{
     _NO
     return 255
-)
+}
 
 function shutdown
-(
+{
     _NO
     return 255
-)
+}
 
 function /sbin/shutdown
-(
+{
     _NO
     return 255
-)
+}
 
 function //
-(
+{
     :
-)
+}
 
 function front
-(
+{
     if [ "${#@}" = 0 ]
     then
     return 1
     fi
+    local FILE
     for FILE in "$@"
     do
         command echo "${FILE}"
         break
     done
-)
+}
 function back
-(
+{
     if [ "${#@}" = 0 ]
     then
     return 1
     fi
+    local FILE
     for FILE in "$@"
     do
         :
     done
     command echo "${FILE}"
-)
+}
 
 function _LOG
 {
@@ -599,11 +602,11 @@ fi
 
 (
 function ignore_chrome_crash
-(
+{
 exec sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
     ~/.config/google-chrome/Default/Preferences \
     ~/.config/google-chrome-beta/Default/Preferences
-)
+}
 function mount_shares
 {
 local item
@@ -628,8 +631,7 @@ ignore_chrome_crash
 kill_tracker
 # mount shares can wait for network I/O quite some time, do this late to not block other tasks
 bash ~/.config/dotfiles/deal-with-it/deal-with-it.sh &
-mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo/
-mkdir -p "${GOPATH}"
+mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo/ "${GOPATH}"
 
 # hide files from nautilus and ls
 ln -sf "${DOTFILESDIR}/home.hidden" ~/.hidden
@@ -639,7 +641,10 @@ rm -f "~/.cache/logs/${TTY//\//_}"
 }
 background_startup_tasks &
 )
+unset -f _dotfiles_main
 }
+} &>/dev/null
+
 if [ -f ~/.bashrc.statistics ]
 then
 time _dotfiles_main &>/dev/null
@@ -649,4 +654,4 @@ _dotfiles_main
 else
 _dotfiles_main &>/dev/null
 fi
-unset -f _dotfiles_main
+

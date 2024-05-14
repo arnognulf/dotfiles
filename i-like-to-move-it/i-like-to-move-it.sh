@@ -3,29 +3,22 @@
 function _ILIKETOMOVEIT ()
 {
     local MV_SRC="${PWD}"
-    local MV_DST=""
+    local MV_DST="${1}"
     MV_SRC="${MV_SRC##*/}"
-    read -e -i "${MV_SRC}" MV_DST
+    if [ -z "$1" ]; then
+    	read -e -i "${MV_SRC}" MV_DST
+    fi
     test -z "${MV_DST}" && return 1
     MV_DST="${MV_DST// /_}"
     MV_DST="${MV_DST##*/}"
     (
-        command cd ..
-        command mv "${MV_SRC}" "${MV_DST}" || exit 1
+        \cd ..
+        \mv "${MV_SRC}" "${MV_DST}" || exit 1
         exit 0
-    ) && { command cd ..; command cd "${MV_DST}"; return 0; }
+    ) && { \cd ..; \cd "${MV_DST}"; return 0; }
     return $?
 }
-
-function rencwd ()
-{
-    if [ -z "${1}" ]
-    then
-        _ILIKETOMOVEIT
-    else
-        mv "${@}"
-    fi
-}
+alias rencwd=_ILIKETOMOVEIT
 
 function unspace ()
 {
@@ -35,6 +28,6 @@ function unspace ()
         then
             unspace "${FILE}"/*
         fi
-        command mv "${FILE}" "${FILE// /_}"
+        \mv "${FILE}" "${FILE// /_}"
     done
 }

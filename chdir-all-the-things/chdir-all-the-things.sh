@@ -110,7 +110,7 @@ function _TMP_ALL_THE_THINGS
     \echo -n "_"
     if [ -z "$*" ]
     then
-        \echo $(gzip -cd /usr/share/ispell/american.mwl.gz |command iconv -f ISO8859-15 -t UTF-8|command cut -d/ -f1|command tail -n$RANDOM|command head -n1)-$(command gzip -cd /usr/share/ispell/american.mwl.gz |iconv -f ISO8859-15 -t UTF-8|cut -d/ -f1|tail -n$RANDOM|head -n1)-$(gzip -cd /usr/share/ispell/american.mwl.gz |iconv -f ISO8859-15 -t UTF-8|cut -d/ -f1|tail -n$RANDOM|head -n1)
+        \echo $(gzip -cd /usr/share/ispell/american.mwl.gz |\iconv -f ISO8859-15 -t UTF-8|\cut -d/ -f1|\tail -n$RANDOM|\head -n1)-$(\gzip -cd /usr/share/ispell/american.mwl.gz |iconv -f ISO8859-15 -t UTF-8|cut -d/ -f1|tail -n$RANDOM|head -n1)-$(gzip -cd /usr/share/ispell/american.mwl.gz |iconv -f ISO8859-15 -t UTF-8|cut -d/ -f1|tail -n$RANDOM|head -n1)
     else
     echo "$*"
     fi
@@ -207,7 +207,7 @@ function _CHDIR_ALL_THE_THINGS ()
     fi
     case "${ARG}" in
     *'$')
-    	builtin cd $(\fdfind ${ARG})
+    	builtin _CHDIR_ALL_THE_THINGS $(\fdfind ${ARG})
 	return $?
     ;;
     */*)
@@ -306,9 +306,9 @@ function _CHDIR_ALL_THE_THINGS ()
         fi
         local SUCCESS=1;
         # some files can be decompressed with Info-Zip, others with 7z
-        type -p unzip &>/dev/null || { \echo "missing unzip" 2>&1| command tee 1>/dev/null;}
-        type -p unar &>/dev/null || { \echo "missing unar" 2>&1| command tee 1>/dev/null;}
-        type -p 7z &>/dev/null || { \echo "missing 7z" 2>&1| command tee 1>/dev/null;}
+        type -p unzip &>/dev/null || { \echo "missing unzip" 2>&1| \tee >/dev/null;}
+        type -p unar &>/dev/null || { \echo "missing unar" 2>&1| \tee >/dev/null;}
+        type -p 7z &>/dev/null || { \echo "missing 7z" 2>&1| \tee >/dev/null;}
         nice -n 19 tar xf "${ORIG_FILE}" &>/dev/null || nice -n 19 unzip -X -o "${ORIG_FILE}" &>/dev/null || nice -n 19 unsquashfs "${ORIG_FILE}" &>/dev/null || nice -n 19 7z x -pDUMMY_PASSWORD -y "${ORIG_FILE}" &>/dev/null || nice -n 19 unar -force-rename -no-directory -password DUMMY_PASSWORD "${ORIG_FILE}" &>/dev/null || { nice -n 19 simg2img "${ORIG_FILE}" "${ORIG_FILE}.nonsparse" &>/dev/null && nice -n 19 7z x "${ORIG_FILE}.nonsparse" &>/dev/null;}  || SUCCESS=0;
         [ -f "${ORIG_FILE}.nonsparse" ] && \rm -f "${ORIG_FILE}.nonsparse"  &>/dev/null
         # shellcheck disable=SC2046
