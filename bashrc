@@ -146,18 +146,18 @@ function _EDITOR
     $(type -P "nvim" &>/dev/null||type -P "vim" &>/dev/null ||type -P "vi" &>/dev/null ) -p "${@}"
 }
 
-[ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o ionice --class idle nice -n 19 ~/.local/share/android-studio/bin/studio.sh'
+[ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o _BATCH_PRIO ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
-alias clang='_ICON 🛠️ _LOG ionice --class idle nice -n 19 clang'
-alias gcc='_ICON 🛠️ _LOG ionice --class idle nice -n 19 gcc'
-alias g++='_ICON 🛠️ _LOG ionice --class idle nice -n 19 g++'
-alias ninja='_ICON 🛠️ _LOG ionice --class idle nice -n 19 ninja'
-alias make='_ICON 🛠️ _LOG ionice --class idle nice -n 19 make -j$(nproc)'
-alias cat="_NO_MEASURE  _ICON 🐱 _MOAR ionice --class idle nice -n 19 cat"
-alias delta='ionice --class idle nice -n 19 delta --light'
-alias cp='_ICON 💽 ionice --class idle nice -n 19 cp --reflink=auto'
-alias dd='_ICON 💽 ionice --class idle nice -n 19 dd status=progress'
+alias clang='_ICON 🛠️ _BATCH_PRIO _LOG clang'
+alias gcc='_ICON 🛠️ _BATCH_PRIO _LOG gcc'
+alias g++='_ICON 🛠️ _BATCH_PRIO _LOG g++'
+alias ninja='_ICON 🛠️ _BATCH_PRIO _LOG ninja'
+alias make='_ICON 🛠️ _BATCH_PRIO _LOG make -j$(nproc)'
+alias cat="_NO_MEASURE _ICON 🐱 _BATCH_PRIO _MOAR cat"
+alias delta='_BATCH_PRIO delta --light'
+alias cp='_ICON 💽 _BATCH_PRIO cp --reflink=auto'
+alias dd='_ICON 💽 _BATCH_PRIO dd status=progress'
 alias dl=_UBER_FOR_MV
 alias octave=octave-cli
 alias excel='o localc --norestore --view'
@@ -167,7 +167,7 @@ alias loimpress='o loimpress --norestore --view'
 alias lowriter='o lowriter --norestore --view'
 alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
-alias tar='_ICON 📼 ionice --class idle nice -n 19 tar'
+alias tar='_ICON 📼 _BATCH_PRIO tar'
 alias scrcpy='_RETRY scrcpy'
 alias adb='_NO_MEASURE  _ICON 🤖 _RETRY _LOG adb'
 if [ -n "$WAYLAND_DISPLAY" ]
@@ -204,11 +204,11 @@ alias htop='_NO_MEASURE _ICON 📈 htop'
 alias nload='_NO_MEASURE _ICON 📈 nload'
 rm()
 {
-    _ICON ♻️  ionice --class idle nice -n 19 rm "$@"
+    _ICON ♻️  _BATCH_PRIO rm "$@"
 }
 alias rm='_ICON ♻️  _ERMAHGERD'
 alias trash='_ICON ♻️  gio trash'
-alias jdupes='_ICON ♻️  ionice --class idle nice -n 19 jdupes --dedupe -R'
+alias jdupes='_ICON ♻️  jdupes --dedupe -R'
 alias hog='~/.config/dotfiles/hog/hog.sh'
 alias g="egrep"
 alias gv="grep -v"
@@ -217,10 +217,14 @@ function fclones
 [ -z "$(type -P fclones)" ] && { _NO; return 255;}
 if [ -z "$1" ]
 then
-_ICON ♻️  ionice -c idle nice -n 19 $(type -P fclones) group "$PWD" | ionice -c idle nice -n 19 $(type -P fclones) dedupe
+_ICON ♻️  _BATCH_PRIO $(type -P fclones) group "$PWD" | _BATCH_PRIO $(type -P fclones) dedupe
 else
-_ICON ♻️  ionice -c idle nice -n 19 $(type -P fclones) "$@"
+_ICON ♻️  _BATCH_PRIO $(type -P fclones) "$@"
 fi
+}
+_BATCH_PRIO ()
+{
+ionice --class idle nice -n 19 "$@"
 }
 function _REPO
 {
@@ -231,7 +235,7 @@ function _REPO
     fi
 	\repo "$@"
 }
-alias repo="_ICON 🪣 ionice --class idle nice -n 19 repo"
+alias repo="_ICON 🪣 _BATCH_PRIO repo"
 
 export LESS='-Q -R'
 alias gl="LESS='-Q -R --pattern ^(commit|diff)' git log -p"
@@ -247,7 +251,7 @@ alias r='repo status'
 alias -- -='c -'
 alias ..='c ..'
 alias rud='repo upload -d'
-alias man='_NO_MEASURE MANWIDTH=$((COLUMNS > 80 ? 80 : COLUMNS)) _ICON 📓 man'
+alias man='MANWIDTH=$((COLUMNS > 80 ? 80 : COLUMNS)) _NO_MEASURE _ICON 📓 man'
 alias v=_EDITOR
 alias keepass='o keepassxc'
 alias kp=keepassxc

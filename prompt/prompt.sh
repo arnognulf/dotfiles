@@ -90,7 +90,7 @@ function _PROMPT_MAGIC_SHELLBALL ()
   SPACES="${SPACES} "
   let i++
   done
-  \echo -e "\e[?25l\e[D \e[3A\e[994D\e[99D\e[K${SPACES}${ANSWER}                       \e[D "
+  \echo -e "\e[?25l\e[3A\r\e[K${SPACES}${ANSWER}"
 }
 
 function _PROMPT_COMMAND ()
@@ -120,7 +120,7 @@ function _PROMPT_COMMAND ()
         then
         CR_LEVEL=1
         else
-        \echo -ne "\e[D \n\n" 
+        \echo -ne "\e[J\n\n" 
         fi
         ;;
             2) CR_LEVEL=3;\git -c color.status=always status |head -n$((LINES - 2)) | head -n$((LINES - 4)); \echo -e "        ...\n\n";;
@@ -149,7 +149,7 @@ function _PROMPT_COMMAND ()
   trap "_PROMPT_CTRLC=1;\echo -n" ERR
   stty echo 2>/dev/null
   history -a
-  [ -n "${GNOME_TERMINAL_SCREEN}" ] && \echo -ne "\e]11;${BGCOLOR}\a\e]10;${FGCOLOR}\007\e]12;#312D2A\007"
+  [ -n "${GNOME_TERMINAL_SCREEN}" ] && \echo -ne "\e]11;${BGCOLOR}\a\e]10;${FGCOLOR}\a\e]12;#312D2A\a"
 }
 
 function _PREEXEC ()
@@ -466,22 +466,10 @@ local ICON="$1"
 shift
 local FIRST_ARG="${1}"
 (
-if [ "${FIRST_ARG}" = "ionice" ]
-then
-shift 3
-fi
-local FIRST_ARG="${1}"
-
-if [ "${FIRST_ARG}" = "nice" ]
-then
-shift 3
-fi
-FIRST_ARG="${1}"
-
-if [ "${FIRST_ARG}" = "_LOG" ]
-then
+case "${FIRST_ARG}" in
+_*)
 shift
-fi
+case
 FIRST_ARG="${1}"
 
 FIRST_NON_OPTION="${2}"
