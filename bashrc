@@ -682,6 +682,8 @@ unset -f _dotfiles_main
 }
 } &>/dev/null
 
+if ! shopt -q login_shell
+then
 if [ -f ~/.bashrc.statistics ]
 then
 time LC_ALL=C _dotfiles_main &>/dev/null
@@ -694,4 +696,7 @@ unset PS4
 else
 LC_ALL=C _dotfiles_main &>/dev/null
 fi
-
+elif [ -z "${DISPLAY}${WAYLAND_DISPLAY}" ]
+then
+LC_ALL=C _dotfiles_main &>/dev/null
+fi
