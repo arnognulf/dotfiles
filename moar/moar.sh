@@ -38,7 +38,6 @@ _MOAR_BUILTIN ()
 
 }
 alias declare="_MOAR_BUILTIN declare"
-alias set="_MOAR_BUILTIN set"
 
 _MOAR_DEFINE ()
 {

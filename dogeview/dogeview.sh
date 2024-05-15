@@ -333,8 +333,8 @@ function _DOGE_DECODE
 }
 
 function _DOGEVIEW
-(
-    command rm -rf /tmp/.DOGE* &>/dev/null
+{
+    ( \rm -rf /tmp/.DOGE* &>/dev/null & )
     _MEASURE=0
     if [ "${#@}" = 0 ]
     then
@@ -403,5 +403,5 @@ function _DOGEVIEW
         set +o pipefail
     fi
     return ${RETURN}
-)
+}
 alias d="_ICON 📜 _DOGEVIEW"

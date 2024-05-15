@@ -149,7 +149,7 @@ function _PROMPT_COMMAND ()
   trap "_PROMPT_CTRLC=1;\echo -n" ERR
   stty echo 2>/dev/null
   history -a
-  [ -n "${GNOME_TERMINAL_SCREEN}" ] && \echo -ne "\e]11;${BGCOLOR}\007\e]10;${FGCOLOR}\007\e]12;#312D2A\007"
+  [ -n "${GNOME_TERMINAL_SCREEN}" ] && \echo -ne "\e]11;${BGCOLOR}\a\e]10;${FGCOLOR}\007\e]12;#312D2A\007"
 }
 
 function _PREEXEC ()
@@ -180,7 +180,7 @@ _TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\w')/\\\\\w}"
 _TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\x')/\\\\\x}"
 _TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\y')/\\\\\y}"
 _TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\z')/\\\\\z}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\e')/<ESC>}"
+_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\033')/<ESC>}"
 _TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\007')/<BEL>}"
 (
 case "${_TIMER_CMD}" in
@@ -253,7 +253,7 @@ SECONDS_M=$((DIFF % 3600))
 DURATION_H=$((DIFF / 3600))
 DURATION_M=$((SECONDS_M / 60))
 DURATION_S=$((SECONDS_M % 60))
-\echo -ne "\n\007Command took "
+\echo -ne "\n\aCommand took "
 DURATION=""
 [ ${DURATION_H} -gt 0 ] && DURATION="${DURATION}${DURATION_H}h "
 [ ${DURATION_M} -gt 0 ] && DURATION="${DURATION}${DURATION_M}m "
@@ -455,10 +455,9 @@ PS1="\[\r\e]0;"'${TITLE}'"\a\e[0;4m"'$([ ${UID} = 0 ] && command echo -e "\e[31m
 PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
 
 
-TTY=$(tty)
 _title ()
 {
-[ -n "$*" ] && [ -t 0 ] && command echo -ne "\e]0;$* in ${PWD##*/} at $(date +%H:%M)\007" &>${TTY}
+[ -n "$*" ] && [ -t 0 ] && command echo -ne "\e]0;$* in ${PWD##*/} at $(date +%H:%M)\a"
 }
 
 _ICON ()
@@ -513,6 +512,6 @@ title "$*"
 
 name "$*"
 
-alias c='echo "Terminal is locked to task: ${NAME}\007";: '
-alias cd='echo "Terminal is locked to task: ${NAME}\007";: '
+alias c='echo "Terminal is locked to task: ${NAME}\a";: '
+alias cd='echo "Terminal is locked to task: ${NAME}\a";: '
 }

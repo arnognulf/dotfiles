@@ -88,10 +88,8 @@ export HISTSIZE=100000                   # big big history
 export HISTFILESIZE=100000               # big big history
 _SOURCED=1
 shopt -s globstar
-#function . { _SOURCED=1 command . "$@";}
 export BAT_THEME=GitHub
 
-#function source { _SOURCED=1 command . "$@";}
 PATH=${PATH}:~/.local/share/ParaView/bin:~/.local/share/android-studio/bin:~/.local/bin:/usr/share/code-insiders/resources/app/node_modules.asar.unpacked/vscode-ripgrep/bin/
 
 local DOTFILESDIR=$(readlink "${HOME}/.bashrc")
@@ -105,22 +103,16 @@ export VIMRUNTIME=${DOTFILESDIR}/vim
 . "${DOTFILESDIR}"/can-opener/can-opener.sh
 . "${DOTFILESDIR}"/git-prompt/git-prompt.sh
 . "${DOTFILESDIR}"/shabacus/shabacus.sh
-#. "${DOTFILESDIR}"/markdown-writer/markdown-writer.sh
 . "${DOTFILESDIR}"/uber-for-mv/uber-for-mv.sh
-#. "${DOTFILESDIR}"/archivr/archivr.sh
 . "${DOTFILESDIR}"/bash-preexec/bash-preexec.sh
 . "${DOTFILESDIR}"/emojify/emojify.sh
 . "${DOTFILESDIR}"/moar/moar.sh
 . "${DOTFILESDIR}"/ermahgerd/ermahgerd.sh
-#. "${DOTFILESDIR}"/yankypanky/yankypanky.sh
 . "${DOTFILESDIR}"/i-like-to-move-it/i-like-to-move-it.sh
 . "${DOTFILESDIR}"/fuuuu/fuuuu.sh
 . "${DOTFILESDIR}"/stawkastic/stawkastic.sh
-#_Z_DATA=${HOME}/.config/z
-#_Z_NO_PROMPT_COMMAND=1 _Z_CMD=_Z . "${DOTFILESDIR}"/z/z.sh
 . "${DOTFILESDIR}"/zipit/zipit.sh
 . "${DOTFILESDIR}"/dogeview/dogeview.sh
-
 
 if type -P nvim
 then
@@ -470,7 +462,7 @@ alias retry=_RETRY
 
 function _NO
 {
-    \printf "\rCOMPUTER SAYS NO\n" >&2 | \tee >/dev/null
+    \printf "\r\e[JCOMPUTER SAYS NO\n" >&2 | \tee >/dev/null
 }
 
 # loop is an xscreensaver module 
@@ -606,17 +598,17 @@ SPINNER ()
 {
 \printf "\\e[?25l"
 while sleep 0.04; do
-\printf "\\e[99D   "
+\printf "\\r\\e[J"
 sleep 0.04
-\printf "\\e[99D  ."
+\printf "\\r\\e[J  ."
 sleep 0.04
-\printf "\\e[99D .."
+\printf "\\r\\e[J .."
 sleep 0.04
-\printf "\\e[99D..."
+\printf "\\r\\e[J..."
 sleep 0.04
-\printf "\\e[99D.. "
+\printf "\\r\\e[J.. "
 sleep 0.04
-\printf "\\e[99D.  "
+\printf "\\r\\e[J.  "
 done
 }
 SPINNER &
@@ -688,11 +680,14 @@ unset -f _dotfiles_main
 
 if [ -f ~/.bashrc.statistics ]
 then
-time _dotfiles_main &>/dev/null
+time LC_ALL=C _dotfiles_main &>/dev/null
 elif [ -f ~/.bashrc.debug ]
 then
-_dotfiles_main
+set -x
+export PS4='+ $EPOCHREALTIME ($LINENO) '
+LC_ALL=C _dotfiles_main
+unset PS4
 else
-_dotfiles_main &>/dev/null
+LC_ALL=C _dotfiles_main &>/dev/null
 fi
 
