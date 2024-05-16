@@ -274,7 +274,6 @@ function _CHDIR_ALL_THE_THINGS ()
         esac;
         # shellcheck disable=SC2164
         _CHDIR_ALL_THE_THINGS_CD "${DEST_DIR}"
-        local TTY
         local SPINNER_PID_FILE
         _SPINNER_START
         local SUCCESS=1;

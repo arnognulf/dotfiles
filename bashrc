@@ -572,6 +572,7 @@ function back
 
 function _LOG
 {
+local TTY=$(tty)
 local LOG="${TTY//\//_}"
 local LOGDIR="${HOME}/.cache/logs"
 \mkdir -p "${LOGDIR}"; 
