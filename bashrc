@@ -316,7 +316,7 @@ alias which="command -v"
 alias ssh="_NO_MEASURE ssh"
 unalias google-chrome
 unalias chrome
-pidof chrome || \rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome"
+pidof chrome || /bin/rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome"
 
 function _CHROME-POLISHER
 {
@@ -325,7 +325,7 @@ then
 local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
 fi
     local DIR=/run/user/${UID}/_CHROME-POLISHER-${USER}
-    pidof chrome &>/dev/null || \rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
+    pidof chrome &>/dev/null || /bin/rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
     \mkdir -p "${DIR}" &>/dev/null
     _CAN_OPENER google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
 }
@@ -336,7 +336,7 @@ then
 local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
 fi
     local DIR="/run/user/${UID}/_CHROME-POLISHER-${USER}/${1}"
-    pidof chrome &>/dev/null || \rm -rf "${DIR}"
+    pidof chrome &>/dev/null || /bin/rm -rf "${DIR}"
     \mkdir -p ${DIR}
     shift
     _CAN_OPENER google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}" --app="${*}"
@@ -411,7 +411,7 @@ function c ()
         fi
         fi
         [ -d ".git" ] && { builtin echo ""; PAGER= $(type -P git) log --oneline -1 --color=never 2>/dev/null;}
-        ( \rm -f "${TMP}" &>/dev/null & )
+        ( /bin/rm -f "${TMP}" &>/dev/null & )
     }
     ( _DEDUPE &>/dev/null & )
 }
@@ -588,7 +588,7 @@ do
 done
 script -q -e -a -c "bash \"${TEMP}\"" "${LOG}"
 local RETURN=$?
-\rm -f "${TEMP}"
+/bin/rm -f "${TEMP}"
 return ${RETURN}
 }
 
@@ -630,7 +630,7 @@ _SPINNER_STOP ()
 {
 {
 kill -9 $(<${_SPINNER_PID_FILE})
-( \rm -f ${_SPINNER_PID_FILE} & )
+( /bin/rm -f ${_SPINNER_PID_FILE} & )
 unset _SPINNER_PID_FILE
 } &>/dev/null
 \printf "\\r\\e[J" >&2 | tee 2>/dev/null
@@ -666,7 +666,7 @@ function kill_tracker
     systemctl --user mask tracker-store.service tracker-miner-fs.service tracker-miner-rss.service tracker-extract.service tracker-miner-apps.service tracker-writeback.service
     tracker3 daemon -k
     tracker daemon -k
-    \rm -rf ~/.cache/tracker* ~/.local/share/tracker*
+    /bin/rm -rf ~/.cache/tracker* ~/.local/share/tracker*
 }
 # try to run one thread for non-blocking background tasks such that CPU 
 # and IO is not stressed at shell startup, this way we will get to prompt 

@@ -334,6 +334,10 @@ function _DOGE_DECODE
 
 function _DOGEVIEW
 {
+    if [ -t 0 ]
+    then
+        local _DOGE_STDOUT=1
+    fi
     ( \rm -rf /tmp/.DOGE* &>/dev/null & )
     _MEASURE=0
     if [ "${#@}" = 0 ]
@@ -341,9 +345,15 @@ function _DOGEVIEW
         local FILE=$(_LATEST $HOME/.cache/logs/*)
         if [ -f "${FILE}" ]
         then
-            command less +G "${FILE}"
+
+            if [ "${_DOGE_STDOUT}" = 1 ]
+	    then
+                \less -R -X -F -K +G "${FILE}"
+            else
+                \cat "${@}"
+	    fi
         else
-            command echo "WOW! Such view! Many formats! Much decode!" >&2 | tee /dev/null >/dev/null
+            command echo "WOW! Such view! Many formats! Much decode!" >&2 | tee  >/dev/null
         fi
         return 1
     elif [ "${1}" = "1" ]
@@ -351,9 +361,15 @@ function _DOGEVIEW
         local FILE=$(_SECOND_LATEST $HOME/.cache/logs/*)
         if [ -f "${FILE}" ]
         then
-            command less +G ${FILE}
+
+            if [ "${_DOGE_STDOUT}" = 1 ]
+	    then
+                \less -R -X -F -K +G "${FILE}"
+            else
+                \cat "${@}"
+	    fi
         else
-            command echo "WOW! Such view! Many formats! Much decode!" >&2 | tee /dev/null >/dev/null
+            command echo "WOW! Such view! Many formats! Much decode!" >&2 | tee  >/dev/null
         fi
         return 1
     elif [ "${#@}" -gt 1 ]
@@ -373,10 +389,6 @@ function _DOGEVIEW
         PIPEFAIL_ENABLED=0
     else
         PIPEFAIL_ENABLED=1
-    fi
-    if [ -t 0 ]
-    then
-        local _DOGE_STDOUT=1
     fi
     local TTY=$(tty) 2>/dev/null
     local RETURN
