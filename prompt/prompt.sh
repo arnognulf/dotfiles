@@ -96,7 +96,7 @@ function _PROMPT_MAGIC_SHELLBALL ()
 function _PROMPT_COMMAND ()
 {
   # disconnect other clients and resize window to current size
-  ( [ -n "$TMUX" ] && { tmux detach-client -a;for CLIENT in 1 2 3; do tmux -L "$CLIENT" resize-window -A; done; } &>/dev/null & )
+  ( [ -n "$TMUX" ] && { LC_ALL=C tmux detach-client -a;for CLIENT in 1 2 3; do LC_ALL=C tmux -L "$CLIENT" resize-window -A; done; } &>/dev/null & )
   local _SOURCED=1
   # add trailing newline for last command if missing
   \printf "%$((COLUMNS-1))s\\r"
@@ -147,7 +147,7 @@ function _PROMPT_COMMAND ()
   HISTCMD_before_last=$_PROMPT_HISTCMD_PREV
   trap "_PROMPT_CTRLC=1;\echo -n" INT
   trap "_PROMPT_CTRLC=1;\echo -n" ERR
-  stty echo 2>/dev/null
+  LC_ALL=C stty echo 2>/dev/null
   history -a
   [ -n "${GNOME_TERMINAL_SCREEN}" ] && \echo -ne "\e]11;${BGCOLOR}\a\e]10;${FGCOLOR}\a\e]12;#312D2A\a"
 }
@@ -469,7 +469,7 @@ local FIRST_ARG="${1}"
 case "${FIRST_ARG}" in
 _*)
 shift
-case
+esac
 FIRST_ARG="${1}"
 
 FIRST_NON_OPTION="${2}"

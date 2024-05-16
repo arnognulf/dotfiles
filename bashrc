@@ -9,6 +9,7 @@ then
 (
 setup_tmux ()
 {
+export LC_ALL=C 
 tmux set -g status off
 tmux set-option -g set-titles-string "#T"
 tmux set-option -g set-titles on
