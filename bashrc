@@ -662,8 +662,9 @@ function kill_tracker
     tracker daemon -k
     \rm -rf ~/.cache/tracker* ~/.local/share/tracker*
 }
-# try to run one thread for non-blocking background tasks such that CPU and IO is not
-# stressed at shell startup, this way we will get to prompt faster
+# try to run one thread for non-blocking background tasks such that CPU 
+# and IO is not stressed at shell startup, this way we will get to prompt 
+# faster
 function background_startup_tasks
 {
 ignore_chrome_crash
@@ -696,6 +697,11 @@ export PS4='+ $EPOCHREALTIME ($LINENO) '
 LC_ALL=C _dotfiles_main
 unset PS4
 else
+# setting LC_ALL=C disables loading of locales and does away with 
+# multibyte text parsing which results in faster startup
+#
+# redirecting to /dev/null as few times as possible also results in 
+# improved startup performance
 LC_ALL=C _dotfiles_main &>/dev/null
 fi
 elif [ -z "${DISPLAY}${WAYLAND_DISPLAY}" ]
