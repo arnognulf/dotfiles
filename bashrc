@@ -697,11 +697,6 @@ export PS4='+ $EPOCHREALTIME ($LINENO) '
 LC_ALL=C _dotfiles_main
 unset PS4
 else
-# setting LC_ALL=C disables loading of locales and does away with 
-# multibyte text parsing which results in faster startup
-#
-# redirecting to /dev/null as few times as possible also results in 
-# improved startup performance
 LC_ALL=C _dotfiles_main &>/dev/null
 fi
 elif [ -z "${DISPLAY}${WAYLAND_DISPLAY}" ]
