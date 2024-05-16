@@ -119,11 +119,13 @@ if type -P nvim
 then
 EDITOR="nvim"
 alias vim='_NO_MEASURE _ICON 📝 nvim -p'
+alias im='_NO_MEASURE _ICON 📝 nvim -p'
 alias v='_NO_MEASURE _ICON 📝  nvim -p'
 alias nano='_NO_MEASURE _ICON 📝 nvim -p'
 else
 EDITOR="vim"
 alias vim='_NO_MEASURE _ICON 📝 vim -p'
+alias im='_NO_MEASURE _ICON 📝 vim -p'
 alias v='_NO_MEASURE _ICON 📝  vim -p'
 alias nano='_NO_MEASURE _ICON 📝 vim -p'
 fi
@@ -190,6 +192,7 @@ _MEASURE=0
 _MOAR git "$@"
 esac
 }
+alias it="_GIT"
 alias git="_GIT"
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
@@ -602,6 +605,7 @@ _SPINNER_PID_FILE=$(mktemp)
 (
 SPINNER ()
 {
+{
 \printf "\\e[?25l"
 while sleep 0.04; do
 \printf "\\r\\e[J"
@@ -616,6 +620,7 @@ sleep 0.04
 sleep 0.04
 \printf "\\r\\e[J.  "
 done
+} >&2 | tee 2>/dev/null
 }
 SPINNER &
 \echo $! > "${_SPINNER_PID_FILE}"                               
@@ -628,6 +633,7 @@ kill -9 $(<${_SPINNER_PID_FILE})
 ( \rm -f ${_SPINNER_PID_FILE} & )
 unset _SPINNER_PID_FILE
 } &>/dev/null
+\printf "\\r\\e[J" >&2 | tee 2>/dev/null
 }
 
 LS_COLORS='di=01';

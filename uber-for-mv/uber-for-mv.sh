@@ -24,42 +24,42 @@
 
 _LATEST ()
 {
-    local DIR
-    local SECOND_NEWEST_FILE
     local NEWEST_FILE
     local FILE
-    DIR="$(xdg-user-dir DOWNLOAD)"
     NEWEST_FILE=
     for FILE in "${@}"
     do
-        case ${FILE} in
-        *.part|*.crdownload)
-        :
-        ;;
-        *)
         if [[ -z "${NEWEST_FILE}" || "${FILE}" -nt "${NEWEST_FILE}" ]]
         then
             NEWEST_FILE="${FILE}"
         fi
-        esac
+    done
+    echo "${NEWEST_FILE}"
+    return 0
+}
+_SECOND_LATEST ()
+{
+    local SECOND_NEWEST_FILE
+    local NEWEST_FILE
+    local FILE
+    NEWEST_FILE=
+    for FILE in "${@}"
+    do
+        if [[ -z "${NEWEST_FILE}" || "${FILE}" -nt "${NEWEST_FILE}" ]]
+        then
+            NEWEST_FILE="${FILE}"
+        fi
     done
     for FILE in "${@}"
     do
-        case "${FILE}" in
-        *.part|*.crdownload)
-        :
-        ;;
-        *)
         if [[ -z "${SECOND_NEWEST_FILE}" || "${FILE}" -nt "${SECOND_NEWEST_FILE}" ]] && [ "${FILE}" != "${NEWEST_FILE}" ]
         then
             SECOND_NEWEST_FILE="${FILE}"
         fi
-        esac
     done
-    echo -e "${NEWEST_FILE##*/}\n\nNext: ${SECOND_NEWEST_FILE##*/}"
+    echo "${SECOND_NEWEST_FILE}"
     return 0
 }
-
 
 _UBER_FOR_MV ()
 {
@@ -87,10 +87,10 @@ _UBER_FOR_MV ()
         fi
         case "${NEWEST_FILE}" in
         *.part|*.crdownload)
-	_START_SPINNER
+	_SPINNER_START
         ;;
         *)
-	_STOP_SPINNER
+	_SPINNER_STOP
         CAN_MOVE=1
         esac
     done

@@ -457,7 +457,8 @@ PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
 
 _title ()
 {
-[ -n "$*" ] && [ -t 0 ] && command echo -ne "\e]0;$* in ${PWD##*/} at $(date +%H:%M)\a"
+[ -z "${TTY}" ] && TTY=$(tty)
+[ -n "$*" ] && [ -t 0 ] && command echo -ne "\e]0;$* in ${PWD##*/} at $(date +%H:%M)\a" >${TTY}
 }
 
 _ICON ()

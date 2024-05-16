@@ -341,7 +341,17 @@ function _DOGEVIEW
         local FILE=$(_LATEST $HOME/.cache/logs/*)
         if [ -f "${FILE}" ]
         then
-            command less +G ~/.cache/logs/${FILE}
+            command less +G "${FILE}"
+        else
+            command echo "WOW! Such view! Many formats! Much decode!" >&2 | tee /dev/null >/dev/null
+        fi
+        return 1
+    elif [ "${1}" = "1" ]
+    then
+        local FILE=$(_SECOND_LATEST $HOME/.cache/logs/*)
+        if [ -f "${FILE}" ]
+        then
+            command less +G ${FILE}
         else
             command echo "WOW! Such view! Many formats! Much decode!" >&2 | tee /dev/null >/dev/null
         fi
