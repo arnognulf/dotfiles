@@ -607,18 +607,18 @@ SPINNER ()
 {
 {
 \printf "\\e[?25l"
-while sleep 0.04; do
+while sleep 0.04 && [ -f "${_SPINNER_PID_FILE}" ]; do
 \printf "\\r\\e[J"
 sleep 0.04
-\printf "\\r\\e[J  ."
+[ -f "${_SPINNER_PID_FILE}" ] && \printf "\\r\\e[J  ."
 sleep 0.04
-\printf "\\r\\e[J .."
+[ -f "${_SPINNER_PID_FILE}" ] && \printf "\\r\\e[J .."
 sleep 0.04
-\printf "\\r\\e[J..."
+[ -f "${_SPINNER_PID_FILE}" ] && \printf "\\r\\e[J..."
 sleep 0.04
-\printf "\\r\\e[J.. "
+[ -f "${_SPINNER_PID_FILE}" ] && \printf "\\r\\e[J.. "
 sleep 0.04
-\printf "\\r\\e[J.  "
+[ -f "${_SPINNER_PID_FILE}" ] && \printf "\\r\\e[J.  "
 done
 } >&2 | tee 2>/dev/null
 }
