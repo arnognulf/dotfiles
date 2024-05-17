@@ -116,14 +116,14 @@ function _PROMPT_COMMAND ()
         0)
         _LS_HIDDEN -w${COLUMNS}
         CR_LEVEL=3;
-        if \git status &>/dev/null
+        if LC_ALL=C \git status &>/dev/null
         then
         CR_LEVEL=1
         else
         \echo -ne "\e[J\n\n" 
         fi
         ;;
-            2) CR_LEVEL=3;\git -c color.status=always status |head -n$((LINES - 2)) | head -n$((LINES - 4)); \echo -e "        ...\n\n";;
+            2) CR_LEVEL=3;\git -c color.status=always status |\head -n$((LINES - 2)) | \head -n$((LINES - 4)); \echo -e "        ...\n\n";;
             *) _PROMPT_MAGIC_SHELLBALL
         esac
         CR_LEVEL=$((CR_LEVEL + 1))
@@ -305,7 +305,7 @@ _PROMPT ()
     fi
     _PROMPT_PWD="${_PROMPT_PWD%/*}"
   done
-    _PROMPT_GIT_PS1=$(__git_ps1)
+    _PROMPT_GIT_PS1=$(LC_ALL=C __git_ps1)
   esac
 
 if [ "${TITLE_OVERRIDE}" = "" ]
@@ -411,7 +411,7 @@ _PROMPT_LUT[5]="119;00;136"
 
 _PROMPT_LINE="${REVERSE}"
 
-local ESC=$(command echo -e '\e')
+local ESC=$(\printf '\e')
 local PRE="${ESC}[38;2;"
 local POST="m"
 local INDEX=0
@@ -448,7 +448,7 @@ fi
 let INDEX++
 done
 
-PS1="\[\r\e]0;"'${TITLE}'"\a\e[0;4m"'$([ ${UID} = 0 ] && command echo -e "\e[31m")\]${_PROMPT_LINE}'"
+PS1="\[\r\e]0;"'${TITLE}'"\a\e[0;4m"'$([ ${UID} = 0 ] && \echo -e "\e[31m")\]${_PROMPT_LINE}'"
 \[\e(1\e[0;7m"'$([ ${UID} = 0 ] && \echo -e "\e[31m")'"\]${_PROMPT_TEXT}\[\e[0m\e[?25h\] "
 }
 
@@ -458,7 +458,7 @@ PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
 _title ()
 {
 [ -z "${TTY}" ] && TTY=$(tty)
-[ -n "$*" ] && [ -t 0 ] && command echo -ne "\e]0;$* in ${PWD##*/} at $(date +%H:%M)\a" >${TTY}
+[ -n "$*" ] && [ -t 0 ] && \echo -ne "\e]0;$* in ${PWD##*/} at $(date +%H:%M)\a" >${TTY}
 }
 
 _ICON ()

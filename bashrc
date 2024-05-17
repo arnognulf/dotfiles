@@ -157,7 +157,7 @@ alias gcc='_ICON 🛠️ _BATCH_PRIO _LOG gcc'
 alias g++='_ICON 🛠️ _BATCH_PRIO _LOG g++'
 alias ninja='_ICON 🛠️ _BATCH_PRIO _LOG ninja'
 alias make='_ICON 🛠️ _BATCH_PRIO _LOG make -j$(nproc)'
-alias cat="_NO_MEASURE _ICON 🐱 _BATCH_PRIO _MOAR cat"
+alias cat="_ICON 🐱 _BATCH_PRIO _MOAR cat"
 alias delta='_BATCH_PRIO delta --light'
 alias cp='_ICON 💽 _BATCH_PRIO cp --reflink=auto'
 alias dd='_ICON 💽 _BATCH_PRIO dd status=progress'
@@ -197,11 +197,11 @@ alias git="_GIT"
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
-type -P fdfind && alias fdfind='_NO_MEASURE _ICON 🔎 _MOAR fdfind -H -I'
-type -P fdfind && alias fd='_NO_MEASURE _ICON 🔎 _MOAR fdfind -H -I'
-alias find='_NO_MEASURE _ICON 🔎 _MOAR find'
-alias rga='_NO_MEASURE _ICON 🔎 _MOAR rga --color=always'
-alias rg='_NO_MEASURE _ICON 🔎 _MOAR rg'
+type -P fdfind && alias fdfind='_ICON 🔎 _MOAR fdfind -H -I'
+type -P fdfind && alias fd='_ICON 🔎 _MOAR fdfind -H -I'
+alias find='_ICON 🔎 _MOAR find'
+alias rga='_ICON 🔎 _MOAR rga --color=always'
+alias rg='_ICON 🔎 _MOAR rg'
 alias top='_NO_MEASURE _ICON 📈 top'
 alias ntop='_NO_MEASURE _ICON 📈 ntop'
 alias htop='_NO_MEASURE _ICON 📈 htop'
@@ -300,7 +300,7 @@ alias mosh="_NO_MEASURE  MOSH_TITLE_NOPREFIX=1 mosh"
 alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
 #alias p=_PANKY
-alias grep="_NO_MEASURE  _MOAR grep -a"
+alias grep=" _MOAR grep -a"
 alias willys="o google-chrome-beta  ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/willys --no-default-browser-check --no-first-run --app=https://willys.se"
 alias hbo="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/hbo --no-default-browser-check --no-first-run --app=https://www.hbomax.com"
 alias dn="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/dn --no-default-browser-check --no-first-run --app=https://dn.se"

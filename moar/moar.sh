@@ -125,18 +125,23 @@ then
     local BASECMD="${CMD##*/}"
     case ${BASECMD} in
     *" "*)
-    eval "alias \"${BASECMD}\"=\"_NO_MEASURE _MOAR \\\"${BASECMD}\\\"\""
+    eval "alias \"${BASECMD}\"=\"_MOAR \\\"${BASECMD}\\\"\""
     ;;
     *)
-    eval "alias \"${BASECMD}\"=\"_NO_MEASURE _MOAR ${BASECMD}\""
+    eval "alias \"${BASECMD}\"=\"_MOAR ${BASECMD}\""
     esac
 elif [ $(type -t "${CMD}") = "builtin" ]
 then
-    eval "alias \"${CMD}\"=\"_NO_MEASURE _MOAR \\\"${CMD}\\\"\""
+    eval "alias \"${CMD}\"=\"_MOAR \\\"${CMD}\\\"\""
 fi
 done
-eval "function _MOAR_d { NO_MEASURE _MOAR \"\${FUNCNAME/_MOAR_/}\" \"\$@\";}"
+eval "function _MOAR_d { _MOAR \"\${FUNCNAME/_MOAR_/}\" \"\$@\";}"
 }
 _MOAR_DEFINE
 unset -f _MOAR_DEFINE
-_MOAR true || PATH=$PATH:${DOTFILESDIR}/moar
+_MOAR.sh true || PATH=$PATH:${DOTFILESDIR}/moar
+_MOAR ()
+{
+_NO_MEASURE
+_MOAR.sh "$@"
+}
