@@ -534,13 +534,14 @@ fi
 
 log ()
 {
-if [ "$1" -ge 0 ] 2>/dev/null || [ "$1" -lt 0 ] 2>/dev/null
-then
+case "$1" in
+-*|[0-9]*)
 _SHABACUS log "$@"
-else
+;;
+*)
 local _LOGFILE="${1}-$(now).log"
 _LOG "$@"
-fi
+esac
 }
 alias shabacus=_SHABACUS
 
