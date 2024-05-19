@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-_shabacus_help_conversions ()
+_SHABACUS_help_conversions ()
 {
 echo "
 Mass conversions
@@ -45,7 +45,7 @@ x UNIT in UNIT - where UNIT are any of [cm,m,km,ft,in,yd,miles,mil]
 " >&2 | tee /dev/null >/dev/null
 }
 
-function _shabacus ()
+function _SHABACUS ()
 {
 local INDEX=0
 local EXPR=""
@@ -153,7 +153,7 @@ not x    - bitwise NOT of x
 bitrev x - bitwise reverse x
 
 " >&2 | tee /dev/null >/dev/null
-_shabacus_help_conversions;
+_SHABACUS_help_conversions;
 return 1
 esac
 
@@ -241,7 +241,7 @@ case "${4}" in
 F) EXPR="(9/5*${EXPR}+32)+273.15";;
 K) EXPR="${EXPR}";;
 C) EXPR="${EXPR}+273.15";;
-*) _shabacus_help_conversions; return 1
+*) _SHABACUS_help_conversions; return 1
 esac
 ;;
 
@@ -257,7 +257,7 @@ kg) EXPR="${EXPR}";;
 g) EXPR="${EXPR}/1000";;
 lb) EXPR="${EXPR}*2.205";;
 oz) EXPR="${EXPR}*35.274";;
-*) _shabacus_help_conversions; return 1
+*) _SHABACUS_help_conversions; return 1
 esac
 ;;
 
@@ -283,7 +283,7 @@ in) EXPR="${EXPR}*39.37";;
 yd) EXPR="${EXPR}*1.094";; 
 miles) EXPR="${EXPR}/1609.344";; 
 mil) EXPR="${EXPR}/10000";; 
-*) _shabacus_help_conversions; return 1
+*) _SHABACUS_help_conversions; return 1
 esac
 ;;
 
@@ -297,7 +297,7 @@ case "${4}" in
 km/h) EXPR="${EXPR}*3.6";;
 mph) EXPR="${EXPR}*2.237";;
 m/s) EXPR="${EXPR}";;
-*) _shabacus_help_conversions; return 1
+*) _SHABACUS_help_conversions; return 1
 esac
 ;;
 
@@ -309,12 +309,12 @@ esac
 case "${4}" in
 deg) EXPR="${EXPR}/pi*180";;
 rad) EXPR="${EXPR}";;
-*) _shabacus_help_conversions; return 1
+*) _SHABACUS_help_conversions; return 1
 esac
 ;;
 
 *)
-_shabacus_help_conversions; return 1
+_SHABACUS_help_conversions; return 1
 esac
 fi
 case "${EXPR}" in
@@ -326,7 +326,7 @@ echo "FUNCNAME[0]}: modulo operator (%): not supported in decimal mode" >&2 | te
 esac
 esac
 
-function _shabacus_cmd ()
+function _SHABACUS_cmd ()
 {
 # http://phodd.net/gnu-bc/code/logic.bc
 # https://unix.stackexchange.com/questions/44226/bc-doesnt-support-log-and-factorial-calculation
@@ -378,7 +378,7 @@ define int(x){auto s;s=scale;scale=0;x/=1;scale=s;return x}
 define pow(x,y){if(y==int(y)){return (x^y);};return e(y*l(x))}
 ${EXPR}"
 }
-_shabacus_cmd
+_SHABACUS_cmd
 RESULT=$(echo "${COMMAND}"| BC_LINE_LENGTH=0 BC_ENV_ARGS="" bc -l 2>/dev/null)
 [ -n "${SHABACUS_TRACE}" ] && echo "shabacus: bc program listing:
 ${COMMAND}" >&2 | tee /dev/null >/dev/null;
@@ -386,12 +386,12 @@ ${COMMAND}" >&2 | tee /dev/null >/dev/null;
 local HIGHER_PRECISION_RESULT
 case "${RESULT}" in
 *.*)
-SHABACUS_DECIMALS=$((${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}} + 4)) _shabacus_cmd
+SHABACUS_DECIMALS=$((${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}} + 4)) _SHABACUS_cmd
 HIGHER_PRECISION_RESULT=$(echo "${COMMAND}"| BC_LINE_LENGTH=0 BC_ENV_ARGS="" bc -l 2>/dev/null)
-SHABACUS_DECIMALS=$((${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}})) _shabacus_cmd
+SHABACUS_DECIMALS=$((${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}})) _SHABACUS_cmd
 local HIGHER_PRECISION_FRACTION=${HIGHER_PRECISION_RESULT#*.}
 EXPR="-(${RESULT})"+${HIGHER_PRECISION_RESULT%.*}.${HIGHER_PRECISION_FRACTION:0:${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}}}+${EXPR}
-_shabacus_cmd
+_SHABACUS_cmd
 [ -n "${SHABACUS_TRACE}" ] && echo "shabacus: compensating numerical error: ${EXPR}" >&2 | tee /dev/null >/dev/null;
 RESULT=$(echo "${COMMAND}"| BC_LINE_LENGTH=0 BC_ENV_ARGS="" bc -l 2>/dev/null)
 esac
@@ -400,7 +400,7 @@ case "${RESULT}" in
 case "${HIGHER_PRECISION_RESULT:7:1}" in
 [5-9])
 EXPR="-1/(10^${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}})+${EXPR}"
-_shabacus_cmd
+_SHABACUS_cmd
 [ -n "${SHABACUS_TRACE}" ] && echo "shabacus: rounding down value: ${EXPR}" >&2 | tee /dev/null >/dev/null;
 RESULT=$(echo "${COMMAND}"| BC_LINE_LENGTH=0 BC_ENV_ARGS="" bc -l 2>/dev/null)
 esac
@@ -409,7 +409,7 @@ esac
 case "${HIGHER_PRECISION_RESULT:6:1}" in
 [5-9])
 EXPR="1/(10^${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}})+${EXPR}"
-_shabacus_cmd
+_SHABACUS_cmd
 [ -n "${SHABACUS_TRACE}" ] && echo "shabacus: rounding up value: ${EXPR}" >&2 | tee /dev/null >/dev/null;
 RESULT=$(echo "${COMMAND}"| BC_LINE_LENGTH=0 BC_ENV_ARGS="" bc -l)
 esac
@@ -441,7 +441,7 @@ fi
 echo "${FORMATTED_RESULT}"
 }
 
-function _shabacus_command_not_found ()
+function _SHABACUS_command_not_found ()
 {
    _SOURCED=1
 if [ -n "${ZSH_VERSION}" ]
@@ -466,54 +466,54 @@ function command_not_found_handle ()
 
 case "${ARGS}" in
 ..*|*[a-d]|*[f-h]|*[j-zG-Z])
-_shabacus_command_not_found "${@}"
+_SHABACUS_command_not_found "${@}"
 return $?
 ;;
 e" ")
-_shabacus e 1
+_SHABACUS e 1
 ;;
 log10" "*|log2" "*|lg" "*|0b[.0-9]*|0o[.0-9]*|0x*[.0-9A-F]*|j" "*|cos" "*|arctan" "*|sin" "*|e" "*|tan" "*|length" "*|sqrt" "*|log10" "*|log" "*|pi*|ln" "*|√[.0-9]*|s'('*|c'('*|a'('*|l'('*|e'('*|j'('*|[.0-9]*|'-'[0-9]*|sqrt"("*|'('*|fac" "*|t" "*|tan" "*|arccsc" "*|arcsec" "*|arccot" "*|arccos" "*|arcsin" "*|lb" "*|sinh" "*|cosh" "*|tanh" "*|sech" "*|csch" "*|coth" "*|arcsinh" "*|arccosh" "*|arctanh" "*|cot" "*)
 if [ "${#@}" -gt 1 ]
 then
-_shabacus "${@}"
+_SHABACUS "${@}"
 else
 case ${1} in
 [1-9]*)
-echo "$(date -d @$(_shabacus $1 in dec)) as UNIX timestamp"
+echo "$(date -d @$(_SHABACUS $1 in dec)) as UNIX timestamp"
 esac
-DEC=$(_shabacus ${1} in dec) 
+DEC=$(_SHABACUS ${1} in dec) 
 if [ ${DEC} -gt 127 ] &>/dev/null && [ ${DEC} -lt 256 ]
 then
-echo "$(_shabacus -${DEC} + 127) as int8"
+echo "$(_SHABACUS -${DEC} + 127) as int8"
 fi
 if [ ${DEC} -gt 32767 ] &>/dev/null && [ ${DEC} -lt 65536 ]
 then
-echo "$(_shabacus -${DEC} + 32767) as int16"
+echo "$(_SHABACUS -${DEC} + 32767) as int16"
 fi
 if [ ${DEC} -gt 2147483647 ] &>/dev/null && [ ${DEC} -lt 4294967296 ]
 then
-echo "$(_shabacus -${DEC} + 2147483647) as int32"
+echo "$(_SHABACUS -${DEC} + 2147483647) as int32"
 fi
 case ${1} in
 -*|0[0-9]*) : ;;
-*) echo "$(_shabacus $1 in oct) in octal"
+*) echo "$(_SHABACUS $1 in oct) in octal"
 esac
 case ${1} in
 -*|0b*) : ;;
-*) echo "$(_shabacus $1 in bin) in binary"
+*) echo "$(_SHABACUS $1 in bin) in binary"
 esac
 case ${1} in
 -*|0x*) : ;;
-*) echo "$(_shabacus $1 in hex) in hexadecimal"
+*) echo "$(_SHABACUS $1 in hex) in hexadecimal"
 esac
 case ${1} in
 -*|[1-9]*) : ;;
-*) echo "$(_shabacus $1 in dec) in decimal"
+*) echo "$(_SHABACUS $1 in dec) in decimal"
 esac
 fi
 ;;
 *)
-_shabacus_command_not_found "${@}"
+_SHABACUS_command_not_found "${@}"
 return $?
 esac
 }
@@ -525,12 +525,24 @@ then
 "$(type -P ln)" "${@}"
 else
 case "${*}" in
-e) _shabacus "l(e(1))";;
-e" "*|-[0-9]*|[0-9]*) _shabacus ln "${@}";;
+e) _SHABACUS "l(e(1))";;
+e" "*|-[0-9]*|[0-9]*) _SHABACUS ln "${@}";;
 *) "$(type -P ln)" "${@}"
 esac
 fi
 }
+
+log ()
+{
+if [ "$1" -ge 0 ] 2>/dev/null || [ "$1" -lt 0 ] 2>/dev/null
+then
+_SHABACUS log "$@"
+else
+local _LOGFILE="${1}-$(now).log"
+_LOG "$@"
+fi
+}
+alias shabacus=_SHABACUS
 
 if [ -n "$ZSH_NAME" ]
 then

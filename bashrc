@@ -591,11 +591,6 @@ local RETURN=$?
 /bin/rm -f "${TEMP}"
 return ${RETURN}
 }
-log ()
-{
-local _LOGFILE="${1}-$(now).log"
-_LOG "$@"
-}
 
 local FILE
 for FILE in /*
