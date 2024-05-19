@@ -157,7 +157,7 @@ alias gcc='_ICON 🛠️ _BATCH_PRIO _LOG gcc'
 alias g++='_ICON 🛠️ _BATCH_PRIO _LOG g++'
 alias ninja='_ICON 🛠️ _BATCH_PRIO _LOG ninja'
 alias make='_ICON 🛠️ _BATCH_PRIO _LOG make -j$(nproc)'
-alias cat="_ICON 🐱 _BATCH_PRIO _MOAR cat"
+alias cat="_ICON 🐱 _MOAR cat"
 alias delta='_BATCH_PRIO delta --light'
 alias cp='_ICON 💽 _BATCH_PRIO cp --reflink=auto'
 alias dd='_ICON 💽 _BATCH_PRIO dd status=progress'
@@ -214,8 +214,8 @@ alias rm='_ICON ♻️  _ERMAHGERD'
 alias trash='_ICON ♻️  gio trash'
 alias jdupes='_ICON ♻️  jdupes --dedupe -R'
 alias hog='~/.config/dotfiles/hog/hog.sh'
-alias g="egrep"
-alias gv="grep -v"
+alias g="_ICON 🔎 egrep"
+alias gv="_ICON 🔎 grep -v"
 function fclones
 {
 [ -z "$(type -P fclones)" ] && { _NO; return 255;}
@@ -300,7 +300,7 @@ alias mosh="_NO_MEASURE  MOSH_TITLE_NOPREFIX=1 mosh"
 alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
 #alias p=_PANKY
-alias grep=" _MOAR grep -a"
+alias grep="_ICON 🔎 _MOAR grep -a"
 alias willys="o google-chrome-beta  ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/willys --no-default-browser-check --no-first-run --app=https://willys.se"
 alias hbo="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/hbo --no-default-browser-check --no-first-run --app=https://www.hbomax.com"
 alias dn="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/dn --no-default-browser-check --no-first-run --app=https://dn.se"
@@ -576,10 +576,10 @@ function back
 function _LOG
 {
 local TTY=$(tty)
-local LOG="${TTY//\//_}"
+local LOGFILE="${TTY//\//_}"
 local LOGDIR="${HOME}/.cache/logs"
 \mkdir -p "${LOGDIR}"; 
-LOG="${LOGDIR}/${LOG}"
+LOG="${_LOGFILE-${LOGDIR}/${LOGFILE}}"
 local ARG
 local TEMP=$(\mktemp)
 for ARG in "$@"
@@ -590,6 +590,11 @@ script -q -e -a -c "bash \"${TEMP}\"" "${LOG}"
 local RETURN=$?
 /bin/rm -f "${TEMP}"
 return ${RETURN}
+}
+log ()
+{
+local _LOGFILE="${1}-$(now).log"
+_LOG "$@"
 }
 
 local FILE
