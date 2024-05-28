@@ -551,6 +551,8 @@ rgbpaint \
 doublecmd \
 gource \
 xaos \
+rpi-imager \
+golly \
 slack
 do
 if type -P "${CMD}"
@@ -590,8 +592,8 @@ do
 if \grep Terminal=false "${DESKTOP_FILE}"
 then
     local NAME=$(\grep "^Name=" "${DESKTOP_FILE}"|\sed -e 's/Name=//g' -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|\head -n1)
-    local NAME_LOCALIZED=$(\grep "^Name\[${LANG%%_*}\]=" "${DESKTOP_FILE}"|cut -d= -f2|sed -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|head -n1)
-    local COMMAND=$(\grep "^Exec=" "${DESKTOP_FILE}"|sed -e 's/Exec=//g' -e 's/\%f//g' -e 's/\%F//g' -e 's/\%u//g' -e 's/\%U//g'|head -n1)
+    local NAME_LOCALIZED=$(\grep "^Name\[${LANG%%_*}\]=" "${DESKTOP_FILE}"|cut -d= -f2|\sed -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|\head -n1)
+    local COMMAND=$(\grep "^Exec=" "${DESKTOP_FILE}"|sed -e 's/Exec=//g' -e 's/\%f//g' -e 's/\%F//g' -e 's/\%u//g' -e 's/\%U//g'|\head -n1)
     eval alias \""${NAME}"\"=\"o ${COMMAND}\"
     test -n "${NAME_LOCALIZED}" && { eval alias \""${NAME_LOCALIZED}"\"=\"o ${COMMAND}\"; }
     NAME=""

@@ -117,7 +117,10 @@ systemctl \
 last \
 ss \
 tldr \
-freecad \
+ansi2html \
+ansi2txt \
+2csv \
+2html \
 ip
 do
 if type -P "${CMD}" &>/dev/null 

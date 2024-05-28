@@ -283,7 +283,7 @@ function _CHDIR_ALL_THE_THINGS ()
         type -p unzip &>/dev/null || { \echo "missing unzip" 2>&1| \tee >/dev/null;}
         type -p unar &>/dev/null || { \echo "missing unar" 2>&1| \tee >/dev/null;}
         type -p 7z &>/dev/null || { \echo "missing 7z" 2>&1| \tee >/dev/null;}
-        nice -n 19 tar xf "${ORIG_FILE}" &>/dev/null || nice -n 19 unzip -X -o "${ORIG_FILE}" &>/dev/null || nice -n 19 unsquashfs "${ORIG_FILE}" &>/dev/null || nice -n 19 7z x -pDUMMY_PASSWORD -y "${ORIG_FILE}" &>/dev/null || nice -n 19 unar -force-rename -no-directory -password DUMMY_PASSWORD "${ORIG_FILE}" &>/dev/null || { nice -n 19 simg2img "${ORIG_FILE}" "${ORIG_FILE}.nonsparse" &>/dev/null && nice -n 19 7z x "${ORIG_FILE}.nonsparse" &>/dev/null;}  || SUCCESS=0;
+        nice -n 19 tar xf "${ORIG_FILE}" &>/dev/null || nice -n 19 unzip -X -o "${ORIG_FILE}" &>/dev/null || nice -n 19 unsquashfs -no-xattrs "${ORIG_FILE}" &>/dev/null || nice -n 19 7z x -pDUMMY_PASSWORD -y "${ORIG_FILE}" &>/dev/null || nice -n 19 unar -force-rename -no-directory -password DUMMY_PASSWORD "${ORIG_FILE}" &>/dev/null || { nice -n 19 simg2img "${ORIG_FILE}" "${ORIG_FILE}.nonsparse" &>/dev/null && nice -n 19 7z x "${ORIG_FILE}.nonsparse" &>/dev/null;}  || SUCCESS=0;
         [ -f "${ORIG_FILE}.nonsparse" ] && \rm -f "${ORIG_FILE}.nonsparse"  &>/dev/null
 	_SPINNER_STOP
         if [ ${SUCCESS} = 0 ]

@@ -380,7 +380,7 @@ function c ()
         if [ -f "${FILE}" ]
         then
         \echo -ne "\n   \e[1;4m"
-        \grep -v ^$ "${FILE}" | \sed -e 's/# //g' | \head -n1
+        \grep -v ^$ "${FILE}" | \sed -e 's/# //g' -e 's/<[^>]*>//g' | \head -n1
         \echo -e "\e[0m"
         break
         fi
@@ -390,7 +390,7 @@ function c ()
         else
         local MAXLINES=$((LINES - 6))
         fi
-        _LS_HIDDEN -C -w${COLUMNS} | \tee "${TMP}" | head -n${MAXLINES}
+        _LS_HIDDEN -C -w${COLUMNS} | \tee "${TMP}" | \head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
         [ ${LS_LINES} -gt ${MAXLINES} ] && \echo "..."
         if [ ${LS_LINES} = 0 ]
@@ -588,6 +588,7 @@ do
 done
 script -q -e -a -c "bash \"${TEMP}\"" "${LOG}"
 local RETURN=$?
+\sed -i -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' -e 's/\r/\n/g' "${LOG}"
 /bin/rm -f "${TEMP}"
 return ${RETURN}
 }
@@ -636,6 +637,14 @@ unset _SPINNER_PID_FILE
 \printf "\\r\\e[J" >&2 | tee 2>/dev/null
 }
 
+# https://stackoverflow.com/questions/51653450/show-call-stack-in-bash
+function _STACKTRACE { 
+   local i=1 line file func
+   while read -r line func file < <(caller $i); do
+      echo >&2 "[$i] $file:$line $func(): $(sed -n ${line}p $file)"
+      ((i++))
+   done
+}
 LS_COLORS='di=01';
 export LS_COLORS
 . ~/.bashrc.local
