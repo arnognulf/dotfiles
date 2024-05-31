@@ -72,6 +72,7 @@ head \
 apt-cache \
 sed \
 ls \
+vdir \
 git \
 awk \
 lsar \

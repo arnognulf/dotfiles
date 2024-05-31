@@ -63,7 +63,7 @@ function _MOAR
             command ionice --class idle nice -n 19 "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            command ionice --class idle nice -n 19 "${CMD}" "$@"
+            exec -a "$1" ionice --class idle nice -n 19 "${CMD}" "$@"
             RETURN=$?
         fi
         ;;
@@ -76,7 +76,7 @@ function _MOAR
                     command less -Q -R -X -F -K -S +F "$@"
                     RETURN=$?
                 else
-                    command ionice --class idle nice -n 19 "$@" | less -Q -R -X -F -K -S 
+                    exec -a "$1" ionice --class idle nice -n 19 "$@" | less -Q -R -X -F -K -S 
                 fi
             else
                 command ionice --class idle nice -n 19 "$@"
@@ -91,7 +91,7 @@ function _MOAR
                 command ionice --class idle nice -n 19 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} |tail -n +2| command less -Q -R -X -F -K -S
                 RETURN=$?
             else
-                command ionice --class idle nice -n 19 "$@"
+                exec -a "$1" ionice --class idle nice -n 19 "$@"
                 RETURN=$?
             fi
         ;;
@@ -101,12 +101,12 @@ function _MOAR
                 command ionice --class idle nice -n 19 "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
                 RETURN=$?
             else
-                command ionice --class idle nice -n 19 "$@"
+                exec -a "$1" ionice --class idle nice -n 19 "$@"
                 RETURN=$?
             fi
         ;;
         *)
-            command ionice --class idle nice -n 19 "$@"
+            exec -a "$1" ionice --class idle nice -n 19 "$@"
             RETURN=$?
         esac
         ;;
@@ -124,7 +124,7 @@ function _MOAR
         fi
         ;;
         *)
-            command ionice --class idle nice -n 19 "$@"
+            exec -a "$1" ionice --class idle nice -n 19 "$@"
             RETURN=$?
         esac
     ;;
@@ -135,7 +135,7 @@ function _MOAR
             RETURN=$?
         else
             shift
-            command ionice --class idle nice -n 19 cat "${@}"
+            exec -a "$1" ionice --class idle nice -n 19 cat "${@}"
             RETURN=$?
         fi
         ;;
@@ -145,7 +145,7 @@ function _MOAR
             command ionice --class idle nice -n 19 "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            command ionice --class idle nice -n 19 "$@"
+            exec -a "$1" ionice --class idle nice -n 19 "$@"
             RETURN=$?
         fi
     ;;
@@ -155,7 +155,7 @@ function _MOAR
             command "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            command "$@"
+            exec -a "$1" "$@"
             RETURN=$?
         fi
     ;;
@@ -166,7 +166,7 @@ function _MOAR
             command "$@" 2>${_MOAR_STDERR_FILE} | _EMOJIFY | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            command "$@"
+            exec -a "$1" "$@"
             RETURN=$?
         fi
     ;;
@@ -176,7 +176,7 @@ function _MOAR
             command ionice --class idle nice -n 19 "$@" --color=always 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            command ionice --class idle nice -n 19 "$@" --color=never
+            exec -a "$1" ionice --class idle nice -n 19 "$@" --color=never
             RETURN=$?
         fi
     ;;
@@ -186,7 +186,7 @@ function _MOAR
             command ionice --class idle nice -n 19 "$@" --no-pager 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            command ionice --class idle nice -n 19 "$@" --color=never
+            exec -a "$1" ionice --class idle nice -n 19 "$@" --color=never
             RETURN=$?
         fi
     ;;
@@ -197,7 +197,7 @@ function _MOAR
             command ionice --class idle nice -n 19 "$@" --color=always 2>/dev/null | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            command ionice --class idle nice -n 19 "$@" --color=never 2>/dev/null
+            exec -a "$1" ionice --class idle nice -n 19 "$@" --color=never 2>/dev/null
             RETURN=$?
         fi
     ;;
@@ -208,7 +208,7 @@ function _MOAR
             command ionice --class idle nice -n 19 "$@" --color always 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            command ionice --class idle nice -n 19 "$@" --color never
+            exec -a "$1" ionice --class idle nice -n 19 "$@" --color never
             RETURN=$?
         fi
     ;;
@@ -218,7 +218,7 @@ function _MOAR
             command ionice --class idle nice -n 19 "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            command ionice --class idle nice -n 19 "$@"
+            exec -a "$1" ionice --class idle nice -n 19 "$@"
             RETURN=$?
         fi
     esac
@@ -230,7 +230,7 @@ function _MOAR
         then
             command less -Q -R -X -F -K -S "${_MOAR_STDERR_FILE}"
         else
-            command cat "${_MOAR_STDERR_FILE}"
+            exec -a "$1" cat "${_MOAR_STDERR_FILE}"
         fi
         command rm ${_MOAR_STDERR_FILE}
     fi

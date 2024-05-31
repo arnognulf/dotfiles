@@ -47,7 +47,7 @@ bind-key p paste-buffer
 set -g status off
 EOF
 
-tmux -L ${NUM} attach-session || tmux -L ${NUM}
+LC_ALL=${OLD_LC_ALL} tmux -L ${NUM} attach-session || LC_ALL=${OLD_LC_ALL} tmux -L ${NUM}
 sleep 30
 clear
 \echo -ne "\e7\n"
@@ -152,11 +152,11 @@ function _EDITOR
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o _BATCH_PRIO ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
-alias clang='_ICON 🛠️ _BATCH_PRIO _LOG clang'
-alias gcc='_ICON 🛠️ _BATCH_PRIO _LOG gcc'
-alias g++='_ICON 🛠️ _BATCH_PRIO _LOG g++'
-alias ninja='_ICON 🛠️ _BATCH_PRIO _LOG ninja'
-alias make='_ICON 🛠️ _BATCH_PRIO _LOG make -j$(nproc)'
+alias clang='_ICON 🛠️ _LOG _BATCH_PRIO clang'
+alias gcc='_ICON 🛠️ _LOG _BATCH_PRIO gcc'
+alias g++='_ICON 🛠️ _LOG _BATCH_PRIO g++'
+alias ninja='_ICON 🛠️ _LOG _BATCH_PRIO ninja'
+alias make='_ICON 🛠️  _LOG _BATCH_PRIO make -j$(nproc)'
 alias cat="_ICON 🐱 _MOAR cat"
 alias delta='_BATCH_PRIO delta --light'
 alias cp='_ICON 💽 _BATCH_PRIO cp --reflink=auto'
@@ -700,6 +700,7 @@ unset -f _dotfiles_main
 }
 } &>/dev/null
 
+OLD_LC_ALL=${LC_ALL}
 if ! shopt -q login_shell
 then
 if [ -f ~/.bashrc.statistics ]
@@ -717,4 +718,6 @@ fi
 elif [ -z "${DISPLAY}${WAYLAND_DISPLAY}" ]
 then
 LC_ALL=C _dotfiles_main &>/dev/null
+else
+unset OLD_LC_ALL
 fi

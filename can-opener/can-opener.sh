@@ -211,6 +211,7 @@ pinta \
 scribus \
 mypaint \
 gitg \
+git-cola \
 zim \
 giggle \
 blender \
