@@ -578,8 +578,8 @@ function _LOG
 local TTY=$(tty)
 local LOGFILE="${TTY//\//_}"
 local LOGDIR="${HOME}/.cache/logs"
-\mkdir -p "${LOGDIR}"; 
-LOG="${_LOGFILE-${LOGDIR}/${LOGFILE}}"
+\mkdir -p "${LOGDIR}";
+local LOG="${_LOGFILE-${LOGDIR}/${LOGFILE}}"
 local ARG
 local TEMP=$(\mktemp)
 for ARG in "$@"
