@@ -143,9 +143,12 @@ eval "function _MOAR_d { _MOAR \"\${FUNCNAME/_MOAR_/}\" \"\$@\";}"
 }
 _MOAR_DEFINE
 unset -f _MOAR_DEFINE
-_MOAR.sh true || PATH=$PATH:${DOTFILESDIR}/moar
+_MOAR true || PATH=$PATH:${DOTFILESDIR}/moar
 _MOAR ()
 {
 _NO_MEASURE
-_MOAR.sh "$@"
+(
+unset -f _MOAR
+_MOAR "$@"
+)
 }

@@ -112,7 +112,7 @@ function _MOAR
         ;;
         *git)
         case "$2" in
-        log|status|remote|branch|diff)
+        log|reflog|status|remote|branch|diff)
         shift
         if [ "${_MOAR_STDOUT}" = 1 ]
         then

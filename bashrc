@@ -152,11 +152,12 @@ function _EDITOR
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o _BATCH_PRIO ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
-alias clang='_ICON 🛠️ _LOG _BATCH_PRIO clang'
-alias gcc='_ICON 🛠️ _LOG _BATCH_PRIO gcc'
-alias g++='_ICON 🛠️ _LOG _BATCH_PRIO g++'
-alias ninja='_ICON 🛠️ _LOG _BATCH_PRIO ninja'
-alias make='_ICON 🛠️  _LOG _BATCH_PRIO make -j$(nproc)'
+alias clang='_ICON 🛠️ _LOG clang'
+alias gcc='_ICON 🛠️ _LOG gcc'
+alias g++='_ICON 🛠️ _LOG g++'
+alias snapcraft='_ICON 🛠️ _LOG snapcraft' 
+alias ninja='_ICON 🛠️ _LOG ninja'
+alias make='_ICON 🛠️ _LOG make -j$(nproc)'
 alias cat="_ICON 🐱 _MOAR cat"
 alias delta='_BATCH_PRIO delta --light'
 alias cp='_ICON 💽 _BATCH_PRIO cp --reflink=auto'
@@ -172,7 +173,7 @@ alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
 alias tar='_ICON 📼 _BATCH_PRIO tar'
 alias scrcpy='_RETRY scrcpy'
-alias adb='_NO_MEASURE  _ICON 🤖 _RETRY _LOG adb'
+alias adb='_NO_MEASURE  _ICON 🤖 _RETRY adb'
 if [ -n "$WAYLAND_DISPLAY" ]
 then
 local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
@@ -582,7 +583,7 @@ local LOGDIR="${HOME}/.cache/logs"
 local LOG="${_LOGFILE-${LOGDIR}/${LOGFILE}}"
 local ARG
 local TEMP=$(\mktemp)
-for ARG in "$@"
+for ARG in "exec" "-a" "$1" "ionice" "--class" "idle" "nice" "-n" "19" "$@"
 do
 \echo -n "\"${ARG}\" " >>"${TEMP}"
 done
