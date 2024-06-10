@@ -653,8 +653,8 @@ export LS_COLORS
 unset _SOURCED
 bind 'set completion-ignore-case on'
 bind 'set bell-style none'
-BGCOLOR="#FFFAF1"
-FGCOLOR="#312D2A"
+BGCOLOR="FFFAF1"
+FGCOLOR="312D2A"
 fi
 
 (
