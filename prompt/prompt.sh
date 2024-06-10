@@ -44,11 +44,11 @@ function _FASD_PROMPT_FUNC ()
 if [ -n "${SSH_CLIENT}" ]
 then
 case $((16#$(\echo -n "${HOSTNAME}"|\sum|\cut -c1))) in
-0|5) _PROMPTHOSTDOT="\[\e[102m\]• \[\e[0;7m\]";;
-1|6) _PROMPTHOSTDOT="\[\e[103m\]• \[\e[0;7m\]";;
-2|7) _PROMPTHOSTDOT="\[\e[104m\]• \[\e[0;7m\]";;
-3|8) _PROMPTHOSTDOT="\[\e[105m\]• \[\e[0;7m\]";;
-4|9) _PROMPTHOSTDOT="\[\e[106m\]• \[\e[0;7m\]";;
+0|5) _PROMPTHOSTDOT="\[\e[102m\]⬤ \[\e[0;7m\]";;
+1|6) _PROMPTHOSTDOT="\[\e[103m\]⬤ \[\e[0;7m\]";;
+2|7) _PROMPTHOSTDOT="\[\e[104m\]⬤ \[\e[0;7m\]";;
+3|8) _PROMPTHOSTDOT="\[\e[105m\]⬤ \[\e[0;7m\]";;
+4|9) _PROMPTHOSTDOT="\[\e[106m\]⬤ \[\e[0;7m\]";;
 esac
 fi
 function _PROMPT_MAGIC_SHELLBALL ()
@@ -476,7 +476,12 @@ FIRST_ARG="${1}"
 FIRST_NON_OPTION="${2}"
 while [ "${FIRST_NON_OPTION:0:1}" = '-' ] || [ "${FIRST_NON_OPTION:0:1}" = '_' ]|| [ "${FIRST_NON_OPTION}" = '.' ]
 do
+if [ "${FIRST_NON_OPTION}" = '-u' ]
+then
+shift 2
+else
 shift
+fi
 FIRST_NON_OPTION="${2}"
 done
 

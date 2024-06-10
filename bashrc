@@ -118,17 +118,18 @@ export VIMRUNTIME=${DOTFILESDIR}/vim
 if type -P nvim
 then
 EDITOR="nvim"
-alias vim='_NO_MEASURE _ICON 📝 nvim -p'
-alias im='_NO_MEASURE _ICON 📝 nvim -p'
-alias v='_NO_MEASURE _ICON 📝  nvim -p'
-alias nano='_NO_MEASURE _ICON 📝 nvim -p'
 else
 EDITOR="vim"
-alias vim='_NO_MEASURE _ICON 📝 vim -p'
-alias im='_NO_MEASURE _ICON 📝 vim -p'
-alias v='_NO_MEASURE _ICON 📝  vim -p'
-alias nano='_NO_MEASURE _ICON 📝 vim -p'
 fi
+
+alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 nvim -u "${VIM}"/nvim.vim -p '
+alias ivm='nvim'
+alias vi='nvim'
+alias vim='nvim'
+alias im='nvim'
+alias v='nvim'
+alias nano='nvim'
+
 export EDITOR
 _NO_MEASURE ()
 {
@@ -146,7 +147,7 @@ function _EDITOR
         *.kt|*.java) type -P studio.sh &>/dev/null && _CAN_OPENER studio.sh "${PWD}/${FILE}" ; return
         esac
     done
-    $(type -P "nvim" &>/dev/null||type -P "vim" &>/dev/null ||type -P "vi" &>/dev/null ) -p "${@}"
+    XDG_DATA_HOME="${VIM}" $(type -P "nvim" 2>/dev/null||type -P "vim" 2>/dev/null ||type -P "vi" 2>/dev/null ) -u "${VIM}"/nvim.vim -p "${@}"
 }
 
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o _BATCH_PRIO ~/.local/share/android-studio/bin/studio.sh'
@@ -155,7 +156,7 @@ function _EDITOR
 alias clang='_ICON 🛠️ _LOG clang'
 alias gcc='_ICON 🛠️ _LOG gcc'
 alias g++='_ICON 🛠️ _LOG g++'
-alias snapcraft='_ICON 🛠️ _LOG snapcraft' 
+alias snapcraft='_ICON 🛠️ _LOG snapcraft --verbose'
 alias ninja='_ICON 🛠️ _LOG ninja'
 alias make='_ICON 🛠️ _LOG make -j$(nproc)'
 alias cat="_ICON 🐱 _MOAR cat"
@@ -650,6 +651,7 @@ LS_COLORS='di=01';
 export LS_COLORS
 . ~/.bashrc.local
 unset _SOURCED
+bind 'set completion-ignore-case on'
 bind 'set bell-style none'
 BGCOLOR="#FFFAF1"
 FGCOLOR="#312D2A"

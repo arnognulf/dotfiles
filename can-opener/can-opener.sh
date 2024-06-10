@@ -554,6 +554,14 @@ gource \
 xaos \
 rpi-imager \
 golly \
+viewnior \
+feh \
+nomacs \
+imv \
+pfsglview \
+pfsview \
+qimgv \
+qiv \
 slack
 do
 if type -P "${CMD}"
