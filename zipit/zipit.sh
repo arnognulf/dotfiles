@@ -33,7 +33,10 @@ function _SHOVEIT
             fi
         elif [ -n "${SSH_CLIENT}" ]
         then
+	(
+	    HOSTNAME=${HOST_OVERRIDE-${HOSTNAME}}
             \echo "sftp://${HOSTNAME}${FILE// /%20}"
+	)
         else
             \echo "${FILE}"
         fi
