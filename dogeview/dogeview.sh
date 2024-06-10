@@ -31,104 +31,6 @@
 
 function _DOGE_DECODE_DOC
 {
-    [ "${_DOGE_STDOUT}" != 1 ] && local _DOGE_COLOROPT=-c
-    case "${1,,}" in
-    *.cs|*.vala|*.java|*.js|*.c|*.xml|*.kt)
-        if [ "${_DOGE_STDOUT}" = 1 ]
-        then
-            command batcat --theme=GitHub -pp --color always "${1}" || command cat "${1}"
-            return 0
-        fi
-        ;;
-    *.mk)
-        if [ "${_DOGE_STDOUT}" = 1 ]
-        then
-            command batcat --theme=GitHub -pp --color always -l Makefile "${1}" || command cat "${1}"
-            return 0
-        fi
-    ;;
-    *.bp)
-        if [ "${_DOGE_STDOUT}" = 1 ]
-        then
-            command batcat --theme=GitHub -pp --color always -l json "${1}" || command cat "${1}"
-            return 0
-        fi
-	;;
-    *.json)
-        if [ "${_DOGE_STDOUT}" = 1 ]
-        then
-            command jq . -C "${1}" || command cat "${1}"
-            return 0
-	else
-            command jq . -M "${1}" || command cat "${1}"
-            return 0
-        fi
-    esac
-
-    case $(command file -L "${1}") in #case2
-        *" PEM certificate")
-        command openssl x509 -in "${1}" -text -noout
-        ;;
-        *)
-        case "${_DOGE_MIME}" in
-        *" "text/x-c|*" "text/x-c++) 
-            command batcat --theme=GitHub -pp --language=c++ --color always "${1}" || command cat "${1}"
-            return 0
-            ;;
-        *" "text/x-ecmascript|*" "text/x-javascript|*" "text/javascript)
-            command batcat --theme=GitHub -pp --language=js --color always "${1}" || command cat "${1}"
-            return 0
-            ;;
-        *" "text/x-diff) 
-            command batcat --theme=GitHub -pp --language=diff --color always "${1}" || command cat "${1}"
-            return 0
-            ;;
-        *" "text/x-makefile) 
-            command batcat --theme=GitHub -pp --language=makefile --color always "${1}" || command cat "${1}"
-            return 0
-            ;;
-        *" "text/xml) 
-            command batcat --theme=GitHub -pp --language=xml --color always "${1}" || command cat "${1}"
-            return 0
-            ;;
-        *" "text/x-java)
-            command batcat --theme=GitHub -pp --language=java -color always "${1}" || command cat "${1}"
-            return 0
-            ;;
-        *" "text/x-sql)
-            command batcat --theme=GitHub -pp --language=sql -color always "${1}" || command cat "${1}"
-            return 0
-            ;;
-        *" "text/rtf) : ;;
-        *" "text/*)
-        local _DOGE_ENCODING=$(command file -L --mime-encoding "$1")
-        case ${_DOGE_ENCODING} in #case3
-        *": ebcdic")
-        command iconv -f EBCDIC-CP-SE -t UTF-8 "${1}"
-        return 0
-        ;;
-        *": utf-16le")
-        command iconv -f UTF-16LE -t UTF-8 "${1}"
-        return 0
-        ;;
-        *": utf-16be")
-        command iconv -f UTF-16BE -t UTF-8 "${1}"
-        return 0
-        ;;
-        *": utf-32le")
-        command iconv -f UTF-32LE -t UTF-8 "${1}"
-        return 0
-        ;;
-        *": utf-32be")
-        command iconv -f UTF-32BE -t UTF-8 "${1}"
-        return 0
-        ;;
-        *": iso-8859-1")
-        command iconv -f CP437 -t UTF-8 "${1}" | command pv --force -q -L 300
-        return 0
-        esac #end case3
-        esac
-    esac #end case2
 
     local BASENAME="${1##*/}"
     if [ -z "${BASENAME}" ]
@@ -136,28 +38,134 @@ function _DOGE_DECODE_DOC
         BASENAME="${1}"
     fi
     local TEMP="/tmp/.DOGE.${RANDOM}.${BASENAME##*.}"
-    if command cp -s "${PWD}/${1}" "${TEMP}" 2>/dev/null
+    if \cp -s "${PWD}/${1}" "${TEMP}" 2>/dev/null
     then
         :
     else
-        command cp "${1}" "${TEMP}"  
+        \cp "${1}" "${TEMP}"
     fi
 
+
+    [ "${_DOGE_STDOUT}" != 1 ] && local _DOGE_COLOROPT=-c
     case "${1,,}" in
-    *.htm|*.html) command elinks -dump -dump-width 80 "${TEMP}";return 0;;
+    *.markdown|*.mdown|*.mkdn|*.md) 
+        \pandoc -s --from=gfm --to=man "${TEMP}" > "${TEMP}.man" 
+        \nroff ${_DOGE_COLOROPT} -man "${TEMP}.man" 2>/dev/null | \sed 's/()//g'
+        \rm -f "${TEMP}" "${TEMP}.man" "${TEMP}.docx" 
+	return 0
+;;
+    *.cs|*.vala|*.java|*.js|*.c|*.xml|*.kt)
+        if [ "${_DOGE_STDOUT}" = 1 ]
+        then
+            \batcat --theme=GitHub -pp --color always "${1}" || \cat "${1}"
+            return 0
+        fi
+        ;;
+    *.mk)
+        if [ "${_DOGE_STDOUT}" = 1 ]
+        then
+            \batcat --theme=GitHub -pp --color always -l Makefile "${1}" || \cat "${1}"
+            return 0
+        fi
+    ;;
+    *.bp)
+        if [ "${_DOGE_STDOUT}" = 1 ]
+        then
+            \batcat --theme=GitHub -pp --color always -l json "${1}" || \cat "${1}"
+            return 0
+        fi
+	;;
+    *.json)
+        if [ "${_DOGE_STDOUT}" = 1 ]
+        then
+            \jq . -C "${1}" || \cat "${1}"
+            return 0
+	else
+            \jq . -M "${1}" || \cat "${1}"
+            return 0
+        fi
+    esac
+
+    case $(\file -L "${1}") in #case2
+        *" PEM certificate")
+        \openssl x509 -in "${1}" -text -noout
+        ;;
+        *)
+        case "${_DOGE_MIME}" in
+        *" "text/x-c|*" "text/x-c++) 
+            \batcat --theme=GitHub -pp --language=c++ --color always "${1}" || \cat "${1}"
+            return 0
+            ;;
+        *" "text/x-ecmascript|*" "text/x-javascript|*" "text/javascript)
+            \batcat --theme=GitHub -pp --language=js --color always "${1}" || \cat "${1}"
+            return 0
+            ;;
+        *" "text/x-diff) 
+            \batcat --theme=GitHub -pp --language=diff --color always "${1}" || \cat "${1}"
+            return 0
+            ;;
+        *" "text/x-makefile) 
+            \batcat --theme=GitHub -pp --language=makefile --color always "${1}" || \cat "${1}"
+            return 0
+            ;;
+        *" "text/xml) 
+            \batcat --theme=GitHub -pp --language=xml --color always "${1}" || \cat "${1}"
+            return 0
+            ;;
+        *" "text/x-java)
+            \batcat --theme=GitHub -pp --language=java -color always "${1}" || \cat "${1}"
+            return 0
+            ;;
+        *" "text/x-sql)
+            \batcat --theme=GitHub -pp --language=sql -color always "${1}" || \cat "${1}"
+            return 0
+            ;;
+        *" "text/rtf) : ;;
+        *" "text/*)
+        local _DOGE_ENCODING=$(\file -L --mime-encoding "$1")
+        case ${_DOGE_ENCODING} in #case3
+        *": ebcdic")
+        \iconv -f EBCDIC-CP-SE -t UTF-8 "${1}"
+        return 0
+        ;;
+        *": utf-16le")
+        \iconv -f UTF-16LE -t UTF-8 "${1}"
+        return 0
+        ;;
+        *": utf-16be")
+        \iconv -f UTF-16BE -t UTF-8 "${1}"
+        return 0
+        ;;
+        *": utf-32le")
+        \iconv -f UTF-32LE -t UTF-8 "${1}"
+        return 0
+        ;;
+        *": utf-32be")
+        \iconv -f UTF-32BE -t UTF-8 "${1}"
+        return 0
+        ;;
+        *": iso-8859-1")
+        \iconv -f CP437 -t UTF-8 "${1}" | \pv --force -q -L 300
+        return 0
+        esac #end case3
+        esac
+    esac #end case2
+
+    case "${1,,}" in
+    *.htm|*.html) \elinks -dump -dump-width 80 "${TEMP}";return 0;;
     esac
 
     case "${1,,}" in #case1
-    *.wri) command unoconv --format=doc "${TEMP}" -o "${TEMP}.doc";command pandoc -s --from=html --to=man "${TEMP}.doc";;
-    *.markdown|*.mdown|*.mkdn|*.md) command pandoc -s --from=gfm --to=man "${TEMP}";;
-    *.textile) command pandoc -s --from=textile --to=man "${TEMP}";;
-    *.mediawiki) command pandoc -s --from=mediawiki --to=man "${TEMP}";;
-    *.creole) command pandoc -s --from=creole --to=man "${TEMP}";;
-    *.rdoc) command pandoc -s --from=rdoc --to=man "${TEMP}";;
-    *.org) command pandoc -s --from=org --to=man "${TEMP}";;
-    *.tex) command pandoc -s --from=latex --to=man "${TEMP}";;
-    *.rst) command pandoc -s --from=rst --to=man "${TEMP}";;
-    *.man) command cat "${1}";;
+    *.wri) \unoconv --format=doc "${TEMP}" -o "${TEMP}.doc";\pandoc -s --from=html --to=man "${TEMP}.doc";;
+    *.markdown|*.mdown|*.mkdn|*.md) \pandoc -s --from=gfm --to=man "${TEMP}";;
+    *.textile) \pandoc -s --from=textile --to=man "${TEMP}";;
+    *.mediawiki) \pandoc -s --from=mediawiki --to=man "${TEMP}";;
+    *.creole) \pandoc -s --from=creole --to=man "${TEMP}";;
+    *.rdoc) \pandoc -s --from=rdoc --to=man "${TEMP}";;
+    *.org) \pandoc -s --from=org --to=man "${TEMP}";;
+    *.tex) \pandoc -s --from=latex --to=man "${TEMP}";;
+    *.rst) \pandoc -s --from=rst --to=man "${TEMP}";;
+    *.man) \cat "${1}";;
     *.asciidoc|*.adoc|*.asc) pandoc -s --from=asciidoc --to=man "${TEMP}";;
     esac > "${TEMP}.man" #end case1
 
@@ -165,21 +173,21 @@ function _DOGE_DECODE_DOC
     *": "us-ascii|*" "utf-8)
         if [ "${_DOGE_STDOUT}" = 1 ]
         then
-            command batcat --theme=GitHub -pp --color always "${1}" || command cat "${1}"
+            \batcat --theme=GitHub -pp --color always "${1}" || \cat "${1}"
             return 0
         else
-            command cat "${1}"
+            \cat "${1}"
         fi
         ;;
     *)
-        command unoconv --stdout -f docx "${TEMP}" > "${TEMP}.docx" 2>/dev/null && command pandoc -s --to=man "${TEMP}.docx" > "${TEMP}.man"
+        \unoconv --stdout -f docx "${TEMP}" > "${TEMP}.docx" 2>/dev/null && \pandoc -s --to=man "${TEMP}.docx" > "${TEMP}.man"
     esac
     if [ -s "${TEMP}.man" ]
     then
-        command nroff ${_DOGE_COLOROPT} -man "${TEMP}.man" 2>/dev/null | command sed 's/()//g'
-        command rm -f "${TEMP}" "${TEMP}.man" "${TEMP}.docx"
+        \nroff ${_DOGE_COLOROPT} -man "${TEMP}.man" 2>/dev/null | \sed 's/()//g'
+        \rm -f "${TEMP}" "${TEMP}.man" "${TEMP}.docx"
     else
-        command strings "${TEMP}"
+        \strings "${TEMP}"
     fi
 }
 
@@ -189,13 +197,13 @@ function _DOGE_DECODE
     for FILE in "$@"
     do
         local TEMP=$(mktemp -u /tmp/.DOGE.XXXXXXXXXXXX)
-        if [ ! -s "${FILE}" ] && command cat "${FILE}" &>"${TEMP}" && [ ! -s "${TEMP}" ]
+        if [ ! -s "${FILE}" ] && \cat "${FILE}" &>"${TEMP}" && [ ! -s "${TEMP}" ]
         then
             printf "\e[91m<EMPTY>\e[0m" 2>/dev/null
         elif [ -f "${FILE}" ]
         then
             {
-            local _DOGE_MIME=$(command file -L --mime-type "${FILE}")
+            local _DOGE_MIME=$(\file -L --mime-type "${FILE}")
             case "${_DOGE_MIME}" in
             *" "application/gzip*)
             gzip -cd "${FILE}"
@@ -204,71 +212,71 @@ function _DOGE_DECODE
             xz -cd "${FILE}"
             ;;
             *" "application/x-sqlite3)
-            for TABLE in $(command sqlite3 "${FILE}" "SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%';")
+            for TABLE in $(\sqlite3 "${FILE}" "SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%';")
             do
             {
             echo ".headers on"
             echo ".mode csv"
             echo "SELECT '${TABLE}',* FROM ${TABLE}"
-            } | command sqlite3 "${FILE}" |command sed -e s/\"\'//g -e s/\'\"//g
+            } | \sqlite3 "${FILE}" |\sed -e s/\"\'//g -e s/\'\"//g
             done
             ;;
             *" "font/*|*" "application/vnd.ms-opentype)
                 local TEMP_PNM=${TEMP}.pnm
-                command convert -background white -fill black -font "${FILE}" -pointsize 300 label:"Abc" "${TEMP_PNM}"
-                [ -f "${TEMP_JPG}" ] && command chafa -s ${COLUMNS}x$((LINES-3)) "${TEMP_PNM}"
-                command rm -f "${TEMP_PNM}"
+                \convert -background white -fill black -font "${FILE}" -pointsize 300 label:"Abc" "${TEMP_PNM}"
+                [ -f "${TEMP_JPG}" ] && \chafa -s ${COLUMNS}x$((LINES-3)) "${TEMP_PNM}"
+                \rm -f "${TEMP_PNM}"
             ;;
             *" "video/*)
                 local TEMP_GIF=$(mktemp /tmp/.DOGE.XXXXXXXXXXXX.gif)
                 ffmpeg -ss 00:00:00.000 -i "${FILE}" -vf "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1" -pix_fmt rgb8 -s 500x240 -t 00:00:5.000 "${TEMP_GIF}" &>/dev/null
                 chafa "${TEMP_GIF}" >${TTY}
-                command rm -f "${TEMP_GIF}" &>/dev/null
+                \rm -f "${TEMP_GIF}" &>/dev/null
                 reset
             ;;
             *" "audio/*)
-            DISPLAY="" command mplayer -really-quiet -vo caca -framedrop -monitorpixelaspect 0.5 "${FILE}"
+            DISPLAY="" \mplayer -really-quiet -vo caca -framedrop -monitorpixelaspect 0.5 "${FILE}"
             reset
             ;;
             *" "image/*)
-            [ "${_DOGE_STDOUT}" = 1 ] && command chafa -s ${COLUMNS}x$((LINES-3)) "${FILE}"
-            command tesseract "${FILE}" - 2>/dev/null
+            [ "${_DOGE_STDOUT}" = 1 ] && \chafa -s ${COLUMNS}x$((LINES-3)) "${FILE}"
+            \tesseract "${FILE}" - 2>/dev/null
             ;;
             *" text/"*|*" "application/vnd.apple.keynote|*" "application/vnd.wordperfect|*" "application/rtf|*" "application/vnd.oasis.opendocument.text|*" "application/vnd.openxmlformats-officedocument.presentationml.presentation|*" "application/vnd.openxmlformats-officedocument.wordprocessingml.document|*" "application/vnd.openxmlformats-officedocument.presentationml.presentation|*" "application/doc|*" "application/ms-doc|*" "application/msword|*" "application/json)
             _DOGE_DECODE_DOC "${FILE}"
             ;;
             *" "application/x-sharedlib|*" "application/x-pie-executable|*" "application/x-executable|*" application/x-dosexec")
-            case $(command file -L "${FILE}") in
+            case $(\file -L "${FILE}") in
                 *"ELF 32-bit LSB executable, ARM,"*)
-                command arm-linux-gnueabi-objdump -d "${FILE}"
+                \arm-linux-gnueabi-objdump -d "${FILE}"
                 return 0
                 ;;
                 *"ELF 64-bit LSB pie executable, x86-64,"*|*"ELF 64-bit LSB executable, x86-64,"*)
-                command x86_64-linux-gnu-objdump -d "${FILE}"
+                \x86_64-linux-gnu-objdump -d "${FILE}"
                 return 0
                 ;;
                 *"ELF 32-bit LSB executable, Intel 80386,"*)
-                command i686-linux-gnu-objdump -d "${FILE}"
+                \i686-linux-gnu-objdump -d "${FILE}"
                 return 0
                 ;;
                 *"PE32+ executable "*"("*") x86-64"*)
-                command x86_64-w64-mingw32-objdump -d "${FILE}"
+                \x86_64-w64-mingw32-objdump -d "${FILE}"
                 return 0
                 ;;
                 *"PE32 executable "*"("*") Intel 80386"*)
-                command i686-w64-mingw32-objdump -d "${FILE}"
+                \i686-w64-mingw32-objdump -d "${FILE}"
                 return 0
                 ;;
                 *"ELF 64-bit LSB shared object, ARM aarch64,"*)
-                command aarch64-linux-gnu-objdump -d "${FILE}"
+                \aarch64-linux-gnu-objdump -d "${FILE}"
                 return 0
                 ;;
                 *"ELF 64-bit MSB executable, IBM S/390"*)
-                command s390x-linux-gnu-objdump -d "${FILE}"
+                \s390x-linux-gnu-objdump -d "${FILE}"
                 return 0
                 ;;
                 *)
-                command hexdump -C "${FILE}"
+                \hexdump -C "${FILE}"
                 return 0
             esac
             ;;
@@ -278,33 +286,33 @@ function _DOGE_DECODE
             _DOGE_DECODE_DOC "${FILE}";;
             *.dlt)
             local TEMP=$(mktemp -u /tmp/.DOGE.XXXXXXXXXXXX.txt)
-            command dlt-viewer -c "${FILE}" "${TEMP}"
-            command cat "${TEMP}"
-            command rm -f "${TEMP}"
+            \dlt-viewer -c "${FILE}" "${TEMP}"
+            \cat "${TEMP}"
+            \rm -f "${TEMP}"
             ;;
             *.psm|*.nsf)
-            DISPLAY="" command mplayer -really-quiet -vc null -vo null "${FILE}" >/dev/null
+            DISPLAY="" \mplayer -really-quiet -vc null -vo null "${FILE}" >/dev/null
             reset
             ;;
             *)
-            command iconv -f CP437 -t UTF-8 "${FILE}"|pv -q -L 300 --force
+            \iconv -f CP437 -t UTF-8 "${FILE}"|pv -q -L 300 --force
             esac
             ;;
             *" "application/pdf)
-            command pdftotext -layout "${FILE}" -
+            \pdftotext -layout "${FILE}" -
             ;;
             *" "application/excel|*" "application/vnd.ms-excel|*" "application/x-excel|*" "application/x-msexcel|*" "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet)
             local TEMP="/tmp/.DOGE.${RANDOM}.${FILE##*.}"
-            if command cp -l "${FILE}" "${TEMP}"
+            if \cp -l "${FILE}" "${TEMP}"
             then
                 TEMP=$(mktemp /tmp/.DOGE.XXXXXXXXXXXX.${FILE##*.})
-                command cp "${FILE}" "${TEMP}"
+                \cp "${FILE}" "${TEMP}"
             fi
-            command unoconv -f csv --stdout "${TEMP}"
-            command rm -f "${TEMP}"
+            \unoconv -f csv --stdout "${TEMP}"
+            \rm -f "${TEMP}"
             ;;
             *)
-                command cat "${FILE}"
+                \cat "${FILE}"
             esac
             }
         elif [ -d "${FILE}" ]
@@ -314,19 +322,19 @@ function _DOGE_DECODE
             case "${FILE}" in
             "https://www.youtube.com/"*)
             {
-            command youtube-dl -o - -f '(best[height<=1080])[protocol^=https]' "${FILE}" | DISPLAY="" command mplayer -vo caca -monitorpixelaspect 0.5 -framedrop -really-quiet -cache 30720 -cache-min 2 /dev/fd/3 3<&0 </dev/tty >${TTY}
+            \youtube-dl -o - -f '(best[height<=1080])[protocol^=https]' "${FILE}" | DISPLAY="" \mplayer -vo caca -monitorpixelaspect 0.5 -framedrop -really-quiet -cache 30720 -cache-min 2 /dev/fd/3 3<&0 </dev/tty >${TTY}
             reset
             } 2>/dev/null
             ;;
             "http://"*|"https://"*|"ftp://"*)
             {
             local TEMP_HTML=${TEMP_HTML}
-            command curl -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' "${FILE}" >"${TEMP_HTML}"
+            \curl -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' "${FILE}" >"${TEMP_HTML}"
             _DOGE_DECODE_HTML "${TEMP_HTML}"
             } 2>/dev/null
             ;;
             *)
-            command printf "\e[91m<NONEXISTANT>\e[0m" 2>/dev/null
+            \printf "\e[91m<NONEXISTANT>\e[0m" 2>/dev/null
             esac
         fi
     done
@@ -353,7 +361,7 @@ function _DOGEVIEW
                 \cat "${@}"
 	    fi
         else
-            command echo "WOW! Such view! Many formats! Much decode!" >&2 | tee  >/dev/null
+            \echo "WOW! Such view! Many formats! Much decode!" >&2 | tee  >/dev/null
         fi
         return 1
     elif [ "${1}" = "1" ]
@@ -369,7 +377,7 @@ function _DOGEVIEW
                 \cat "${@}"
 	    fi
         else
-            command echo "WOW! Such view! Many formats! Much decode!" >&2 | tee  >/dev/null
+            \echo "WOW! Such view! Many formats! Much decode!" >&2 | tee  >/dev/null
         fi
         return 1
     elif [ "${#@}" -gt 1 ]
@@ -383,7 +391,7 @@ function _DOGEVIEW
         return $?
     fi
     local PIPEFAIL_ENABLED
-    if set -o|command egrep -q "pipefail(.*)off"
+    if set -o|\egrep -q "pipefail(.*)off"
     then
         set -o pipefail
         PIPEFAIL_ENABLED=0
@@ -400,7 +408,7 @@ function _DOGEVIEW
         do
             if [ -f "${FILE}" ]
             then
-                _DOGE_DECODE "${FILE}" | command less -R -X -F -K
+                _DOGE_DECODE "${FILE}" | \less -R -X -F -K
                 RETURN=$?
                 break
             fi
@@ -408,7 +416,7 @@ function _DOGEVIEW
     else
         for FILE in "$@"
         do
-                _DOGE_DECODE "${FILE}" | command less -R -X -F -K
+                _DOGE_DECODE "${FILE}" | \less -R -X -F -K
                 RETURN=$?
         done
     fi
@@ -416,7 +424,7 @@ function _DOGEVIEW
 
     if [ "${_DOGE_STDOUT}" = 1 ]
     then
-        _DOGE_DECODE "${@}" 2>${_DOGE_STDERR_FILE} | command less -R -X -F -K
+        _DOGE_DECODE "${@}" 2>${_DOGE_STDERR_FILE} | \less -R -X -F -K
     else
         _DOGE_DECODE "${@}"
     fi
