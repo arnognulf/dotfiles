@@ -93,7 +93,7 @@ export BAT_THEME=GitHub
 
 PATH=${PATH}:~/.local/share/ParaView/bin:~/.local/share/android-studio/bin:~/.local/bin:/usr/share/code-insiders/resources/app/node_modules.asar.unpacked/vscode-ripgrep/bin/
 
-local DOTFILESDIR=$(readlink "${HOME}/.bashrc")
+DOTFILESDIR=$(readlink "${HOME}/.bashrc")
 DOTFILESDIR=${DOTFILESDIR%/*}
 export GOPATH=${HOME}/.local/share/go
 
@@ -122,7 +122,7 @@ else
 EDITOR="vim"
 fi
 
-alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 nvim -u "${VIM}"/nvim.vim -p '
+alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 nvim -u "${VIM}"/nvimrc -p '
 alias ivm='nvim'
 alias vi='nvim'
 alias vim='nvim'
@@ -218,6 +218,31 @@ alias jdupes='_ICON ♻️  jdupes --dedupe -R'
 alias hog='~/.config/dotfiles/hog/hog.sh'
 alias g="_ICON 🔎 egrep"
 alias gv="_ICON 🔎 grep -v"
+timer ()
+{
+local time=$(($1 * 60))
+while sleep 1
+do
+let time--
+local minutes=$((time / 60))
+local seconds=$((time % 60))
+if [ ${#seconds} = 1 ]
+then
+seconds=0${seconds}
+fi
+clear
+printf "\033]0;⏲️  ${minutes}:${seconds}\007\033[?25l
+
+    ${minutes}:${seconds}"
+if [ ${time} -le 0 ]
+then
+mplayer "${DOTFILESDIR}"/kitchen_timer.ogg &>/dev/null
+printf '\033]0;⏲️  Time is up!\007Time is up! Press key to continue'
+read -n1
+return 0
+fi
+done
+}
 function fclones
 {
 [ -z "$(type -P fclones)" ] && { _NO; return 255;}
