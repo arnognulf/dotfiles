@@ -41,7 +41,7 @@ function _FASD_PROMPT_FUNC ()
 {
 :
 }
-if [ -n "${SSH_CLIENT}" ]
+if [ -n "${TMUX}" ]
 then
 case $((16#$(\echo -n "${HOSTNAME}"|\sum|\cut -c1))) in
 0|5) _PROMPTHOSTDOT="\[\e[102m\]⬤ \[\e[0;7m\]";;
@@ -50,6 +50,15 @@ case $((16#$(\echo -n "${HOSTNAME}"|\sum|\cut -c1))) in
 3|8) _PROMPTHOSTDOT="\[\e[105m\]⬤ \[\e[0;7m\]";;
 4|9) _PROMPTHOSTDOT="\[\e[106m\]⬤ \[\e[0;7m\]";;
 esac
+elif [ -n "${SSH_CLIENT}" ]
+case $((16#$(\echo -n "${HOSTNAME}"|\sum|\cut -c1))) in
+0|5) _PROMPTHOSTDOT="⬤ ";;
+1|6) _PROMPTHOSTDOT="⬤ ";;
+2|7) _PROMPTHOSTDOT="⬤ ";;
+3|8) _PROMPTHOSTDOT="⬤ ";;
+4|9) _PROMPTHOSTDOT="⬤ ";;
+esac
+
 fi
 function _PROMPT_MAGIC_SHELLBALL ()
 {
@@ -205,7 +214,7 @@ LINE="💻  serial"
 *)
 LINE="${CHAR}  ${_TIMER_CMD}"
 esac
-if [ -n "$SSH_CLIENT" ]
+if [ -n "$TMUX" ]
 then
 local SHORT_HOSTNAME=${HOSTNAME%%.*}
 SHORT_HOSTNAME=${SHORT_HOSTNAME,,}
@@ -456,7 +465,7 @@ local REVERSE="${ESC}[4m"
 while [ ${INDEX} -lt ${COLUMNS} ]
 do
 # 16M colors broken in mosh
-if [ -n "$SSH_CLIENT" ]
+if [ -n "$TMUX" ]
 then
 _PROMPT_LINE="${_PROMPT_LINE}${CHAR}"
 else

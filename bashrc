@@ -323,7 +323,7 @@ alias task_flash='task "⚡ FLASH ⚡"'
 alias task_bake='task "🍞 Bake"'
 alias task_bug="🐛 Bug"
 alias xargs="xargs -d'\n'"
-alias mosh="_NO_MEASURE  MOSH_TITLE_NOPREFIX=1 mosh"
+alias mosh="MOSH_TITLE_NOPREFIX=1 _NO_MEASURE mosh"
 alias tmp=_TMP_ALL_THE_THINGS
 #alias y=_YANKY
 #alias p=_PANKY
