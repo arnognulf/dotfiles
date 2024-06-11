@@ -54,6 +54,13 @@ function _DOGE_DECODE_DOC
         \rm -f "${TEMP}" "${TEMP}.man" "${TEMP}.docx" 
 	return 0
 ;;
+    *.aidl|*.hal)
+        if [ "${_DOGE_STDOUT}" = 1 ]
+        then
+            \batcat --language 'C++' --theme=GitHub -pp --color always "${1}" || \cat "${1}"
+            return 0
+        fi
+        ;;
     *.cs|*.vala|*.java|*.js|*.c|*.xml|*.kt)
         if [ "${_DOGE_STDOUT}" = 1 ]
         then
