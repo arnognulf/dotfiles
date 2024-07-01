@@ -99,6 +99,9 @@ export GOPATH=${HOME}/.local/share/go
 
 export VIM=${DOTFILESDIR}/vim
 export VIMRUNTIME=${DOTFILESDIR}/vim
+BGCOLOR="FFFAF1"
+FGCOLOR="312D2A"
+. "${HOME}/.bashrc.colors"
 . "${DOTFILESDIR}"/prompt/prompt.sh
 . "${DOTFILESDIR}"/chdir-all-the-things/chdir-all-the-things.sh
 . "${DOTFILESDIR}"/can-opener/can-opener.sh
@@ -672,14 +675,10 @@ function _STACKTRACE {
       ((i++))
    done
 }
-LS_COLORS='di=01';
-export LS_COLORS
 . ~/.bashrc.local
 unset _SOURCED
 bind 'set completion-ignore-case on'
 bind 'set bell-style none'
-BGCOLOR="FFFAF1"
-FGCOLOR="312D2A"
 fi
 
 (
