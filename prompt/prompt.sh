@@ -149,7 +149,7 @@ function _PROMPT_COMMAND ()
   trap "_PROMPT_CTRLC=1;\echo -n" ERR
   LC_ALL=C stty echo 2>/dev/null
   history -a
-  \echo -ne "\e]11;#${BGCOLOR}\a\e]10;#${FGCOLOR}\a\e]12;#${FGCOLOR}\a"
+
 }
 
 function _PREEXEC ()
@@ -421,13 +421,23 @@ case ${PWD} in
 ${HOME}) _PROMPT_PWD_BASENAME="~";;
 *) _PROMPT_PWD_BASENAME="${NAME-${PWD_BASENAME}}"
 esac
-local PROMPT_TEXT=" ${_PROMPTHOSTDOT}${_PROMPT_PWD_BASENAME}${_PROMPT_GIT_PS1} "$([ $UID = 0 ] && \echo "# ")
+PROMPT_TEXT=" ${_PROMPTHOSTDOT}${_PROMPT_PWD_BASENAME}${_PROMPT_GIT_PS1} "$([ $UID = 0 ] && \echo "# ")
+
+local CURSORPOS=$((${#PROMPT_TEXT} + 1 ))
+local RGB_CUR_COLOR=${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${CURSORPOS} / $((${COLUMNS} + 1))))]}
+local RGB_CUR_R=${RGB_CUR_COLOR%%;*}
+local RGB_CUR_GB=${RGB_CUR_COLOR#*;}
+local RGB_CUR_G=${RGB_CUR_GB%%;*}
+local RGB_CUR_B=${RGB_CUR_GB##*;}
+local HEX_CUR_COLOR=$(\printf "%.2x%.2x%.2x" ${RGB_CUR_R} ${RGB_CUR_G} ${RGB_CUR_B})
+[ -z "${HEX_CUR_COLOR}" ] && HEX_CUR_COLOR="${FGCOLOR}"
+\echo -ne "\e]11;#${BGCOLOR}\a\e]10;#${FGCOLOR}\a\e]12;#${HEX_CUR_COLOR}\a"
 
 _PROMPT_TEXT=""
 local INDEX=0
 while [ ${INDEX} -lt ${#PROMPT_TEXT} ]
 do
-if [ -n "$SSH_CLIENT" ]
+if [ -n "$TMUX" ]
 then
 _PROMPT_TEXT="${_PROMPT_TEXT}${PROMPT_TEXT:${INDEX}:1}"
 else

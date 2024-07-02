@@ -208,7 +208,7 @@ function _CHDIR_ALL_THE_THINGS ()
     case "${ARG}" in
     *'$')
         _SPINNER_START
-    	_CHDIR_ALL_THE_THINGS $(\fdfind -t d ${ARG}|\head -n1)
+    	_CHDIR_ALL_THE_THINGS $(\fdfind "${ARG}"|\head -n1)
         _SPINNER_STOP
 	return $?
     ;;
