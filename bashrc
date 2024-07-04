@@ -50,41 +50,42 @@ EOF
 LC_ALL=${OLD_LC_ALL} tmux -L ${NUM} attach-session || LC_ALL=${OLD_LC_ALL} tmux -L ${NUM}
 sleep 30
 clear
-\echo -ne "\e7\n"
-\echo -ne "\e8................                              \n"
+\printf "\e7\n"
+\printf "\e8................                              \n"
 sleep 0.1
-\echo -ne "\e8...............                              \n"
+\printf "\e8...............                              \n"
 sleep 0.1
-\echo -ne "\e8..............                              \n"
+\printf "\e8..............                              \n"
 sleep 0.1
-\echo -ne "\e8.............                              \n"
+\printf "\e8.............                              \n"
 sleep 0.1
-\echo -ne "\e8............                              \n"
+\printf "\e8............                              \n"
 sleep 0.1
-\echo -ne "\e8...........                              \n"
+\printf "\e8...........                              \n"
 sleep 0.1
-\echo -ne "\e8..........                              \n"
+\printf "\e8..........                              \n"
 sleep 0.1
-\echo -ne "\e8.........                              \n"
+\printf "\e8.........                              \n"
 sleep 0.1
-\echo -ne "\e8........                              \n"
+\printf "\e8........                              \n"
 sleep 0.1
-\echo -ne "\e8.......                              \n"
+\printf "\e8.......                              \n"
 sleep 0.1
-\echo -ne "\e8......                              \n"
+\printf "\e8......                              \n"
 sleep 0.1
-\echo -ne "\e8.....                              \n"
+\printf "\e8.....                              \n"
 sleep 0.1
-\echo -ne "\e8....                              \n"
+\printf "\e8....                              \n"
 sleep 0.1
-\echo -ne "\e8...                              \n"
+\printf "\e8...                              \n"
 sleep 0.1
-\echo -ne "\e8..                              \n"
+\printf "\e8..                              \n"
 sleep 0.1
-\echo -ne "\e8.                              \n"
+\printf "\e8.                              \n"
 sleep 0.1
 exit 1
 fi
+TTY=$(tty)
 export HISTSIZE=100000                   # big big history
 export HISTFILESIZE=100000               # big big history
 _SOURCED=1
@@ -375,7 +376,7 @@ alias chromium=_CHROME-POLISHER
 alias google-chrome=_CHROME-POLISHER
 alias chrome=_CHROME-POLISHER
 alias dos="bash ${DOTFILESDIR}/dos/sh-dos.sh"
-alias sudo="\echo -ne \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\";_ICON ⚠️  sudo"
+alias sudo="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\";_ICON ⚠️  sudo"
 function _SCP
 {
 local ARG
@@ -409,9 +410,9 @@ function c ()
         do
         if [ -f "${FILE}" ]
         then
-        \echo -ne "\n   \e[1;4m"
-        \grep -v ^$ "${FILE}" | \sed -e 's/# //g' -e 's/<[^>]*>//g' | \head -n1
-        \echo -e "\e[0m"
+        \printf "\n   \e[1;4m"
+        \sed -e '/^=.*/d' -e 's/^[[:space:]]*//g' -e '/^!.*/d' -e '/^\[!.*/d' -e 's/# //g' -e 's/<[^>]*>//g' -e '/^[[:space:]]*$/d' "${FILE}" | \head -n1
+        \printf "\e[0m\n"
         break
         fi
         done
@@ -422,7 +423,7 @@ function c ()
         fi
         _LS_HIDDEN -C -w${COLUMNS} | \tee "${TMP}" | \head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
-        [ ${LS_LINES} -gt ${MAXLINES} ] && \echo "..."
+        [ ${LS_LINES} -gt ${MAXLINES} ] && \printf "...\n"
         if [ ${LS_LINES} = 0 ]
         then
         local COUNT=0
@@ -435,12 +436,12 @@ function c ()
         then
         _LS_HIDDEN -A -C -w${COLUMNS} | \tee "${TMP}" | \tee "${TMP}" | \head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
-        [ ${LS_LINES} -gt ${MAXLINES} ] && \echo "..."
+        [ ${LS_LINES} -gt ${MAXLINES} ] && \printf "...\n"
         else
-        \echo "<empty>"
+        \printf "<empty>\n"
         fi
         fi
-        [ -d ".git" ] && { builtin echo ""; PAGER= $(type -P git) log --oneline -1 --color=never 2>/dev/null;}
+        [ -d ".git" ] && { \printf "\n";PAGER= $(type -P git) log --oneline -1 --color=never 2>/dev/null;}
         ( /bin/rm -f "${TMP}" &>/dev/null & )
     }
     ( _DEDUPE &>/dev/null & )
@@ -585,7 +586,7 @@ function front
     local FILE
     for FILE in "$@"
     do
-        \echo "${FILE}"
+        \printf "${FILE}"
         break
     done
 }
@@ -600,12 +601,11 @@ function back
     do
         :
     done
-    \echo "${FILE}"
+    \printf "${FILE}"
 }
 
 function _LOG
 {
-local TTY=$(tty)
 local LOGFILE="${TTY//\//_}"
 local LOGDIR="${HOME}/.cache/logs"
 \mkdir -p "${LOGDIR}";

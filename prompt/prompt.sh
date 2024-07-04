@@ -120,7 +120,7 @@ function _PROMPT_COMMAND ()
         then
         CR_LEVEL=1
         else
-        \echo -ne "\e[J\n\n" 
+        \printf "\e[J\n\n" 
         fi
         ;;
             2) CR_LEVEL=3;\git -c color.status=always status |\head -n$((LINES - 2)) | \head -n$((LINES - 4)); \echo -e "        ...\n\n";;
@@ -154,34 +154,35 @@ function _PROMPT_COMMAND ()
 
 function _PREEXEC ()
 {
-_TIMER_CMD="${1/$(\echo -ne '\\\\a')/\\\\\a}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\b')/\\\\\b}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\c')/\\\\\c}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\d')/\\\\\d}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\e')/\\\\\e}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\f')/\\\\\f}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\g')/\\\\\g}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\h')/\\\\\h}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\i')/\\\\\i}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\j')/\\\\\j}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\k')/\\\\\k}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\l')/\\\\\l}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\m')/\\\\\m}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\n')/\\\\\n}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\o')/\\\\\o}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\p')/\\\\\p}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\q')/\\\\\q}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\r')/\\\\\r}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\s')/\\\\\s}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\t')/\\\\\t}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\u')/\\\\\u}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\v')/\\\\\v}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\w')/\\\\\w}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\x')/\\\\\x}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\y')/\\\\\y}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\z')/\\\\\z}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\033')/<ESC>}"
-_TIMER_CMD="${_TIMER_CMD/$(\echo -ne '\\\\007')/<BEL>}"
+{
+_TIMER_CMD="${1/$(\printf '\\\\a')/\\\\\a}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\b')/\\\\\b}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\c')/\\\\\c}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\d')/\\\\\d}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\e')/\\\\\e}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\f')/\\\\\f}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\g')/\\\\\g}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\h')/\\\\\h}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\i')/\\\\\i}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\j')/\\\\\j}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\k')/\\\\\k}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\l')/\\\\\l}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\m')/\\\\\m}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\n')/\\\\\n}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\o')/\\\\\o}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\p')/\\\\\p}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\q')/\\\\\q}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\r')/\\\\\r}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\s')/\\\\\s}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\t')/\\\\\t}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\u')/\\\\\u}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\v')/\\\\\v}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\w')/\\\\\w}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\x')/\\\\\x}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\y')/\\\\\y}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\z')/\\\\\z}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\033')/<ESC>}"
+_TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\007')/<BEL>}"
 (
 case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;
@@ -233,6 +234,8 @@ fi
 )
 _MEASURE=1
 _START_SECONDS=$SECONDS
+\printf "\e]11;#${BGCOLOR}\a\e]10;#${FGCOLOR}\a\e]12;#${FGCOLOR}\a"
+} &>"${TTY}"
 }
 
 function _PROMPT_STOP_TIMER ()
@@ -253,7 +256,7 @@ SECONDS_M=$((DIFF % 3600))
 DURATION_H=$((DIFF / 3600))
 DURATION_M=$((SECONDS_M / 60))
 DURATION_S=$((SECONDS_M % 60))
-\echo -ne "\n\aCommand took "
+\printf "\n\aCommand took "
 DURATION=""
 [ ${DURATION_H} -gt 0 ] && DURATION="${DURATION}${DURATION_H}h "
 [ ${DURATION_M} -gt 0 ] && DURATION="${DURATION}${DURATION_M}m "
@@ -382,7 +385,7 @@ fi
 #if [ ${TERM} = linux ]
 #then
 #local CHAR="_"
-#command echo -ne "\e[0m"
+#command printf "\e[0m"
 #else
 local CHAR="▁"
 #fi
@@ -431,7 +434,7 @@ local RGB_CUR_G=${RGB_CUR_GB%%;*}
 local RGB_CUR_B=${RGB_CUR_GB##*;}
 local HEX_CUR_COLOR=$(\printf "%.2x%.2x%.2x" ${RGB_CUR_R} ${RGB_CUR_G} ${RGB_CUR_B})
 [ -z "${HEX_CUR_COLOR}" ] && HEX_CUR_COLOR="${FGCOLOR}"
-\echo -ne "\e]11;#${BGCOLOR}\a\e]10;#${FGCOLOR}\a\e]12;#${HEX_CUR_COLOR}\a"
+\printf "\e]11;#${BGCOLOR}\a\e]10;#${FGCOLOR}\a\e]12;#${HEX_CUR_COLOR}\a"
 
 _PROMPT_TEXT=""
 local INDEX=0
@@ -455,8 +458,7 @@ PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
 
 _title ()
 {
-[ -z "${TTY}" ] && TTY=$(tty)
-[ -n "$*" ] && [ -t 0 ] && \echo -ne "\e]0;$* in ${PWD##*/} at $(date +%H:%M)\a" >${TTY}
+[ -n "$*" ] && [ -t 0 ] && \printf "\e]0;$* in ${PWD##*/} at $(date +%H:%M)\a"
 }
 
 _ICON ()
@@ -489,7 +491,7 @@ _title "${ICON}  ${FIRST_ARG##*/}"
 else
 _title "${ICON}  ${FIRST_NON_OPTION##*/}"
 fi
-)
+) &>"${TTY}"
 "$@"
 }
 
