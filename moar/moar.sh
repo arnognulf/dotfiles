@@ -50,7 +50,6 @@ column \
 hexdump \
 look \
 rev \
-echo \
 cut \
 dmesg \
 tsort \
