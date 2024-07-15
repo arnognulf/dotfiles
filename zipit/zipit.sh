@@ -1,6 +1,10 @@
 #!/bin/bash
 function _SHOVEIT
 (
+    if [ -z "$1" ];then
+        _NO
+	return 1
+    fi
     local FILE
     for FILE in "$@"
     do
