@@ -620,7 +620,7 @@ for ARG in "exec" "-a" "$1" "ionice" "--class" "idle" "nice" "-n" "19" "$@"
 do
 \echo -n "\"${ARG}\" " >>"${TEMP}"
 done
-script -q -e -a -c "bash \"${TEMP}\"" "${LOG}"
+script -q -e -c "bash \"${TEMP}\"" "${LOG}"
 local RETURN=$?
 \sed -i -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' -e 's/\r/\n/g' "${LOG}"
 /bin/rm -f "${TEMP}"
