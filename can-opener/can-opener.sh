@@ -95,7 +95,7 @@ function _CAN_OPENER ()
     then
     command "$@"
     else
-        ( exec "$@" &>/dev/null & )
+    	setsid -f -- "$@" 0<&- &>/dev/null
     fi
     elif [ -f "$1" ]
     then
@@ -114,7 +114,12 @@ function _CAN_OPENER ()
     done
     if [ ${HELP} = 1 ]
     then
+    if [ -t 1 ]
+    then
+    command "$@" | command less -Q -R -X -F -K -S
+    else
     command "$@"
+    fi
     else
     if [ "$1" = mplayer ] && command mplayer -vo null -ao null -identify -frames 0 "$2" 2>/dev/null|\grep "Video: no video" &>/dev/null
     then

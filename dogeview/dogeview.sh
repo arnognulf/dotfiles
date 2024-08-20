@@ -54,6 +54,9 @@ function _DOGE_DECODE_DOC
         \rm -f "${TEMP}" "${TEMP}.man" "${TEMP}.docx" 
 	return 0
 ;;
+    *.dtb)
+    \dtc -I dtb -O dts -o - "${TEMP}" | \batcat --language c
+    ;;
     *.aidl|*.hal)
         if [ "${_DOGE_STDOUT}" = 1 ]
         then
@@ -245,6 +248,9 @@ function _DOGE_DECODE
             DISPLAY="" \mplayer -really-quiet -vo caca -framedrop -monitorpixelaspect 0.5 "${FILE}"
             reset
             ;;
+	    *" "image/gif)
+                chafa "${FILE}" >${TTY}
+	    ;;
             *" "image/*)
             [ "${_DOGE_STDOUT}" = 1 ] && \chafa -s ${COLUMNS}x$((LINES-3)) "${FILE}"
             \tesseract "${FILE}" - 2>/dev/null
