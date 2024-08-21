@@ -55,7 +55,7 @@ function _DOGE_DECODE_DOC
 	return 0
 ;;
     *.dtb)
-    \dtc -I dtb -O dts -o - "${TEMP}" | \batcat --language c
+    \dtc -I dtb -O dts -o - "${TEMP}" | \batcat --language c --theme=GitHub -pp --color always 
     ;;
     *.aidl|*.hal)
         if [ "${_DOGE_STDOUT}" = 1 ]
@@ -295,7 +295,7 @@ function _DOGE_DECODE
             ;;
             *" "application/octet-stream)
             case "${FILE,,}" in
-            *.wri)
+            *.wri|*.dtb)
             _DOGE_DECODE_DOC "${FILE}";;
             *.dlt)
             local TEMP=$(mktemp -u /tmp/.DOGE.XXXXXXXXXXXX.txt)
@@ -363,9 +363,12 @@ function _DOGEVIEW
     _MEASURE=0
     if [ "${#@}" = 0 ]
     then
-        local FILE=$(_LATEST $HOME/.cache/logs/*)
+        local FILE=$(_LATEST "${HOME}"/.cache/logs/*)
         if [ -f "${FILE}" ]
         then
+	local LINE
+	    read -r LINE < "${FILE}"
+	    \printf "\e]0;⏪ replay ${LINE%% *}\a"
 
             if [ "${_DOGE_STDOUT}" = 1 ]
 	    then
@@ -447,4 +450,4 @@ function _DOGEVIEW
     fi
     return ${RETURN}
 }
-alias d="_ICON 📜 _DOGEVIEW"
+alias d="_ICON 🐶 _DOGEVIEW"

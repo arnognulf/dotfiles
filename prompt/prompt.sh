@@ -183,6 +183,7 @@ _TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\y')/\\\\\y}"
 _TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\z')/\\\\\z}"
 _TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\033')/<ESC>}"
 _TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\007')/<BEL>}"
+_TIMER_CMD="${_TIMER_CMD/%/%%}"
 (
 case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;
@@ -403,7 +404,8 @@ _PROMPT_LINE="${REVERSE}"
 local ESC=$(\printf '\e')
 local CR=$(\printf '\r')
 local BEL=$(\printf '\a')
-local PRE="${ESC}[38;2;"
+local PREFG="${ESC}[38;2;"
+local PREBG="${ESC}[48;2;"
 local POST="m"
 local INDEX=0
 local REVERSE="${ESC}[4m"
@@ -414,7 +416,7 @@ if [ -n "$TMUX" ]
 then
 _PROMPT_LINE="${_PROMPT_LINE}${CHAR}"
 else
-_PROMPT_LINE="${_PROMPT_LINE}${PRE}${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}${CHAR}"
+_PROMPT_LINE="${_PROMPT_LINE}${PREFG}${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}${CHAR}"
 fi
 let INDEX++
 done
@@ -444,7 +446,7 @@ if [ -n "$TMUX" ]
 then
 _PROMPT_TEXT="${_PROMPT_TEXT}${PROMPT_TEXT:${INDEX}:1}"
 else
-_PROMPT_TEXT="${_PROMPT_TEXT}\[${PRE}${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}\]${PROMPT_TEXT:${INDEX}:1}"
+_PROMPT_TEXT="${_PROMPT_TEXT}\[${PREFG}${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}${PREBG}${_PROMPT_TEXT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}\]${PROMPT_TEXT:${INDEX}:1}"
 fi
 let INDEX++
 done

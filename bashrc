@@ -381,7 +381,7 @@ alias chromium=_CHROME-POLISHER
 alias google-chrome=_CHROME-POLISHER
 alias chrome=_CHROME-POLISHER
 alias dos="bash ${DOTFILESDIR}/dos/sh-dos.sh"
-alias sudo="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\";_ICON ⚠️  sudo"
+alias sudo="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\";_ICON ⚠️  _LOG sudo"
 function _SCP
 {
 local ARG
@@ -621,7 +621,8 @@ for ARG in "exec" "-a" "$1" "ionice" "--class" "idle" "nice" "-n" "19" "$@"
 do
 \echo -n "\"${ARG}\" " >>"${TEMP}"
 done
-script -q -e -c "bash \"${TEMP}\"" "${LOG}"
+\printf "$*\n" >"${LOG}"
+script -a -q -e -c "bash \"${TEMP}\"" "${LOG}"
 local RETURN=$?
 \sed -i -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' -e 's/\r/\n/g' "${LOG}"
 /bin/rm -f "${TEMP}"
