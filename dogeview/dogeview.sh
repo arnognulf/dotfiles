@@ -166,7 +166,7 @@ function _DOGE_DECODE_DOC
     esac
 
     case "${1,,}" in #case1
-    *.wri) \unoconv --format=doc "${TEMP}" -o "${TEMP}.doc";\pandoc -s --from=html --to=man "${TEMP}.doc";;
+    *.wri) \unoconv --format=doc "${TEMP}" -o "${TEMP}.doc" 2>/dev/null;\pandoc -s --from=html --to=man "${TEMP}.doc";;
     *.markdown|*.mdown|*.mkdn|*.md) \pandoc -s --from=gfm --to=man "${TEMP}";;
     *.textile) \pandoc -s --from=textile --to=man "${TEMP}";;
     *.mediawiki) \pandoc -s --from=mediawiki --to=man "${TEMP}";;
@@ -175,6 +175,7 @@ function _DOGE_DECODE_DOC
     *.org) \pandoc -s --from=org --to=man "${TEMP}";;
     *.tex) \pandoc -s --from=latex --to=man "${TEMP}";;
     *.rst) \pandoc -s --from=rst --to=man "${TEMP}";;
+    *screenlog.0) \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' -e 's/\r/\n/g' "${TEMP}";;
     *.man) \cat "${1}";;
     *.asciidoc|*.adoc|*.asc) pandoc -s --from=asciidoc --to=man "${TEMP}";;
     esac > "${TEMP}.man" #end case1
@@ -295,6 +296,7 @@ function _DOGE_DECODE
             ;;
             *" "application/octet-stream)
             case "${FILE,,}" in
+            *screenlog.0) \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' -e 's/\r/\n/g' "${FILE}";;
             *.wri|*.dtb)
             _DOGE_DECODE_DOC "${FILE}";;
             *.dlt)
@@ -321,7 +323,7 @@ function _DOGE_DECODE
                 TEMP=$(mktemp /tmp/.DOGE.XXXXXXXXXXXX.${FILE##*.})
                 \cp "${FILE}" "${TEMP}"
             fi
-            \unoconv -f csv --stdout "${TEMP}"
+            \unoconv -f csv --stdout "${TEMP}" 2>/dev/null
             \rm -f "${TEMP}"
             ;;
             *)
@@ -368,7 +370,7 @@ function _DOGEVIEW
         then
 	local LINE
 	    read -r LINE < "${FILE}"
-	    \printf "\e]0;⏪ replay ${LINE%% *}\a"
+	    \printf "\e]0;⏪  replay ${LINE%% *}\a"
 
             if [ "${_DOGE_STDOUT}" = 1 ]
 	    then

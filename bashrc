@@ -193,6 +193,9 @@ case "$1" in
 clone|push)
 _LOG \git "$@"
 ;;
+log|show|diff)
+\git "$@"
+;;
 *)
 _MEASURE=0
 _MOAR git "$@"
@@ -208,7 +211,7 @@ type -P fdfind && alias fd='_ICON 🔎 _MOAR fdfind -H -I'
 alias find='_ICON 🔎 _MOAR find'
 alias rga='_ICON 🔎 _MOAR rga --color=always'
 alias rg='_ICON 🔎 _MOAR rg'
-alias strace='_ICON 👣 strace'
+alias strace='_ICON 👣 _LOG strace'
 alias top='_NO_MEASURE _ICON 📈 top'
 alias ntop='_NO_MEASURE _ICON 📈 ntop'
 alias htop='_NO_MEASURE _ICON 📈 htop'
@@ -326,8 +329,8 @@ BRANCH=$({ \git branch -a|\cut -c3-1024; \git reflog;}|fzf --no-mouse)||exit 1
 alias b=_BRANCHY_MCBRANCHFACE
 
 alias ll='ls -al --color=always'
-alias l='_LS_HIDDEN -C'
-alias ls='_LS_HIDDEN -C'
+alias l='_LS_HIDDEN -v -C'
+alias ls='_LS_HIDDEN -v -C'
 alias task_flash='task "⚡ FLASH ⚡"'
 alias task_bake='task "🍞 Bake"'
 alias task_bug="🐛 Bug"
@@ -426,7 +429,7 @@ function c ()
         else
         local MAXLINES=$((LINES - 6))
         fi
-        _LS_HIDDEN -C -w${COLUMNS} | \tee "${TMP}" | \head -n${MAXLINES}
+        _LS_HIDDEN -v -C -w${COLUMNS} | \tee "${TMP}" | \head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
         [ ${LS_LINES} -gt ${MAXLINES} ] && \printf "...\n"
         if [ ${LS_LINES} = 0 ]
@@ -439,7 +442,7 @@ function c ()
         done
         if [ ${COUNT} -gt 2 ]
         then
-        _LS_HIDDEN -A -C -w${COLUMNS} | \tee "${TMP}" | \tee "${TMP}" | \head -n${MAXLINES}
+        _LS_HIDDEN -v -A -C -w${COLUMNS} | \tee "${TMP}" | \tee "${TMP}" | \head -n${MAXLINES}
         local LS_LINES=$(wc -l < $TMP) 
         [ ${LS_LINES} -gt ${MAXLINES} ] && \printf "...\n"
         else
@@ -686,7 +689,31 @@ unset _SOURCED
 bind 'set completion-ignore-case on'
 bind 'set bell-style none'
 fi
+#https://stackoverflow.com/questions/6250698/how-to-decode-url-encoded-string-in-shell
+function urldecode()
+{
+: "${*//+/ }"
+echo -e "${_//%/\\x}";
+}
 
+function update_recent
+{
+\mkdir -p ~/Recent
+\rm -f ~/Recent/*
+local ITEM
+local IFS="
+"
+for ITEM in $(\gio tree recent://|\grep ' file://')
+do
+ITEM=${ITEM:47}
+ITEM=$(urldecode "${ITEM}")
+ITEM=${ITEM//%20/ }
+SRC_ITEM=${ITEM}
+ITEM=${ITEM##*/}
+\echo "## ${SRC_ITEM} -> ${ITEM} ##\n"
+\ln -s "${SRC_ITEM}" "${HOME}/Recent/${ITEM}"
+done
+}
 (
 function ignore_chrome_crash
 {
@@ -715,6 +742,7 @@ function kill_tracker
 # faster
 function background_startup_tasks
 {
+update_recent
 ignore_chrome_crash
 kill_tracker
 # mount shares can wait for network I/O quite some time, do this late to not block other tasks

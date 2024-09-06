@@ -183,7 +183,6 @@ _TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\y')/\\\\\y}"
 _TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\z')/\\\\\z}"
 _TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\033')/<ESC>}"
 _TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\007')/<BEL>}"
-_TIMER_CMD="${_TIMER_CMD/%/%%}"
 (
 case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;

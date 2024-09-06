@@ -41,7 +41,12 @@ function _CAN_OPENER_ALL ()
     for FILE in "$@"
     do
         (
-            MIME=$(command file -L --mime-type "${FILE}")
+            if [ -h "${FILE}" ]
+            then
+                FILE=$(readlink "${FILE}")
+            fi
+            
+            MIME=$(command file --mime-type "${FILE}")
             case "${MIME}" in
             *" "application/vnd.apple.keynote|*" "application/vnd.wordperfect|*" "application/rtf|*" "application/vnd.oasis.opendocument.text|*" "application/vnd.openxmlformats-officedocument.*|*" "application/doc|*" "application/ms-doc|*" "application/msword)
             exec loffice --norestore --view "${FILE}" &>/dev/null &
