@@ -82,6 +82,23 @@ function _MOAR
                 RETURN=$?
             fi
         ;;
+        snap)
+        case "${2}" in
+        search|list)
+            if [ "${_MOAR_STDOUT}" = 1 ]
+            then
+                command ionice --class idle nice -n 19 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} |tail -n +2| command less -Q -R -X -F -K -S
+                RETURN=$?
+            else
+                exec -a "$1" ionice --class idle nice -n 19 "$@"
+                RETURN=$?
+            fi
+            ;;
+        *)
+            exec -a "$1" ionice --class idle nice -n 19 "$@"
+            RETURN=$?
+        esac
+        ;;
         apt)
         case "${2}" in
         list)

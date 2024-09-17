@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-_SHABACUS_help_conversions ()
+_SHABACUS_HELP_CONVERSIONS ()
 {
 echo "
 Mass conversions
@@ -45,53 +45,15 @@ x UNIT in UNIT - where UNIT are any of [cm,m,km,ft,in,yd,miles,mil]
 " >&2 | tee /dev/null >/dev/null
 }
 
-function _SHABACUS ()
+function _SHABACUS_HELP ()
 {
-local INDEX=0
-local EXPR=""
-local MATHTERM=""
-local IFS=""
-local FIRSTGLOB=""
-local LASTGLOB=""
-local GLOB=0
-local BASE=10
-local OBASE
-unset OBASE
-local COMMAND=""
-local RESULT=""
-local FORMATTED_RESULT=""
-local FUNCTION_CALLS=0
-local NUM_ARGS="${#@}"
-local NUM_GLOB=0
-local SHABACUS_DEFAULT_DECIMALS=4
-
-if [ "${2}" = "in" ]
-then
-case "${3}" in
-hex) OBASE=16;;
-dec) OBASE=10;;
-oct) OBASE=8;;
-bin) OBASE=2;;
-in) :;;
-*)
-echo "${FUNCNAME[0]}: unsupported conversion base: ${3}" >&2 | tee /dev/null >/dev/null; return 1;;
-esac
-fi
-
-for MATHTERM in *
-do
-[ -z "${FIRSTGLOB}" ] && FIRSTGLOB="${MATHTERM}"
-LASTGLOB="${MATHTERM}"
-NUM_GLOB=$((NUM_GLOB + 1))
-done
-for MATHTERM in "${@}"
-do
-case "${MATHTERM}" in
-*--help|*-h)
-
-echo "\
+\printf "\
 SHABACUS: infix shell decimal calculator
 ========================================
+"
+_SHABACUS_HELP_CONVERSIONS
+
+\printf "\
 Mathematical operators
 ----------------------
 x + y    - addition
@@ -154,6 +116,52 @@ bitrev x - bitwise reverse x
 
 " >&2 | tee /dev/null >/dev/null
 _SHABACUS_help_conversions;
+
+}
+function _SHABACUS ()
+{
+local INDEX=0
+local EXPR=""
+local MATHTERM=""
+local IFS=""
+local FIRSTGLOB=""
+local LASTGLOB=""
+local GLOB=0
+local BASE=10
+local OBASE
+unset OBASE
+local COMMAND=""
+local RESULT=""
+local FORMATTED_RESULT=""
+local FUNCTION_CALLS=0
+local NUM_ARGS="${#@}"
+local NUM_GLOB=0
+local SHABACUS_DEFAULT_DECIMALS=4
+
+if [ "${2}" = "in" ]
+then
+case "${3}" in
+hex) OBASE=16;;
+dec) OBASE=10;;
+oct) OBASE=8;;
+bin) OBASE=2;;
+in) :;;
+*)
+echo "${FUNCNAME[0]}: unsupported conversion base: ${3}" >&2 | tee /dev/null >/dev/null; return 1;;
+esac
+fi
+
+for MATHTERM in *
+do
+[ -z "${FIRSTGLOB}" ] && FIRSTGLOB="${MATHTERM}"
+LASTGLOB="${MATHTERM}"
+NUM_GLOB=$((NUM_GLOB + 1))
+done
+for MATHTERM in "${@}"
+do
+case "${MATHTERM}" in
+*--help|*-h)
+
 return 1
 esac
 
@@ -375,7 +383,9 @@ define arcsinh(x){return l(x+sqrt(x^two+1))}
 define arccosh(x){return l(x+sqrt(x^two-1))}
 define arctanh(x){return 1/two*l((1+x)/(1-x))}
 define int(x){auto s;s=scale;scale=0;x/=1;scale=s;return x}
+define round(x){return int(x+1/two)}
 define pow(x,y){if(y==int(y)){return (x^y);};return e(y*l(x))}
+define cbrt(x){return e(l(x)/three)}
 ${EXPR}"
 }
 _SHABACUS_cmd
@@ -416,6 +426,7 @@ esac
 esac
 if [ -z "${RESULT}" ] 
 then
+_SHABACUS_HELP
 echo -n "shabacus: "
 local ERROR=$(echo "${COMMAND}"| BC_LINE_LENGTH=0 BC_ENV_ARGS="" bc -l 2>&1)
 if [ "x${ERROR}" = x ]
@@ -472,45 +483,8 @@ return $?
 e" ")
 _SHABACUS e 1
 ;;
-log10" "*|log2" "*|lg" "*|0b[.0-9]*|0o[.0-9]*|0x*[.0-9A-F]*|j" "*|cos" "*|arctan" "*|sin" "*|e" "*|tan" "*|length" "*|sqrt" "*|log10" "*|log" "*|pi*|ln" "*|√[.0-9]*|s'('*|c'('*|a'('*|l'('*|e'('*|j'('*|[.0-9]*|'-'[0-9]*|sqrt"("*|'('*|fac" "*|t" "*|tan" "*|arccsc" "*|arcsec" "*|arccot" "*|arccos" "*|arcsin" "*|lb" "*|sinh" "*|cosh" "*|tanh" "*|sech" "*|csch" "*|coth" "*|arcsinh" "*|arccosh" "*|arctanh" "*|cot" "*)
-if [ "${#@}" -gt 1 ]
-then
+log10" "*|log2" "*|lg" "*|0b[.0-9]*|0o[.0-9]*|0x*[.0-9A-F]*|j" "*|cos" "*|arctan" "*|sin" "*|e" "*|tan" "*|length" "*|sqrt" "*|cbrt" "*|round" "*|log10" "*|log" "*|pi*|ln" "*|√[.0-9]*|s'('*|c'('*|a'('*|l'('*|e'('*|j'('*|[.0-9]*|'-'[0-9]*|sqrt"("*|'('*|fac" "*|t" "*|tan" "*|arccsc" "*|arcsec" "*|arccot" "*|arccos" "*|arcsin" "*|lb" "*|sinh" "*|cosh" "*|tanh" "*|sech" "*|csch" "*|coth" "*|arcsinh" "*|arccosh" "*|arctanh" "*|cot" "*)
 _SHABACUS "${@}"
-else
-case ${1} in
-[1-9]*)
-echo "$(date -d @$(_SHABACUS $1 in dec)) as UNIX timestamp"
-esac
-DEC=$(_SHABACUS ${1} in dec) 
-if [ ${DEC} -gt 127 ] &>/dev/null && [ ${DEC} -lt 256 ]
-then
-echo "$(_SHABACUS -${DEC} + 127) as int8"
-fi
-if [ ${DEC} -gt 32767 ] &>/dev/null && [ ${DEC} -lt 65536 ]
-then
-echo "$(_SHABACUS -${DEC} + 32767) as int16"
-fi
-if [ ${DEC} -gt 2147483647 ] &>/dev/null && [ ${DEC} -lt 4294967296 ]
-then
-echo "$(_SHABACUS -${DEC} + 2147483647) as int32"
-fi
-case ${1} in
--*|0[0-9]*) : ;;
-*) echo "$(_SHABACUS $1 in oct) in octal"
-esac
-case ${1} in
--*|0b*) : ;;
-*) echo "$(_SHABACUS $1 in bin) in binary"
-esac
-case ${1} in
--*|0x*) : ;;
-*) echo "$(_SHABACUS $1 in hex) in hexadecimal"
-esac
-case ${1} in
--*|[1-9]*) : ;;
-*) echo "$(_SHABACUS $1 in dec) in decimal"
-esac
-fi
 ;;
 *)
 _SHABACUS_command_not_found "${@}"

@@ -188,12 +188,13 @@ alias code-insiders='o code-insiders'
 alias code='o code-insiders'
 _GIT ()
 {
-_ICON 🪣
+_TITLE "🪣  $*"
 case "$1" in
 clone|push)
 _LOG \git "$@"
 ;;
 log|show|diff)
+_MEASURE=0
 \git "$@"
 ;;
 *)
@@ -322,7 +323,7 @@ esac
 _BRANCHY_MCBRANCHFACE ()
 {
 \git rev-parse --show-toplevel &>/dev/null || { _NO; return 1;}
-_title "🐙  Branchy McBranchFace"
+_TITLE "🐙  Branchy McBranchFace"
 BRANCH=$({ \git branch -a|\cut -c3-1024; \git reflog;}|fzf --no-mouse)||exit 1
 \git checkout ${BRANCH%% *}
 }
@@ -331,6 +332,7 @@ alias b=_BRANCHY_MCBRANCHFACE
 alias ll='ls -al --color=always'
 alias l='_LS_HIDDEN -v -C'
 alias ls='_LS_HIDDEN -v -C'
+alias sl=ls
 alias task_flash='task "⚡ FLASH ⚡"'
 alias task_bake='task "🍞 Bake"'
 alias task_bug="🐛 Bug"
@@ -414,7 +416,7 @@ function c ()
     _CHDIR_ALL_THE_THINGS "$@" && {
         local TMP="/run/user/${UID}/ls-${RANDOM}.txt"
         local FILE
-        for FILE in README.md README.txt README README.doc README.rst README.android README.* "READ *" "Read *" "Read *"
+        for FILE in README.md README.txt README README.doc README.rst README.android README.* "READ *" "Read *" "Read *" "readme"*
         do
         if [ -f "${FILE}" ]
         then

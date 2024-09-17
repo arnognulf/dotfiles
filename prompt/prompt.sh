@@ -229,7 +229,7 @@ fi
 done
 if [ ${CUSTOM_TITLE} = 0 ]
 then
-_title "$LINE"
+_TITLE "$LINE"
 fi
 )
 _MEASURE=1
@@ -457,9 +457,9 @@ PS1="\[${CR}${ESC}]0;"'${TITLE}'"${BEL}${ESC}[0m"'$([ ${UID} = 0 ] && \echo -e "
 PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
 
 
-_title ()
+_TITLE ()
 {
-[ -n "$*" ] && [ -t 0 ] && \printf "\e]0;$* in ${PWD##*/} at $(date +%H:%M)\a"
+\printf "\e]0;$* in ${PWD##*/} at $(date +%H:%M)\a" &>"${TTY}"
 }
 
 _ICON ()
@@ -488,9 +488,9 @@ done
 
 if [ -z "$FIRST_NON_OPTION" ]
 then
-_title "${ICON}  ${FIRST_ARG##*/}"
+_TITLE "${ICON}  ${FIRST_ARG##*/}"
 else
-_title "${ICON}  ${FIRST_NON_OPTION##*/}"
+_TITLE "${ICON}  ${FIRST_NON_OPTION##*/}"
 fi
 ) &>"${TTY}"
 "$@"
