@@ -618,7 +618,7 @@ local LOGDIR="${HOME}/.cache/logs"
 local LOG="${_LOGFILE-${LOGDIR}/${LOGFILE}}"
 local ARG
 local TEMP=$(\mktemp)
-for ARG in "exec" "-a" "$1" "chrt" "-i" "$@"
+for ARG in "exec" "-a" "$1" "chrt" "-i" "0" "$@"
 do
 \echo -n "\"${ARG}\" " >>"${TEMP}"
 done
