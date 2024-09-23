@@ -56,7 +56,7 @@ function _CAN_OPENER_ALL ()
             then
                 case "$1" in
                     /usr/*/xscreensaver/*)
-                        PATH=$PATH:${1%/*} exec nice -n 19 "$@" &>/dev/null &
+                        PATH=$PATH:${1%/*} exec chrt -i 0 "$@" &>/dev/null &
             ;;
             *)
                 exec "${FILE}" &>/dev/null &
@@ -92,7 +92,7 @@ function _CAN_OPENER ()
     for ARG in "$@"
     do
     case "${ARG}" in
-    -h|--help*|--version)
+    -h|--help*|--version|-help)
     HELP=1
     esac
     done

@@ -154,7 +154,7 @@ function _EDITOR
     XDG_DATA_HOME="${VIM}" $(type -P "nvim" 2>/dev/null||type -P "vim" 2>/dev/null ||type -P "vi" 2>/dev/null ) -u "${VIM}"/nvim.vim -p "${@}"
 }
 
-[ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o _BATCH_PRIO ~/.local/share/android-studio/bin/studio.sh'
+[ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o _IDLE_PRIO ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
 alias clang='_ICON 🛠️ _LOG clang'
@@ -164,9 +164,9 @@ alias snapcraft='_ICON 🛠️ _LOG snapcraft --verbose'
 alias ninja='_ICON 🛠️ _LOG ninja'
 alias make='_ICON 🛠️ _LOG make -j$(nproc)'
 alias cat="_ICON 🐱 _MOAR cat"
-alias delta='_BATCH_PRIO delta --light'
-alias cp='_ICON 💽 _BATCH_PRIO cp --reflink=auto'
-alias dd='_ICON 💽 _BATCH_PRIO dd status=progress'
+alias delta='_IDLE_PRIO delta --light'
+alias cp='_ICON 💽 _IDLE_PRIO cp --reflink=auto'
+alias dd='_ICON 💽 _IDLE_PRIO dd status=progress'
 alias dl=_UBER_FOR_MV
 alias octave=octave-cli
 alias excel='o localc --norestore --view'
@@ -176,7 +176,7 @@ alias loimpress='o loimpress --norestore --view'
 alias lowriter='o lowriter --norestore --view'
 alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
-alias tar='_ICON 📼 _BATCH_PRIO tar'
+alias tar='_ICON 📼 _IDLE_PRIO tar'
 alias scrcpy='_RETRY scrcpy'
 alias adb='_NO_MEASURE  _ICON 🤖 _RETRY adb'
 if [ -n "$WAYLAND_DISPLAY" ]
@@ -217,10 +217,6 @@ alias top='_NO_MEASURE _ICON 📈 top'
 alias ntop='_NO_MEASURE _ICON 📈 ntop'
 alias htop='_NO_MEASURE _ICON 📈 htop'
 alias nload='_NO_MEASURE _ICON 📈 nload'
-rm()
-{
-    _ICON ♻️  _BATCH_PRIO rm "$@"
-}
 alias rm='_ICON ♻️  _ERMAHGERD'
 alias trash='_ICON ♻️  gio trash'
 alias jdupes='_ICON ♻️  jdupes --dedupe -R'
@@ -257,14 +253,14 @@ function fclones
 [ -z "$(type -P fclones)" ] && { _NO; return 255;}
 if [ -z "$1" ]
 then
-_ICON ♻️  _BATCH_PRIO $(type -P fclones) group "$PWD" | _BATCH_PRIO $(type -P fclones) dedupe
+_ICON ♻️  _IDLE_PRIO $(type -P fclones) group "$PWD" | _IDLE_PRIO $(type -P fclones) dedupe
 else
-_ICON ♻️  _BATCH_PRIO $(type -P fclones) "$@"
+_ICON ♻️  _IDLE_PRIO $(type -P fclones) "$@"
 fi
 }
-_BATCH_PRIO ()
+_IDLE_PRIO ()
 {
-ionice --class idle nice -n 19 "$@"
+chrt -i 0 "$@"
 }
 function _REPO
 {
@@ -275,7 +271,7 @@ function _REPO
     fi
 	\repo "$@"
 }
-alias repo="_ICON 🪣 _BATCH_PRIO repo"
+alias repo="_ICON 🪣 _IDLE_PRIO repo"
 
 export LESS='-Q -R'
 alias gl="LESS='-Q -R --pattern ^(commit|diff)' git log -p"
@@ -329,7 +325,7 @@ BRANCH=$({ \git branch -a|\cut -c3-1024; \git reflog;}|fzf --no-mouse)||exit 1
 }
 alias b=_BRANCHY_MCBRANCHFACE
 
-alias ll='ls -al --color=always'
+alias ll='\ls -al --color=always'
 alias l='_LS_HIDDEN -v -C'
 alias ls='_LS_HIDDEN -v -C'
 alias sl=ls
@@ -622,11 +618,11 @@ local LOGDIR="${HOME}/.cache/logs"
 local LOG="${_LOGFILE-${LOGDIR}/${LOGFILE}}"
 local ARG
 local TEMP=$(\mktemp)
-for ARG in "exec" "-a" "$1" "ionice" "--class" "idle" "nice" "-n" "19" "$@"
+for ARG in "exec" "-a" "$1" "chrt" "-i" "$@"
 do
 \echo -n "\"${ARG}\" " >>"${TEMP}"
 done
-\printf "$*\n" >"${LOG}"
+\echo "$*" >"${LOG}"
 script -a -q -e -c "bash \"${TEMP}\"" "${LOG}"
 local RETURN=$?
 \sed -i -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' -e 's/\r/\n/g' "${LOG}"

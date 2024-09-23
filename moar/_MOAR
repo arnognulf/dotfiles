@@ -59,10 +59,10 @@ function _MOAR
         shift
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command ionice --class idle nice -n 19 "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
+            command chrt -i 0 "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            exec -a "$1" ionice --class idle nice -n 19 "${CMD}" "$@"
+            exec -a "$1" chrt -i 0 "${CMD}" "$@"
             RETURN=$?
         fi
         ;;
@@ -75,10 +75,10 @@ function _MOAR
                     command less -Q -R -X -F -K -S +F "$@"
                     RETURN=$?
                 else
-                    exec -a "$1" ionice --class idle nice -n 19 "$@" | less -Q -R -X -F -K -S 
+                    exec -a "$1" chrt -i 0 "$@" | less -Q -R -X -F -K -S 
                 fi
             else
-                command ionice --class idle nice -n 19 "$@"
+                command chrt -i 0 "$@"
                 RETURN=$?
             fi
         ;;
@@ -87,15 +87,15 @@ function _MOAR
         search|list)
             if [ "${_MOAR_STDOUT}" = 1 ]
             then
-                command ionice --class idle nice -n 19 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} |tail -n +2| command less -Q -R -X -F -K -S
+                command chrt -i 0 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} |tail -n +2| command less -Q -R -X -F -K -S
                 RETURN=$?
             else
-                exec -a "$1" ionice --class idle nice -n 19 "$@"
+                exec -a "$1" chrt -i 0 "$@"
                 RETURN=$?
             fi
             ;;
         *)
-            exec -a "$1" ionice --class idle nice -n 19 "$@"
+            exec -a "$1" chrt -i 0 "$@"
             RETURN=$?
         esac
         ;;
@@ -104,25 +104,25 @@ function _MOAR
         list)
             if [ "${_MOAR_STDOUT}" = 1 ]
             then
-                command ionice --class idle nice -n 19 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} |tail -n +2| command less -Q -R -X -F -K -S
+                command chrt -i 0 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} |tail -n +2| command less -Q -R -X -F -K -S
                 RETURN=$?
             else
-                exec -a "$1" ionice --class idle nice -n 19 "$@"
+                exec -a "$1" chrt -i 0 "$@"
                 RETURN=$?
             fi
         ;;
         search)
             if [ "${_MOAR_STDOUT}" = 1 ]
             then
-                command ionice --class idle nice -n 19 "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
+                command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
                 RETURN=$?
             else
-                exec -a "$1" ionice --class idle nice -n 19 "$@"
+                exec -a "$1" chrt -i 0 "$@"
                 RETURN=$?
             fi
         ;;
         *)
-            exec -a "$1" ionice --class idle nice -n 19 "$@"
+            exec -a "$1" chrt -i 0 "$@"
             RETURN=$?
         esac
         ;;
@@ -140,28 +140,28 @@ function _MOAR
         fi
         ;;
         *)
-            exec -a "$1" ionice --class idle nice -n 19 "$@"
+            exec -a "$1" chrt -i 0 "$@"
             RETURN=$?
         esac
     ;;
     less|more)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command ionice --class idle nice -n 19 "$@"
+            command chrt -i 0 "$@"
             RETURN=$?
         else
             shift
-            exec -a "$1" ionice --class idle nice -n 19 cat "${@}"
+            exec -a "$1" chrt -i 0 cat "${@}"
             RETURN=$?
         fi
         ;;
     find|od|hexdump)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command ionice --class idle nice -n 19 "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
+            command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            exec -a "$1" ionice --class idle nice -n 19 "$@"
+            exec -a "$1" chrt -i 0 "$@"
             RETURN=$?
         fi
     ;;
@@ -179,20 +179,20 @@ function _MOAR
     rg)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command ionice --class idle nice -n 19 "$@" --color=always 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
+            command chrt -i 0 "$@" --color=always 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            exec -a "$1" ionice --class idle nice -n 19 "$@" --color=never
+            exec -a "$1" chrt -i 0 "$@" --color=never
             RETURN=$?
         fi
     ;;
     systemctl)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command ionice --class idle nice -n 19 "$@" --no-pager 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
+            command chrt -i 0 "$@" --no-pager 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            exec -a "$1" ionice --class idle nice -n 19 "$@" --color=never
+            exec -a "$1" chrt -i 0 "$@" --color=never
             RETURN=$?
         fi
     ;;
@@ -200,10 +200,10 @@ function _MOAR
     rga)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command ionice --class idle nice -n 19 "$@" --color=always 2>/dev/null | command less -Q -R -X -F -K -S
+            command chrt -i 0 "$@" --color=always 2>/dev/null | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            exec -a "$1" ionice --class idle nice -n 19 "$@" --color=never 2>/dev/null
+            exec -a "$1" chrt -i 0 "$@" --color=never 2>/dev/null
             RETURN=$?
         fi
     ;;
@@ -211,20 +211,20 @@ function _MOAR
     fd|fdfind)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command ionice --class idle nice -n 19 "$@" --color always 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
+            command chrt -i 0 "$@" --color always 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            exec -a "$1" ionice --class idle nice -n 19 "$@" --color never
+            exec -a "$1" chrt -i 0 "$@" --color never
             RETURN=$?
         fi
     ;;
     *)
         if [ "${_MOAR_STDOUT}" = 1 ]
         then
-            command ionice --class idle nice -n 19 "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
+            command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | command less -Q -R -X -F -K -S
             RETURN=$?
         else
-            exec -a "$1" ionice --class idle nice -n 19 "$@"
+            exec -a "$1" chrt -i 0 "$@"
             RETURN=$?
         fi
     esac
