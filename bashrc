@@ -163,8 +163,13 @@ alias g++='_ICON 🛠️ _LOG g++'
 alias snapcraft='_ICON 🛠️ _LOG snapcraft --verbose'
 alias ninja='_ICON 🛠️ _LOG ninja'
 alias make='_ICON 🛠️ _LOG make -j$(nproc)'
+alias bitbake='_ICON 🛠️ _LOG bitbake'
+alias bash='_ICON 🐚 _LOG bash'
+alias zsh='_ICON 🐚 _LOG zsh'
+alias ksh='_ICON 🐚 _LOG ksh'
+alias sh='_ICON 🐚 _LOG sh'
 alias cat="_ICON 🐱 _MOAR cat"
-alias delta='_IDLE_PRIO delta --light'
+alias delta='_ICON Δ _IDLE_PRIO delta --light'
 alias cp='_ICON 💽 _IDLE_PRIO cp --reflink=auto'
 alias dd='_ICON 💽 _IDLE_PRIO dd status=progress'
 alias dl=_UBER_FOR_MV
@@ -178,7 +183,7 @@ alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
 alias tar='_ICON 📼 _IDLE_PRIO tar'
 alias scrcpy='_RETRY scrcpy'
-alias adb='_NO_MEASURE  _ICON 🤖 _RETRY adb'
+alias adb='_NO_MEASURE _ICON 🤖 _RETRY adb'
 if [ -n "$WAYLAND_DISPLAY" ]
 then
 local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
