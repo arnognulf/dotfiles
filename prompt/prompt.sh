@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# TODO: move out
 XDG_DESKTOP_DIR="$HOME/"
 XDG_DOWNLOAD_DIR="$HOME/Downloads"
 XDG_TEMPLATES_DIR="$HOME/Templates"
@@ -28,7 +29,6 @@ XDG_DOCUMENTS_DIR="$HOME/Documents"
 XDG_MUSIC_DIR="$HOME/Music"
 XDG_PICTURES_DIR="$HOME/Pictures"
 XDG_VIDEOS_DIR="$HOME/Videos"
-
 [[ -f ~/.config/user-dirs.dirs ]] || xdg-user-dirs-update
 . ~/.config/user-dirs.dirs
 
@@ -37,20 +37,7 @@ function _PROMPT_ALERT ()
 ( exec mplayer -quiet /usr/share/sounds/gnome/default/alerts/glass.ogg &>/dev/null & )
 }
 
-function _FASD_PROMPT_FUNC ()
-{
-:
-}
-if [ -n "${TMUX}" ]
-then
-case $((16#$(\echo -n "${HOSTNAME}"|\sum|\cut -c1))) in
-0|5) _PROMPTHOSTDOT="\[\e[102m\]⬤ \[\e[0;7m\]";;
-1|6) _PROMPTHOSTDOT="\[\e[103m\]⬤ \[\e[0;7m\]";;
-2|7) _PROMPTHOSTDOT="\[\e[104m\]⬤ \[\e[0;7m\]";;
-3|8) _PROMPTHOSTDOT="\[\e[105m\]⬤ \[\e[0;7m\]";;
-4|9) _PROMPTHOSTDOT="\[\e[106m\]⬤ \[\e[0;7m\]";;
-esac
-fi
+# TODO: make callback
 function _PROMPT_MAGIC_SHELLBALL ()
 {
   local ANSWER
@@ -134,14 +121,6 @@ function _PROMPT_COMMAND ()
     :
     unset CR_FIRST
     CR_LEVEL=0
-    # only append to fasd if any non navigational command is executed in cwd
-    case "${_PROMPT_HISTCMD_PREV}" in
-    c|cd|find|ls|l|ll)
-    :
-    ;;
-    *)
-    _FASD_PROMPT_FUNC
-    esac
   fi
   _PROMPT_CTRLC=""
   HISTCMD_before_last=$_PROMPT_HISTCMD_PREV
@@ -187,6 +166,7 @@ _TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\007')/<BEL>}"
 case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;
 *)
+# TODO: break out
 local DATE=$(date +%m-%d)
 case ${DATE} in
 10-2*|10-3*)
@@ -199,13 +179,7 @@ local CHAR=🎄
 local CHAR=▶️
 esac
 esac
-case "${_TIMER_CMD}" in
-"serial"*)
-LINE="💻  serial"
-;;
-*)
 LINE="${CHAR}  ${_TIMER_CMD}"
-esac
 if [ -n "$TMUX" ]
 then
 local SHORT_HOSTNAME=${HOSTNAME%%.*}
@@ -456,10 +430,14 @@ PS1="\[${CR}${ESC}]0;"'${TITLE}'"${BEL}${ESC}[0m"'$([ ${UID} = 0 ] && \echo -e "
 
 PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
 
+_TITLE_RAW ()
+{
+\printf "\e]0;$*\a" &>"${TTY}"
+}
 
 _TITLE ()
 {
-\printf "\e]0;$* in ${PWD##*/} at $(date +%H:%M)\a" &>"${TTY}"
+_TITLE_RAW "$* in ${PWD##*/} at $(date +%H:%M)"
 }
 
 _ICON ()
