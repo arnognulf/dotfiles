@@ -427,7 +427,7 @@ fi
 let INDEX++
 done
 
-PS1="\[${CR}${ESC}]0;"'${TITLE}'"${BEL}${ESC}[0m"'$([ ${UID} = 0 ] && \echo -e "\e[31m")\]${_PROMPT_LINE}'"
+PS1="${CR}"'$([[ $TERM =~ xterm* ]] && \printf "\033]0;${TITLE}\007")''$([ ${UID} = 0 ] && \echo -e "\e[31m")${_PROMPT_LINE}'"
 \[${ESC}(1${ESC}[0;7m"'$([ ${UID} = 0 ] && \echo -e "${ESC}[31m")'"\]${_PROMPT_TEXT}\[${ESC}[0m${ESC}[?25h\] "
 }
 
