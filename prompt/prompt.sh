@@ -356,13 +356,16 @@ fi
 else
 TITLE="${TITLE_OVERRIDE}"
 fi
-#if [ ${TERM} = linux ]
-#then
-#local CHAR="_"
-#command printf "\e[0m"
-#else
+if [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
+then
 local CHAR="▁"
-#fi
+command printf "\e[0m"
+elif [ $TERM = vt100 ] || [ "$TERM" = "" ]
+then
+CHAR=$(\printf "\033(0\xF3")
+else
+local CHAR="_"
+fi
 
 _MAKELUTNOTWAR ()
 {
@@ -399,7 +402,7 @@ case ${PWD} in
 ${HOME}) _PROMPT_PWD_BASENAME="~";;
 *) _PROMPT_PWD_BASENAME="${NAME-${PWD_BASENAME}}"
 esac
-PROMPT_TEXT=" ${_PROMPTHOSTDOT}${_PROMPT_PWD_BASENAME}${_PROMPT_GIT_PS1} "$([ $UID = 0 ] && \echo "# ")
+PROMPT_TEXT=" ${_PROMPT_PWD_BASENAME}${_PROMPT_GIT_PS1} "$([ $UID = 0 ] && \echo "# ")
 
 local CURSORPOS=$((${#PROMPT_TEXT} + 1 ))
 local RGB_CUR_COLOR=${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${CURSORPOS} / $((${COLUMNS} + 1))))]}
@@ -432,7 +435,10 @@ PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
 
 _TITLE_RAW ()
 {
+if [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
+then
 \printf "\e]0;$*\a" &>"${TTY}"
+fi
 }
 
 _TITLE ()
