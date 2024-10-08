@@ -363,9 +363,9 @@ if [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
 then
 local CHAR="▁"
 command printf "\e[0m"
-elif [ $TERM = vt100 ] || [ "$TERM" = "" ]
+elif [ $TERM = vt100 ]
 then
-CHAR=$(\printf "\033(0\xF3")
+CHAR=$(\printf "\xF3")
 else
 local CHAR="_"
 fi
@@ -378,7 +378,6 @@ _MAKELUTNOTWAR ()
 . /tmp/tmp.lut
 }
 
-_PROMPT_LINE="${REVERSE}"
 
 local ESC=$(\printf '\e')
 local CR=$(\printf '\r')
@@ -387,7 +386,12 @@ local PREFG="${ESC}[38;2;"
 local PREBG="${ESC}[48;2;"
 local POST="m"
 local INDEX=0
-local REVERSE="${ESC}[4m"
+if [ "$TERM" = vt100 ]
+then
+_PROMPT_LINE="${ESC}(0"
+else
+_PROMPT_LINE=""
+fi
 while [ ${INDEX} -lt ${COLUMNS} ]
 do
 # 16M colors broken in mosh
@@ -433,11 +437,9 @@ fi
 let INDEX++
 done
 
-PS1="${CR}"'$([[ $TERM =~ xterm* ]] && \printf "\033]0;${TITLE}\007")''${_PROMPT_LINE}'"${ESC}(1
-\[${ESC}[0;7m\]${_PROMPT_TEXT}\[${ESC}[0m${ESC}[?25h\] "
-
-PS1='$([[ $TERM =~ xterm* ]] && \printf "\033]0;${TITLE}\007")''${_PROMPT_LINE}'"${ESC}(1${ESC}[0;7m
+PS1='$([[ $TERM =~ xterm* ]] && \printf "\033]0;${TITLE}\007")'"${CR}"'${_PROMPT_LINE}'"${ESC}(1${ESC}[0;7m
 ${_PROMPT_TEXT}\[${ESC}[0m${ESC}[?25h\] "
+
 }
 
 PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
