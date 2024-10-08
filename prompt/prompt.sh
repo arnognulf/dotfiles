@@ -208,7 +208,10 @@ fi
 )
 _MEASURE=1
 _START_SECONDS=$SECONDS
+if [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
+then
 \printf "\e]11;#${BGCOLOR}\a\e]10;#${FGCOLOR}\a\e]12;#${FGCOLOR}\a"
+fi
 } &>"${TTY}"
 }
 
@@ -412,13 +415,16 @@ local RGB_CUR_G=${RGB_CUR_GB%%;*}
 local RGB_CUR_B=${RGB_CUR_GB##*;}
 local HEX_CUR_COLOR=$(\printf "%.2x%.2x%.2x" ${RGB_CUR_R} ${RGB_CUR_G} ${RGB_CUR_B})
 [ -z "${HEX_CUR_COLOR}" ] && HEX_CUR_COLOR="${FGCOLOR}"
+if [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
+then
 \printf "\e]11;#${BGCOLOR}\a\e]10;#${FGCOLOR}\a\e]12;#${HEX_CUR_COLOR}\a"
+fi
 
 _PROMPT_TEXT=""
 local INDEX=0
 while [ ${INDEX} -lt ${#PROMPT_TEXT} ]
 do
-if [ -n "$TMUX" ]
+if [ -n "$TMUX" ] || [ "$TERM" = vt100 ]
 then
 _PROMPT_TEXT="${_PROMPT_TEXT}${PROMPT_TEXT:${INDEX}:1}"
 else
@@ -427,8 +433,11 @@ fi
 let INDEX++
 done
 
-PS1="${CR}"'$([[ $TERM =~ xterm* ]] && \printf "\033]0;${TITLE}\007")''$([ ${UID} = 0 ] && \echo -e "\e[31m")${_PROMPT_LINE}'"
-\[${ESC}(1${ESC}[0;7m"'$([ ${UID} = 0 ] && \echo -e "${ESC}[31m")'"\]${_PROMPT_TEXT}\[${ESC}[0m${ESC}[?25h\] "
+PS1="${CR}"'$([[ $TERM =~ xterm* ]] && \printf "\033]0;${TITLE}\007")''${_PROMPT_LINE}'"${ESC}(1
+\[${ESC}[0;7m\]${_PROMPT_TEXT}\[${ESC}[0m${ESC}[?25h\] "
+
+PS1='$([[ $TERM =~ xterm* ]] && \printf "\033]0;${TITLE}\007")''${_PROMPT_LINE}'"${ESC}(1${ESC}[0;7m
+${_PROMPT_TEXT}\[${ESC}[0m${ESC}[?25h\] "
 }
 
 PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
