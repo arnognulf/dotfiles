@@ -100,7 +100,13 @@ function _CAN_OPENER ()
     then
     command "$@"
     else
-    	setsid -f -- "$@" 0<&- &>/dev/null
+    	( 
+        unset GNOME_TERMINAL_SCREEN
+        unset GNOME_TERMINAL_SERVICE
+        unset TERM
+        unset TERM
+        unset COLORTERM
+        exec "$@" &>/dev/null & )
     fi
     elif [ -f "$1" ]
     then
