@@ -19,10 +19,12 @@ gradient colors are supported on
 * kitty
 * alacritty
 
-gradient colors have been tested to be partially or fully broken on
+the following terminals are strict on truecolor parameters and will set color to gray if encountering malformed truecolor control sequences:
 * konsole
 * xterm
-* rxvt, rxvt-unicode
 * screen
-* stterm
+* stterm - stterm prints in stderr if any parameters are malformed, great for debugging!
 
+truecolor is not supported on
+* rxvt, rxvt-unicode
+* vt100

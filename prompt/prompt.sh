@@ -388,14 +388,23 @@ local POST="m"
 local INDEX=0
 if [ "$TERM" = vt100 ]
 then
-_PROMPT_LINE="${ESC}(0"
+_PROMPT_LINE="${ESC}#6${ESC}(0"
+_PROMPT_ATTRIBUTE="${ESC}[7m"
 else
 _PROMPT_LINE=""
 fi
 while [ ${INDEX} -lt ${COLUMNS} ]
 do
 # 16M colors broken in mosh
-if [ -z "${GNOME_TERMINAL_SCREEN}" ] && [ "$TERM" != "alacritty" ] && [ "$TERM" != "xterm-kitty" ]
+if [ "${TERM}" = vt100 ]
+then
+if [ ${INDEX} -lt $((COLUMNS / 2)) ]
+then
+_PROMPT_LINE="${_PROMPT_LINE}${CHAR}"
+else
+:
+fi
+elif [ "${TERM}" = "linux" ]
 then
 _PROMPT_LINE="${_PROMPT_LINE}${CHAR}"
 else
@@ -428,17 +437,19 @@ _PROMPT_TEXT=""
 local INDEX=0
 while [ ${INDEX} -lt ${#PROMPT_TEXT} ]
 do
-if [ -z "${GNOME_TERMINAL_SCREEN}" ] && [ "$TERM" != "alacritty" ] && [ "$TERM" != "xterm-kitty" ]
+if [ "$TERM" = "vt100" ] || [ "$TERM" = "linux" ]
 then
 _PROMPT_TEXT="${_PROMPT_TEXT}${PROMPT_TEXT:${INDEX}:1}"
 else
-_PROMPT_TEXT="${_PROMPT_TEXT}\[${PREFG}${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}${PREBG}${_PROMPT_TEXT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}\]${PROMPT_TEXT:${INDEX}:1}"
+local LUT=$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))
+local TEXT_LUT$((${#_PROMPT_TEXT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))
+_PROMPT_TEXT="${_PROMPT_TEXT}\[${PREBG}${_PROMPT_LUT[${LUT}]}${POST}${PREFG}${_PROMPT_TEXT_LUT[${TEXT_LUT}]}${POST}\]${PROMPT_TEXT:${INDEX}:1}"
 fi
 let INDEX++
 done
 
-PS1='$([[ $TERM =~ xterm* ]] && \printf "\033]0;${TITLE}\007")'"${CR}"'${_PROMPT_LINE}'"${ESC}(1${ESC}[0;7m
-${_PROMPT_TEXT}\[${ESC}[0m${ESC}[?25h\] "
+PS1='$([[ $TERM =~ xterm* ]] && \printf "\033]0;${TITLE}\007")'"${CR}"'${_PROMPT_LINE}'"
+\[${ESC}(1${_PROMPT_ATTRIBUTE}\]${_PROMPT_TEXT}\[${ESC}[0m${ESC}[?25h\] "
 
 }
 
