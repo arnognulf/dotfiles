@@ -11,3 +11,18 @@ features:
 * long running command gets timing statistics and a notification is sent with notify-send + sound is played
   these can be disabled by setting '_MEASURE=0;' before running the command, note the semi-colon
 * pressing RETURN multiple times gives ls, git status and finally magic shellball answers
+
+support
+=======
+gradient colors are supported on
+* libvte based terminals: gnome-terminal, xfce4-terminal
+* kitty
+* alacritty
+
+gradient colors have been tested to be partially or fully broken on
+* konsole
+* xterm
+* rxvt, rxvt-unicode
+* screen
+* stterm
+

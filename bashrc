@@ -748,6 +748,7 @@ function background_startup_tasks
 update_recent
 ignore_chrome_crash
 kill_tracker
+gsettings set org.gnome.settings-daemon.plugins.power idle-brightness 100
 # mount shares can wait for network I/O quite some time, do this late to not block other tasks
 bash ~/.config/dotfiles/deal-with-it/deal-with-it.sh &
 mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo/ "${GOPATH}"

@@ -137,7 +137,14 @@ function _CAN_OPENER ()
         command "$@"
         return $?
     else
-        ( trap "" SIGINT; "$@" &>/dev/null & )
+        ( 
+        {
+        unset GNOME_TERMINAL_SCREEN
+        unset GNOME_TERMINAL_SERVICE
+        trap "" SIGINT
+        exec "$@" &
+        } &>/dev/null 
+        )
         fi
         fi
     elif [ -n "$1" ]

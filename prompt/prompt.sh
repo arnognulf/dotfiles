@@ -395,7 +395,7 @@ fi
 while [ ${INDEX} -lt ${COLUMNS} ]
 do
 # 16M colors broken in mosh
-if [ -n "$TMUX" ]
+if [ -z "${GNOME_TERMINAL_SCREEN}" ] && [ "$TERM" != "alacritty" ] && [ "$TERM" != "xterm-kitty" ]
 then
 _PROMPT_LINE="${_PROMPT_LINE}${CHAR}"
 else
@@ -428,7 +428,7 @@ _PROMPT_TEXT=""
 local INDEX=0
 while [ ${INDEX} -lt ${#PROMPT_TEXT} ]
 do
-if [ -n "$TMUX" ] || [ "$TERM" = vt100 ]
+if [ -z "${GNOME_TERMINAL_SCREEN}" ] && [ "$TERM" != "alacritty" ] && [ "$TERM" != "xterm-kitty" ]
 then
 _PROMPT_TEXT="${_PROMPT_TEXT}${PROMPT_TEXT:${INDEX}:1}"
 else
