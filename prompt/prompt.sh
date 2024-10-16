@@ -442,6 +442,10 @@ then
 _PROMPT_TEXT="${_PROMPT_TEXT}${PROMPT_TEXT:${INDEX}:1}"
 else
 local LUT=$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))
+if [ -z "${_PROMPT_TEXT_LUT[*]}" ]
+then
+local _PROMPT_TEXT_LUT[0]="$((16#${BGCOLOR:0:2}));$((16#${BGCOLOR:2:2}));$((16#${BGCOLOR:4:2}))"
+fi
 local TEXT_LUT$((${#_PROMPT_TEXT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))
 _PROMPT_TEXT="${_PROMPT_TEXT}\[${PREBG}${_PROMPT_LUT[${LUT}]}${POST}${PREFG}${_PROMPT_TEXT_LUT[${TEXT_LUT}]}${POST}\]${PROMPT_TEXT:${INDEX}:1}"
 fi

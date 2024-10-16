@@ -18,13 +18,18 @@ gradient colors are supported on
 * libvte based terminals: gnome-terminal, xfce4-terminal
 * kitty
 * alacritty
-
-the following terminals are strict on truecolor parameters and will set color to gray if encountering malformed truecolor control sequences:
 * konsole
 * xterm
 * screen
-* stterm - stterm prints in stderr if any parameters are malformed, great for debugging!
+* stterm
 
 truecolor is not supported on
 * rxvt, rxvt-unicode
 * vt100
+* Mac OS X Terminal
+
+FAQ
+===
+Q: Gradient turns grey or disappears mid-line/mid-text, why?
+A: The gradient look-up-table may be malformed. Verify that all elements have three parameters in the range of 0-255, separated by semicolons ';', eg. "64;29;128".
+
