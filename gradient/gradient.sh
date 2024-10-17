@@ -1,4 +1,16 @@
 #!/bin/bash
+# OKLab: https://bottosson.github.io/posts/oklab/
+# BC functions: http://phodd.net/gnu-bc/code/logic.bc
+
+# INPUT:
+# $R - R component 0-255
+# $G - G component 0-255
+# $B - G component 0-255
+#
+# OUTPUT
+# $L - L component 0.0-1.0
+# $a - a component 0.0-1.0
+# $b - b component 0.0-1.0
 _LINEAR_SRGB_TO_OKLAB()
 {
     local DEF_CBRT="define cbrt(x){return e(l(x)/3)}"
@@ -12,16 +24,43 @@ _LINEAR_SRGB_TO_OKLAB()
     b=$(\echo "0.0259040371*$l + 0.7827717662*$m - 0.8086757660*$s"|bc -l)
 }
 
-_OKLAB_TO_LINEAR_SRGB() 
+# INPUT:
+# $L - L component 0.0-1.0
+# $a - a component 0.0-1.0
+# $b - b component 0.0-1.0
+# $DELTA_L - delta of L 0.0-1.0
+# $DELTA_a - delta of a 0.0-1.0
+# $DELTA_b - delta of b 0.0-1.0
+# $MULTIPLIER 
+#
+# OUTPUT
+# $R - R component 0-255
+# $G - G component 0-255
+# $B - B component 0-255
+_OKLAB_TO_LINEAR_SRGB()
 {
-    local l=$(\echo "($L + 0.3963377774 * $a + 0.2158037573 * $b)^3"|bc -l)
-    local m=$(\echo "($L - 0.1055613458 * $a - 0.0638541728 * $b)^3"|bc -l)
-    local s=$(\echo "($L - 0.0894841775 * $a - 1.2914855480 * $b)^3"|bc -l)
+#echo "L=$L, a=$a, b=$b, DELTA_L=$DELTA_L, NUM=$NUM"
+#set -x
+    local l=$(\echo "(($L + $DELTA_L * $NUM) + 0.3963377774 * ($a + $DELTA_a * $NUM) + 0.2158037573 * ($b + $DELTA_b * $NUM))^3"|bc -l)
+    local m=$(\echo "(($L + $DELTA_L * $NUM) - 0.1055613458 * ($a + $DELTA_a * $NUM) - 0.0638541728 * ($b + $DELTA_b * $NUM))^3"|bc -l)
+    local s=$(\echo "(($L + $DELTA_L * $NUM) - 0.0894841775 * ($a + $DELTA_a * $NUM) - 1.2914855480 * ($b + $DELTA_b * $NUM))^3"|bc -l)
+    #set +x
+#echo "l=$l, m=$m, s=$s"
 
-    DEF_ROUND="define int(x){auto s;s=scale;scale=0;x/=1;scale=s;return x};define round(x){return int(x+1/2)}"
-    R=$(\echo "$DEF_ROUND;round(255.0 * ( 4.0767416621 * $l - 3.3077115913 * $m + 0.2309699292 * $s))"|bc -l)
-    G=$(\echo "$DEF_ROUND;round(255.0 * (-1.2684380046 * $l + 2.6097574011 * $m - 0.3413193965 * $s))"|bc -l)
-    B=$(\echo "$DEF_ROUND;round(255.0 * (-0.0041960863 * $l - 0.7034186147 * $m + 1.7076147010 * $s))"|bc -l)
+    DEF_ROUND="
+    define max(x,y){if(x>y)return x;return y}
+    define min(x,y){if(x<y)return x;return y}
+    define int(x){auto s;s=scalescale=0;x/=1;scale=s;return x}
+define round(x){return int(x+0.5)}"
+    R=$(\echo "$DEF_ROUND
+int(max(0.0, min(255.0, round(255.0 * ( 4.0767416621 * $l - 3.3077115913 * $m + 0.2309699292 * $s)))))"|bc -l)
+    G=$(\echo "
+$DEF_ROUND
+int(max(0.0, min(255.0, round(255.0 * (-1.2684380046 * $l + 2.6097574011 * $m - 0.3413193965 * $s)))))"|bc -l)
+    B=$(\echo "
+$DEF_ROUND
+int(max(0.0, min(255.0, round(255.0 * (-0.0041960863 * $l - 0.7034186147 * $m + 1.7076147010 * $s)))))"|bc -l)
+#echo "R=$R, G=$G, B=$B"
 }
 
 # 0 ffaa33  10 ffbbcc
@@ -54,29 +93,38 @@ local r="$((0x${COLOR:0:2}))"
 local g="$((0x${COLOR:2:2}))"
 local b="$((0x${COLOR:4:2}))"
 _LINEAR_SRGB_TO_OKLAB
+
+
 DST_L=$L
 DST_a=$a
 DST_b=$b
 [ -z "${SRC_L}" ] && SRC_L=${DST_L}
 [ -z "${SRC_a}" ] && SRC_a=${DST_a}
 [ -z "${SRC_b}" ] && SRC_b=${DST_b}
-DELTA_L=$(echo "($DST_L - $SRC_L)/$STEPS" | bc -l)
-DELTA_a=$(echo "($DST_a - $SRC_a)/$STEPS" | bc -l)
-DELTA_b=$(echo "($DST_b - $SRC_b)/$STEPS" | bc -l)
+echo "===== DST_L=$DST_L, DST_a=$DST_a, DST_b=$DST_b"
+L=$DST_L
+a=$DST_a
+b=$DST_b
+_OKLAB_TO_LINEAR_SRGB
+echo "R=${R}, G=${G}, B=${B}"
+echo "===== SRC_L=$SRC_L, SRC_a=$SRC_a, SRC_b=$SRC_b"
+L=$SRC_L
+a=$SRC_a
+b=$SRC_b
+_OKLAB_TO_LINEAR_SRGB
+echo "R=${R}, G=${G}, B=${B}"
 
-# 0...50...100
-# TODO: multiply with 2
-DST_INDEX=$((INDEX + STEPS))
+TOTAL_STEPS=$((STEPS - INDEX))
+DELTA_L=$(echo "-1 * ($DST_L - $SRC_L)/$TOTAL_STEPS" | bc -l)
+DELTA_a=$(echo "-1 * ($DST_a - $SRC_a)/$TOTAL_STEPS" | bc -l)
+DELTA_b=$(echo "-1 * ($DST_b - $SRC_b)/$TOTAL_STEPS" | bc -l)
 
 local I=0
-while [ $I -lt $STEPS ]
+while [ $I -lt $TOTAL_STEPS ]
 do
 
-DST_L=$(echo "$SRC_L + $DELTA_L * $I"| bc -l)
-DST_a=$(echo "$SRC_a + $DELTA_a * $I"| bc -l)
-DST_b=$(echo "$SRC_b + $DELTA_b * $I"| bc -l)
+NUM=$I
 _OKLAB_TO_LINEAR_SRGB
-
 echo _PROMPT_LUT[$INDEX]="$R;$G;$B"
 let INDEX++
 #echo "R=${R}, G=${G}, B=${B}"
