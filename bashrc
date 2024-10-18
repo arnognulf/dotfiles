@@ -617,6 +617,8 @@ function back
 
 function _LOG
 {
+if [ -t 1 ]
+then
 local LOGFILE="${TTY//\//_}"
 local LOGDIR="${HOME}/.cache/logs"
 \mkdir -p "${LOGDIR}";
@@ -633,6 +635,9 @@ local RETURN=$?
 \sed -i -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' -e 's/\r/\n/g' "${LOG}"
 /bin/rm -f "${TEMP}"
 return ${RETURN}
+else
+"$@"
+fi
 }
 
 local FILE
