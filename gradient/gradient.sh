@@ -39,13 +39,9 @@ _LINEAR_SRGB_TO_OKLAB()
 # $B - B component 0-255
 _OKLAB_TO_LINEAR_SRGB()
 {
-#echo "L=$L, a=$a, b=$b, DELTA_L=$DELTA_L, NUM=$NUM"
-#set -x
     local l=$(\echo "(($L + $DELTA_L * $NUM) + 0.3963377774 * ($a + $DELTA_a * $NUM) + 0.2158037573 * ($b + $DELTA_b * $NUM))^3"|bc -l)
     local m=$(\echo "(($L + $DELTA_L * $NUM) - 0.1055613458 * ($a + $DELTA_a * $NUM) - 0.0638541728 * ($b + $DELTA_b * $NUM))^3"|bc -l)
     local s=$(\echo "(($L + $DELTA_L * $NUM) - 0.0894841775 * ($a + $DELTA_a * $NUM) - 1.2914855480 * ($b + $DELTA_b * $NUM))^3"|bc -l)
-    #set +x
-#echo "l=$l, m=$m, s=$s"
 
     DEF_ROUND="
     define max(x,y){if(x>y)return x;return y}
@@ -60,7 +56,6 @@ int(max(0.0, min(255.0, round(255.0 * (-1.2684380046 * $l + 2.6097574011 * $m - 
     B=$(\echo "
 $DEF_ROUND
 int(max(0.0, min(255.0, round(255.0 * (-0.0041960863 * $l - 0.7034186147 * $m + 1.7076147010 * $s)))))"|bc -l)
-#echo "R=$R, G=$G, B=$B"
 }
 
 # 0 ffaa33  10 ffbbcc
@@ -101,18 +96,9 @@ DST_b=$b
 [ -z "${SRC_L}" ] && SRC_L=${DST_L}
 [ -z "${SRC_a}" ] && SRC_a=${DST_a}
 [ -z "${SRC_b}" ] && SRC_b=${DST_b}
-#echo "===== DST_L=$DST_L, DST_a=$DST_a, DST_b=$DST_b"
-#L=$DST_L
-#a=$DST_a
-#b=$DST_b
-#_OKLAB_TO_LINEAR_SRGB
-#echo "R=${R}, G=${G}, B=${B}"
-#echo "===== SRC_L=$SRC_L, SRC_a=$SRC_a, SRC_b=$SRC_b"
 L=$SRC_L
 a=$SRC_a
 b=$SRC_b
-#_OKLAB_TO_LINEAR_SRGB
-#echo "R=${R}, G=${G}, B=${B}"
 
 TOTAL_STEPS=$((STEPS - INDEX))
 DELTA_L=$(echo "($DST_L - $SRC_L)/$TOTAL_STEPS" | bc -l)
@@ -125,7 +111,7 @@ do
 
 NUM=$I
 _OKLAB_TO_LINEAR_SRGB
-echo _PROMPT_LUT[$INDEX]="$R;$G;$B"
+echo "_PROMPT_LUT[$INDEX]=\"$R;$G;$B\""
 let INDEX++
 #echo "R=${R}, G=${G}, B=${B}"
 let I++
