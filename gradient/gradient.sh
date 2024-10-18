@@ -50,7 +50,7 @@ _OKLAB_TO_LINEAR_SRGB()
     DEF_ROUND="
     define max(x,y){if(x>y)return x;return y}
     define min(x,y){if(x<y)return x;return y}
-    define int(x){auto s;s=scalescale=0;x/=1;scale=s;return x}
+    define int(x){auto s;s=scale=0;x/=1;scale=s;return x}
 define round(x){return int(x+0.5)}"
     R=$(\echo "$DEF_ROUND
 int(max(0.0, min(255.0, round(255.0 * ( 4.0767416621 * $l - 3.3077115913 * $m + 0.2309699292 * $s)))))"|bc -l)
@@ -101,23 +101,23 @@ DST_b=$b
 [ -z "${SRC_L}" ] && SRC_L=${DST_L}
 [ -z "${SRC_a}" ] && SRC_a=${DST_a}
 [ -z "${SRC_b}" ] && SRC_b=${DST_b}
-echo "===== DST_L=$DST_L, DST_a=$DST_a, DST_b=$DST_b"
-L=$DST_L
-a=$DST_a
-b=$DST_b
-_OKLAB_TO_LINEAR_SRGB
-echo "R=${R}, G=${G}, B=${B}"
-echo "===== SRC_L=$SRC_L, SRC_a=$SRC_a, SRC_b=$SRC_b"
+#echo "===== DST_L=$DST_L, DST_a=$DST_a, DST_b=$DST_b"
+#L=$DST_L
+#a=$DST_a
+#b=$DST_b
+#_OKLAB_TO_LINEAR_SRGB
+#echo "R=${R}, G=${G}, B=${B}"
+#echo "===== SRC_L=$SRC_L, SRC_a=$SRC_a, SRC_b=$SRC_b"
 L=$SRC_L
 a=$SRC_a
 b=$SRC_b
-_OKLAB_TO_LINEAR_SRGB
-echo "R=${R}, G=${G}, B=${B}"
+#_OKLAB_TO_LINEAR_SRGB
+#echo "R=${R}, G=${G}, B=${B}"
 
 TOTAL_STEPS=$((STEPS - INDEX))
-DELTA_L=$(echo "-1 * ($DST_L - $SRC_L)/$TOTAL_STEPS" | bc -l)
-DELTA_a=$(echo "-1 * ($DST_a - $SRC_a)/$TOTAL_STEPS" | bc -l)
-DELTA_b=$(echo "-1 * ($DST_b - $SRC_b)/$TOTAL_STEPS" | bc -l)
+DELTA_L=$(echo "($DST_L - $SRC_L)/$TOTAL_STEPS" | bc -l)
+DELTA_a=$(echo "($DST_a - $SRC_a)/$TOTAL_STEPS" | bc -l)
+DELTA_b=$(echo "($DST_b - $SRC_b)/$TOTAL_STEPS" | bc -l)
 
 local I=0
 while [ $I -lt $TOTAL_STEPS ]
