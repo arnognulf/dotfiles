@@ -100,7 +100,7 @@ L=$SRC_L
 a=$SRC_a
 b=$SRC_b
 
-TOTAL_STEPS=$((STEPS - INDEX))
+TOTAL_STEPS=$((STEPS * 2 - INDEX))
 DELTA_L=$(echo "($DST_L - $SRC_L)/$TOTAL_STEPS" | bc -l)
 DELTA_a=$(echo "($DST_a - $SRC_a)/$TOTAL_STEPS" | bc -l)
 DELTA_b=$(echo "($DST_b - $SRC_b)/$TOTAL_STEPS" | bc -l)
