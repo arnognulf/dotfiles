@@ -325,10 +325,17 @@ _BRANCHY_MCBRANCHFACE ()
 {
 \git rev-parse --show-toplevel &>/dev/null || { _NO; return 1;}
 _TITLE "🐙  Branchy McBranchFace"
-BRANCH=$({ \git branch -a|\cut -c3-1024; \git reflog;}|fzf --no-mouse)||exit 1
+BRANCH=$({ \git branch -a|\cut -c3-1024; \git reflog;}|fzf --no-mouse)||return 1
 \git checkout ${BRANCH%% *}
 }
 alias b=_BRANCHY_MCBRANCHFACE
+
+_FUZZY_FD ()
+{
+f=$(fd "$@"|fzf --no-mouse)
+[ -n "$f" ] && \echo "f=$f"
+}
+alias fz=_FUZZY_FD
 
 alias ll='\ls -al --color=always'
 alias l='_LS_HIDDEN -v -C'
@@ -632,8 +639,11 @@ done
 \echo "$*" >"${LOG}"
 script -a -q -e -c "bash \"${TEMP}\"" "${LOG}"
 local RETURN=$?
-\sed -i -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' -e 's/\r/\n/g' "${LOG}"
+{
+\sed -i -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' "${LOG}"
+\dos2unix -f "${LOG}"
 /bin/rm -f "${TEMP}"
+} &>/dev/null
 return ${RETURN}
 else
 "$@"
