@@ -1,9 +1,7 @@
 #!/bin/bash
 {
-function _dotfiles_main ()
+_dotfiles_main ()
 {
-if [ -n "$PS1" ]
-then
 if [ -n "${TMUX}" ]
 then
 (
@@ -102,15 +100,11 @@ export VIM=${DOTFILESDIR}/vim
 export VIMRUNTIME=${DOTFILESDIR}/vim
 BGCOLOR="FFFAF1"
 FGCOLOR="312D2A"
-. "${HOME}/.bashrc.colors"
 . "${DOTFILESDIR}"/prompt/prompt.sh
 . "${DOTFILESDIR}"/chdir-all-the-things/chdir-all-the-things.sh
 . "${DOTFILESDIR}"/can-opener/can-opener.sh
-. "${DOTFILESDIR}"/git-prompt/git-prompt.sh
 . "${DOTFILESDIR}"/shabacus/shabacus.sh
 . "${DOTFILESDIR}"/uber-for-mv/uber-for-mv.sh
-. "${DOTFILESDIR}"/bash-preexec/bash-preexec.sh
-. "${DOTFILESDIR}"/emojify/emojify.sh
 . "${DOTFILESDIR}"/moar/moar.sh
 . "${DOTFILESDIR}"/ermahgerd/ermahgerd.sh
 . "${DOTFILESDIR}"/i-like-to-move-it/i-like-to-move-it.sh
@@ -126,6 +120,19 @@ else
 EDITOR="vim"
 fi
 
+# set some fallback defaults if xdg-user-dirs are not available
+XDG_DESKTOP_DIR="$HOME/"
+XDG_DOWNLOAD_DIR="$HOME/Downloads"
+XDG_TEMPLATES_DIR="$HOME/Templates"
+XDG_PUBLICSHARE_DIR="$HOME/Public"
+XDG_DOCUMENTS_DIR="$HOME/Documents"
+XDG_MUSIC_DIR="$HOME/Music"
+XDG_PICTURES_DIR="$HOME/Pictures"
+XDG_VIDEOS_DIR="$HOME/Videos"
+# set the correct xdg user dir defaults
+[[ -f ~/.config/user-dirs.dirs ]] || xdg-user-dirs-update
+. ~/.config/user-dirs.dirs
+
 alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 nvim -u "${VIM}"/nvimrc -p '
 alias ivm='nvim'
 alias vi='nvim'
@@ -140,7 +147,7 @@ _NO_MEASURE ()
     _MEASURE=0
     "$@"
 }
-function _EDITOR
+_EDITOR ()
 {
     _MEASURE=0
     local FILE
@@ -154,7 +161,7 @@ function _EDITOR
     XDG_DATA_HOME="${VIM}" $(type -P "nvim" 2>/dev/null||type -P "vim" 2>/dev/null ||type -P "vi" 2>/dev/null ) -u "${VIM}"/nvim.vim -p "${@}"
 }
 
-[ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o _IDLE_PRIO ~/.local/share/android-studio/bin/studio.sh'
+[ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o _LOW_PRIO ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
 alias clang='_ICON 🛠️ _LOG clang'
@@ -169,9 +176,9 @@ alias zsh='_ICON 🐚 _LOG zsh'
 alias ksh='_ICON 🐚 _LOG ksh'
 alias sh='_ICON 🐚 _LOG sh'
 alias cat="_ICON 🐱 _MOAR cat"
-alias delta='_ICON Δ _IDLE_PRIO delta --light'
-alias cp='_ICON 💽 _IDLE_PRIO cp --reflink=auto'
-alias dd='_ICON 💽 _IDLE_PRIO dd status=progress'
+alias delta='_ICON Δ _LOW_PRIO delta --light'
+alias cp='_ICON 💽 _LOW_PRIO cp --reflink=auto'
+alias dd='_ICON 💽 _LOW_PRIO dd status=progress'
 alias dl=_UBER_FOR_MV
 alias octave=octave-cli
 alias excel='o localc --norestore --view'
@@ -181,7 +188,7 @@ alias loimpress='o loimpress --norestore --view'
 alias lowriter='o lowriter --norestore --view'
 alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
-alias tar='_ICON 📼 _IDLE_PRIO tar'
+alias tar='_ICON 📼 _LOW_PRIO tar'
 alias scrcpy='_RETRY scrcpy'
 alias adb='_NO_MEASURE _ICON 🤖 _RETRY adb'
 if [ -n "$WAYLAND_DISPLAY" ]
@@ -193,7 +200,12 @@ alias code-insiders='o code-insiders'
 alias code='o code-insiders'
 _GIT ()
 {
+# avoid printing title if using completion 
+case "${*}" in
+*'--git-dir='*) :;;
+*)
 _TITLE "🪣  $*"
+esac
 case "$1" in
 clone|push)
 _LOG \git "$@"
@@ -228,7 +240,7 @@ alias jdupes='_ICON ♻️  jdupes --dedupe -R'
 alias hog='~/.config/dotfiles/hog/hog.sh'
 alias g="_ICON 🔎 egrep"
 alias gv="_ICON 🔎 grep -v"
-timer ()
+_TIMER ()
 {
 local time=$(($1 * 60))
 while sleep 1
@@ -253,21 +265,22 @@ return 0
 fi
 done
 }
-function fclones
+alias timer=_TIMER
+fclones ()
 {
 [ -z "$(type -P fclones)" ] && { _NO; return 255;}
 if [ -z "$1" ]
 then
-_ICON ♻️  _IDLE_PRIO $(type -P fclones) group "$PWD" | _IDLE_PRIO $(type -P fclones) dedupe
+_ICON ♻️  _LOW_PRIO $(type -P fclones) group "$PWD" | _LOW_PRIO $(type -P fclones) dedupe
 else
-_ICON ♻️  _IDLE_PRIO $(type -P fclones) "$@"
+_ICON ♻️  _LOW_PRIO $(type -P fclones) "$@"
 fi
 }
-_IDLE_PRIO ()
+_LOW_PRIO ()
 {
 chrt -i 0 "$@"
 }
-function _REPO
+_REPO ()
 {
     if [ -z "$SSH_AUTH_SOCK" ]
     then
@@ -276,7 +289,7 @@ function _REPO
     fi
 	\repo "$@"
 }
-alias repo="_ICON 🪣 _IDLE_PRIO repo"
+alias repo="_ICON 🪣 _LOW_PRIO repo"
 
 export LESS='-Q -R'
 alias gl="LESS='-Q -R --pattern ^(commit|diff)' git log -p"
@@ -304,7 +317,7 @@ alias kp=keepassxc
 _LS_HIDDEN ()
 {
 case "${PWD}" in
-${HOME}/Network/*|/run/user/*/gvfs/*)
+${HOME}/Network/*|/run/user/*/gvfs/*|/mnt/*|/media/*)
 _MOAR ls -C "$@"
 ;;
 *)
@@ -367,7 +380,7 @@ unalias google-chrome
 unalias chrome
 pidof chrome || /bin/rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome"  "~/.config/google-chrome-beta" "~/.config/google-chrome"
 
-function _CHROME-POLISHER
+_CHROME-POLISHER ()
 {
 if [ -n "$WAYLAND_DISPLAY" ]
 then
@@ -378,7 +391,7 @@ fi
     \mkdir -p "${DIR}" &>/dev/null
     _CAN_OPENER google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
 }
-function _CHROME-POLISHER-tmp
+_CHROME-POLISHER-tmp ()
 {
 if [ -n "$WAYLAND_DISPLAY" ]
 then
@@ -395,7 +408,7 @@ alias google-chrome=_CHROME-POLISHER
 alias chrome=_CHROME-POLISHER
 alias dos="bash ${DOTFILESDIR}/dos/sh-dos.sh"
 alias sudo="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\";_ICON ⚠️  _LOG sudo"
-function _SCP
+_SCP ()
 {
 local ARG
 local SERVER
@@ -414,12 +427,7 @@ test -z "${SERVER}" && { \echo "missing server argument"; return; }
 }
 alias scp=_SCP
 
-function _DEDUPE ()
-{
-    \yes 1 | \jdupes --delete --omit-first "${XDG_DOWNLOAD_DIR-/dev/null}" ~/Downloads
-}
-
-function c ()
+c ()
 {
     _CHDIR_ALL_THE_THINGS "$@" && {
         local TMP="/run/user/${UID}/ls-${RANDOM}.txt"
@@ -462,10 +470,9 @@ function c ()
         [ -d ".git" ] && { \printf "\n";PAGER= $(type -P git) log --oneline -1 --color=never 2>/dev/null;}
         ( /bin/rm -f "${TMP}" &>/dev/null & )
     }
-    ( _DEDUPE &>/dev/null & )
 }
 
-function untilfail
+untilfail ()
 {
     if [ "${#@}" = 0 ] 
     then
@@ -485,7 +492,7 @@ function untilfail
     done
 }
 
-function _RETRY
+_RETRY ()
 {
     if [ "${#@}" = 0 ] 
     then
@@ -517,14 +524,14 @@ function _RETRY
 
 alias retry=_RETRY
 
-function _NO
+_NO ()
 {
     \printf "\r\e[JCOMPUTER SAYS NO\n" >&2 | \tee >/dev/null
 }
 
 # loop is an xscreensaver module 
 unalias loop
-function _LOOP
+_LOOP ()
 {
     if [ "${#@}" = 0 ] 
     then
@@ -556,73 +563,77 @@ function _LOOP
 }
 alias loop=_LOOP
 
-function now
+now ()
 {
     \date +%Y-%m-%d_%H-%M-%S
 }
 
-function jetzt
+jetzt ()
 {
     now
 }
 
-function /sbin/reboot
+/sbin/reboot ()
 {
     _NO
     return 255
 }
 
-function reboot
+reboot ()
 {
     _NO
     return 255
 }
 
-function shutdown
+shutdown ()
 {
     _NO
     return 255
 }
 
-function /sbin/shutdown
+/sbin/shutdown ()
 {
     _NO
     return 255
 }
 
-function //
+// ()
 {
     :
 }
 
-function front
+_CP_LAST_ITEM ()
 {
-    if [ "${#@}" = 0 ]
+    if [ "${#@}" -lt 2 ]
     then
+        echo "usage: cp [<FLAGS>] [SOURCE]... [DESTINATION]
+only the last SOURCE is copied
+will not overwrite destination
+" 1>&2 | tee 1>/dev/null
+        
     return 1
     fi
     local FILE
+    local LAST_ITEM
+    local SECOND_LAST_ITEM
     for FILE in "$@"
     do
-        \printf "${FILE}"
-        break
+        if [[ -e "${FILE}" ]]
+        then
+            SECOND_LAST_ITEM="${LAST_ITEM}"
+        fi
+        LAST_ITEM="${FILE}"
     done
-}
-function back
-{
-    if [ "${#@}" = 0 ]
+    if [[ -e "${LAST_ITEM}" ]]
     then
-    return 1
+        echo "cplast: will not overwrite existing file ${LAST_ITEM}" 1>&2 | tee 1>/dev/null
+        return 1
     fi
-    local FILE
-    for FILE in "$@"
-    do
-        :
-    done
-    \printf "${FILE}"
+    cp -r --update=none "${SECOND_LAST_ITEM}" "${LAST_ITEM}"
 }
+alias cplast=_CP_LAST_ITEM
 
-function _LOG
+_LOG ()
 {
 if [ -t 1 ]
 then
@@ -653,17 +664,20 @@ fi
 local FILE
 for FILE in /*
 do
-eval "function $FILE { echo \"C-comment paste detected. Press CTRL+C to continue\";cat;}"
+eval "$FILE () { echo \"C-comment paste detected. Press CTRL+C to continue\";cat;}"
 break;
 done
 
 _SPINNER_START ()
 {
-_SPINNER_PID_FILE=$(mktemp)                         
+kill -9 ${_SPINNER_PID} &>/dev/null
+unset _SPINNER_PID
+_SPINNER_PID_FILE=$(mktemp)
 (
 SPINNER ()
 {
 {
+\echo $! > "${_SPINNER_PID_FILE}"
 \printf "\\e[?25l"
 while sleep 0.04 && [ -f "${_SPINNER_PID_FILE}" ]; do
 \printf "\\r\\e[J"
@@ -681,21 +695,26 @@ done
 } >&2 | tee 2>/dev/null
 }
 SPINNER &
-\echo $! > "${_SPINNER_PID_FILE}"                               
 )
+while [[ -n ${_SPINNER_PID} ]]
+do
+sleep 0.1
+read _SPINNER_PID <_SPINNER_PID_FILE
+done
 }
+
 _SPINNER_STOP ()
 {
 {
-kill -9 $(<${_SPINNER_PID_FILE})
-( /bin/rm -f ${_SPINNER_PID_FILE} & )
-unset _SPINNER_PID_FILE
+/bin/rm -f ${_SPINNER_PID_FILE}
+kill -9 ${_SPINNER_PID}
+unset _SPINNER_PID_FILE _SPINNER_PID
 } &>/dev/null
 \printf "\\r\\e[J" >&2 | tee 2>/dev/null
 }
 
 # https://stackoverflow.com/questions/51653450/show-call-stack-in-bash
-function _STACKTRACE { 
+_STACKTRACE () { 
    local i=1 line file func
    while read -r line func file < <(caller $i); do
       echo >&2 "[$i] $file:$line $func(): $(sed -n ${line}p $file)"
@@ -706,15 +725,14 @@ function _STACKTRACE {
 unset _SOURCED
 bind 'set completion-ignore-case on'
 bind 'set bell-style none'
-fi
 #https://stackoverflow.com/questions/6250698/how-to-decode-url-encoded-string-in-shell
-function urldecode()
+urldecode ()
 {
 : "${*//+/ }"
 echo -e "${_//%/\\x}";
 }
 
-function update_recent
+update_recent ()
 {
 \mkdir -p ~/Recent
 \rm -f ~/Recent/*
@@ -733,13 +751,13 @@ ITEM=${ITEM##*/}
 done
 }
 (
-function ignore_chrome_crash
+ignore_chrome_crash ()
 {
 exec sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
     ~/.config/google-chrome/Default/Preferences \
     ~/.config/google-chrome-beta/Default/Preferences
 }
-function mount_shares
+mount_shares ()
 {
 local item
 for item in $(\cat ~/.config/gtk-3.0/bookmarks | \grep -v file:// | \cut -d" " -f1)
@@ -748,7 +766,7 @@ gio mount "${item}" &
 done
 }
 
-function kill_tracker 
+kill_tracker ()
 {
     systemctl --user mask tracker-store.service tracker-miner-fs.service tracker-miner-rss.service tracker-extract.service tracker-miner-apps.service tracker-writeback.service
     tracker3 daemon -k
@@ -758,7 +776,7 @@ function kill_tracker
 # try to run one thread for non-blocking background tasks such that CPU 
 # and IO is not stressed at shell startup, this way we will get to prompt 
 # faster
-function background_startup_tasks
+background_startup_tasks ()
 {
 update_recent
 ignore_chrome_crash
@@ -781,11 +799,14 @@ unset -f _dotfiles_main
 } &>/dev/null
 
 OLD_LC_ALL=${LC_ALL}
-if ! shopt -q login_shell
+# Avoid starting dotfiles if login shell. unless...
+[[ ${PS1} ]] && if ! shopt -q login_shell
 then
+# print startup statistics
 if [ -f ~/.bashrc.statistics ]
 then
 time LC_ALL=C _dotfiles_main &>/dev/null
+# enable debugging
 elif [ -f ~/.bashrc.debug ]
 then
 set -x
@@ -793,8 +814,13 @@ export PS4='+ $EPOCHREALTIME ($LINENO) '
 LC_ALL=C _dotfiles_main
 unset PS4
 else
+# normal case
+# most programs run faster if not needing to parse UTF-8
+# by only redirecting stdout and stderr to /dev/null once we get significant
+# startup speedup
 LC_ALL=C _dotfiles_main &>/dev/null
 fi
+# if linux/bsd console, start dotfiles function anyway
 elif [ -z "${DISPLAY}${WAYLAND_DISPLAY}" ]
 then
 LC_ALL=C _dotfiles_main &>/dev/null

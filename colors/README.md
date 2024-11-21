@@ -1,4 +1,4 @@
-colors themes for bash prompt
------------------------------
+colors themes for monorail prompt
+-------------------------====----
 
-copy/link either of these to ~/.bashrc.colors
+copy/link either of these to ~/.config/monorail-prompt/colors.sh

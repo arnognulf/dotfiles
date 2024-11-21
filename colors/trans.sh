@@ -1,3 +1,5 @@
+# unset previous LUT since this handcrafted LUT is smaller than the generated
+unset _PROMPT_LUT
 _PROMPT_LUT[0]="91;206;250"
 _PROMPT_LUT[1]="245;169;184"
 _PROMPT_LUT[2]="255;255;255"

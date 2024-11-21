@@ -20,18 +20,34 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# TODO: move out
-XDG_DESKTOP_DIR="$HOME/"
-XDG_DOWNLOAD_DIR="$HOME/Downloads"
-XDG_TEMPLATES_DIR="$HOME/Templates"
-XDG_PUBLICSHARE_DIR="$HOME/Public"
-XDG_DOCUMENTS_DIR="$HOME/Documents"
-XDG_MUSIC_DIR="$HOME/Music"
-XDG_PICTURES_DIR="$HOME/Pictures"
-XDG_VIDEOS_DIR="$HOME/Videos"
-[[ -f ~/.config/user-dirs.dirs ]] || xdg-user-dirs-update
-. ~/.config/user-dirs.dirs
+# detect PROMPTDIR
+if ! [[ $PROMPTDIR ]]
+then
+    PROMPTDIR="${BASH_ARGV[0]}"
+    PROMPTDIR="${PROMPTDIR%/*}"
+    if [[ ${PROMPTDIR} != "*/*" ]]
+    then
+        PROMPTDIR=$PWD
+    fi
+    if [[ ${PROMPTDIR:0:1} != "/" ]]
+    then
+        PROMPTDIR="$PWD/$PROMPTDIR"
+    fi
+fi
+[[ $ZSH_NAME ]] && setopt KSH_ARRAYS
+[[ $_PROMPT_BGCOLOR ]] || _PROMPT_BGCOLOR=ffffff
+[[ $_PROMPT_FGCOLOR ]] || _PROMPT_FGCOLOR=444444
+[[ $TTY ]] || TTY=$(tty)
+[[ ${_PROMPT_TEXT_LUT[0]} ]] || _PROMPT_TEXT_LUT[0]='255;255;255'
+[[ ${_PROMPT_LUT[0]} ]] || _PROMPT_LUT[0]='68;68;68'
 
+. ${PROMPTDIR}/gradient/gradient.sh
+
+# vendored from https://github.com/rcaloras/bash-preexec (8926de0)
+. ${PROMPTDIR}/bash-preexec/bash-preexec.sh
+
+# load system git sh prompt 
+[ -f /usr/lib/git-core/git-sh-prompt ] && . /usr/lib/git-core/git-sh-prompt
 function _PROMPT_ALERT ()
 {
 ( exec mplayer -quiet /usr/share/sounds/gnome/default/alerts/glass.ogg &>/dev/null & )
@@ -131,7 +147,7 @@ function _PROMPT_COMMAND ()
 
 }
 
-function _PREEXEC ()
+function preexec ()
 {
 {
 _TIMER_CMD="${1/$(\printf '\\\\a')/\\\\\a}"
@@ -210,7 +226,7 @@ _MEASURE=1
 _START_SECONDS=$SECONDS
 if [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
 then
-\printf "\e]11;#${BGCOLOR}\a\e]10;#${FGCOLOR}\a\e]12;#${FGCOLOR}\a"
+\printf "\e]11;#${_PROMPT_BGCOLOR}\a\e]10;#${_PROMPT_FGCOLOR}\a\e]12;#${_PROMPT_FGCOLOR}\a"
 fi
 } &>"${TTY}"
 }
@@ -285,13 +301,18 @@ _PROMPT ()
     fi
     _PROMPT_PWD="${_PROMPT_PWD%/*}"
   done
-    _PROMPT_GIT_PS1=$(LC_ALL=C __git_ps1)
+    _PROMPT_GIT_PS1=$(NO_TITLE=1 LC_ALL=C __git_ps1 2>/dev/null)
   esac
 
 if [ "${TITLE_OVERRIDE}" = "" ]
 then
 local SHORT_HOSTNAME=${HOSTNAME%%.*}
+if [[ $ZSH_NAME ]]
+then
+SHORT_HOSTNAME=$SHORT_HOSTNAME:l
+else
 SHORT_HOSTNAME=${SHORT_HOSTNAME,,}
+fi
 if [ -n "${_PROMPT_REPO}" ]
 then
     TITLE="🏗️  ${PWD##*/}"
@@ -370,14 +391,6 @@ else
 local CHAR="_"
 fi
 
-_MAKELUTNOTWAR ()
-{
-{
-\echo -n "_PROMPT_LUT=(\""; \chafa --optimize=0 --scale=max --fg-only --symbols=solid --fill=solid "${1}" |\tail -n$((LINES / 2)) |\head -n1|LC_ALL=C \sed -e "s/$(\printf '\e')\[0m//g" -e 's/█/" "/g' -e 's/m//g' -e 's/38;2;//g' -e "s/$(\printf '\e')\[//g" -e 's/\"39$/)/g'
-} >/tmp/tmp.lut
-. /tmp/tmp.lut
-}
-
 
 local ESC=$(\printf '\e')
 local CR=$(\printf '\r')
@@ -427,10 +440,10 @@ local RGB_CUR_GB=${RGB_CUR_COLOR#*;}
 local RGB_CUR_G=${RGB_CUR_GB%%;*}
 local RGB_CUR_B=${RGB_CUR_GB##*;}
 local HEX_CUR_COLOR=$(\printf "%.2x%.2x%.2x" ${RGB_CUR_R} ${RGB_CUR_G} ${RGB_CUR_B})
-[ -z "${HEX_CUR_COLOR}" ] && HEX_CUR_COLOR="${FGCOLOR}"
+[ -z "${HEX_CUR_COLOR}" ] && HEX_CUR_COLOR="${_PROMPT_FGCOLOR}"
 if [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
 then
-\printf "\e]11;#${BGCOLOR}\a\e]10;#${FGCOLOR}\a\e]12;#${HEX_CUR_COLOR}\a"
+\printf "\e]11;#${_PROMPT_BGCOLOR}\a\e]10;#${_PROMPT_FGCOLOR}\a\e]12;#${HEX_CUR_COLOR}\a"
 fi
 
 _PROMPT_TEXT=""
@@ -442,12 +455,19 @@ then
 _PROMPT_TEXT="${_PROMPT_TEXT}${PROMPT_TEXT:${INDEX}:1}"
 else
 local LUT=$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))
-if [ -z "${_PROMPT_TEXT_LUT[*]}" ]
+if [ -z "${_PROMPT_TEXT_LUT[0]}" ]
 then
-local _PROMPT_TEXT_LUT[0]="$((16#${BGCOLOR:0:2}));$((16#${BGCOLOR:2:2}));$((16#${BGCOLOR:4:2}))"
+local _PROMPT_TEXT_LUT[0]="$(\printf "%d;%d;%d" ${_PROMPT_BGCOLOR:0:2} ${_PROMPT_BGCOLOR:2:2} ${_PROMPT_BGCOLOR:4:2})"
 fi
-local TEXT_LUT$((${#_PROMPT_TEXT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))
+local TEXT_LUT=$(((${#_PROMPT_TEXT_LUT[*]} * ${INDEX} ) / $((${COLUMNS} + 1))))
+if [[ $ZSH_NAME ]]
+then
+# TODO: broken
+_PROMPT_TEXT="${_PROMPT_TEXT}%{${PREBG}${_PROMPT_LUT[${LUT}]}${POST}${PREFG}${_PROMPT_TEXT_LUT[${TEXT_LUT}]}"
+#${POST}%}${PROMPT_TEXT:${INDEX}:1}"
+else
 _PROMPT_TEXT="${_PROMPT_TEXT}\[${PREBG}${_PROMPT_LUT[${LUT}]}${POST}${PREFG}${_PROMPT_TEXT_LUT[${TEXT_LUT}]}${POST}\]${PROMPT_TEXT:${INDEX}:1}"
+fi
 fi
 let INDEX++
 done
@@ -458,14 +478,115 @@ PS1='$([[ $TERM =~ xterm* ]] && \printf "\033]0;${TITLE}\007")'"${CR}"'${_PROMPT
 }
 
 PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
-
+precmd ()
+{
+eval ${PROMPT_COMMAND}
+}
 _TITLE_RAW ()
 {
-if [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
+if [[ -z "$NO_TITLE" ]] && [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
 then
-\printf "\e]0;$*\a" &>"${TTY}"
+\printf "\e]0;$*\a" 1>"${TTY}" 2>/dev/null
 fi
 }
+
+_INIT_CONFIG ()
+{
+    if [[ -n $XDG_CONFIG_HOME ]]
+    then
+        _MONORAIL_CONFIG="${XDG_CONFIG_HOME}/monorail-prompt"
+    else
+        _MONORAIL_CONFIG="${HOME}/.config/monorail-prompt"
+    fi
+    mkdir -p ${_MONORAIL_CONFIG}
+    unset -f _INIT_CONFIG
+    . ~/.config/monorail-prompt/colors.sh
+}
+_INIT_CONFIG
+
+_PROMPT_CONTRAST ()
+{
+COLOR1=$1
+COLOR2=$2
+
+r1="$((0x${COLOR1:0:2}))"
+g1="$((0x${COLOR1:2:2}))"
+b1="$((0x${COLOR1:4:2}))"
+
+r2="$((0x${COLOR2:0:2}))"
+g2="$((0x${COLOR2:2:2}))"
+b2="$((0x${COLOR2:4:2}))"
+
+# translate sRGB to CIE XYZ (only Y-component)
+Y1=$(echo "define vp(v){v=v/255.0;if(v<=0.04045)return v/12.92; return e(2.4*l((v+0.055)/1.055)) };0.2126729*vp($r1) + 0.71515122*vp($g1) + 0.0721750*vp($b1)" | bc -l)
+
+Y2=$(echo "define vp(v){v=v/255.0;if(v<=0.04045)return v/12.92; return e(2.4*l((v+0.055)/1.055)) };0.2126729*vp($r2) + 0.71515122*vp($g2) + 0.0721750*vp($b2)" | bc -l)
+
+# the contrast is the factor K of (Y_largest + 0.05) / (Y_smallest + 0.05)
+# according to WCAG as found on https://www.leserlich.info/werkzeuge/kontrastrechner/index-en.php
+CONTRAST=$(echo "
+    define int(x){auto s;s=scale=0;x/=1;scale=s;return x}
+    define round(x){return int(x+0.5)}
+    define max(x,y){if(x>y)return x;return y}
+    define min(x,y){if(x<y)return x;return y}
+    if($Y1>$Y2)($Y1 + 0.05)/($Y2 + 0.05) else ($Y2 + 0.05)/($Y1 + 0.05)"|bc -l)
+INT_CONTRAST=$(\echo "define int(x){auto s;s=scale=0;x/=1;scale=s;return x};int(${CONTRAST}*100)"|\bc -l)
+# contrast 1.5 is set sufficiently low to be visible, but high enough to avoid shooting yourself in the foot.
+if [[ ${INT_CONTRAST} -lt 150 ]]
+then
+\echo "ERROR: background and foreground are too similar, try setting either background or foreground to '7f7f7f' and the other to '000000' or 'ffffff'" 1>&2 | tee 1>/dev/null
+return 1
+else
+return 0
+fi
+}
+
+_BGCOLOR ()
+{
+# reload in case user has manually modified colors.sh
+. ${_MONORAIL_CONFIG}/colors.sh
+
+if [[ "${#1}" != 6 ]]
+then
+\echo "ERROR: color must be hexadecimal and 6 hexadecimal characters" 1>&2 | tee 1>/dev/null
+return 1
+fi
+
+_PROMPT_CONTRAST ${_PROMPT_FGCOLOR} $1||return 1
+
+_PROMPT_BGCOLOR="$1"
+{
+declare -p _PROMPT_LUT|cut -d" " -f3-1024
+declare -p _PROMPT_TEXT_LUT|cut -d" " -f3-1024
+declare -p _PROMPT_FGCOLOR|cut -d" " -f3-1024
+declare -p _PROMPT_BGCOLOR|cut -d" " -f3-1024
+} >${_MONORAIL_CONFIG}/colors.sh
+}
+
+_FGCOLOR ()
+{
+# reload in case user has manually modified colors.sh
+. ${_MONORAIL_CONFIG}/colors.sh
+
+if [ "${#1}" != 6 ]
+then
+\echo "ERROR: color must be hexadecimal and 6 hexadecimal characters" 1>&2 | tee 1>/dev/null
+return 1
+fi
+
+_PROMPT_CONTRAST ${_PROMPT_BGCOLOR} $1||return 1
+
+_PROMPT_FGCOLOR="$1"
+{
+declare -p _PROMPT_LUT|cut -d" " -f3-1024
+declare -p _PROMPT_TEXT_LUT|cut -d" " -f3-1024
+declare -p _PROMPT_FGCOLOR|cut -d" " -f3-1024
+declare -p _PROMPT_BGCOLOR|cut -d" " -f3-1024
+} >${_MONORAIL_CONFIG}/colors.sh
+}
+
+alias bgcolor=_BGCOLOR
+alias fgcolor=_FGCOLOR
 
 _TITLE ()
 {

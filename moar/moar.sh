@@ -121,6 +121,7 @@ ansi2html \
 ansi2txt \
 2csv \
 2html \
+lolcat \
 ip
 do
 if type -P "${CMD}" &>/dev/null 

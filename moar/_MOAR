@@ -29,7 +29,7 @@
 # * Moar-ified commands can be disabled by prepending backslash: '\' : eg. \grep
 
 
-function _MOAR
+_MOAR ()
 {
     if [ "${#@}" = 0 ]; then yes 'MOAR!';fi
     command rm -rf /tmp/.MOAR* &>/dev/null

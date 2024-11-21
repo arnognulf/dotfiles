@@ -1,29 +1,101 @@
-prompt
-======
+🚝 Monorail Prompt
+==================
 
-features:
+![Terminal showing four different gradient colored prompts loaded.](images/screenshot.png)
 
+Monorail is a simple and beautiful shell prompt with customizable gradient colors.
 
-* horizontal delimiter which makes it easy to find where a command started in the scrollback
-* minimalistic prompt, shows basename of directory and git branch if available with inverted text - no distracting colors!
-* commands that do not write newline (eg. echo -n foo) gets appended a newline
-* title which display emoji icon and directory basename or running command
-* long running command gets timing statistics and a notification is sent with notify-send + sound is played
-  these can be disabled by setting '_MEASURE=0;' before running the command, note the semi-colon
-* pressing RETURN multiple times gives ls, git status and finally magic shellball answers
-
-support
+Install
 =======
-gradient colors are supported on
+
+```
+mkdir -p ~/.config/
+cd ~/.config
+
+# my dotfiles
+git clone https://github.com/arnognulf/dotfiles
+
+```
+
+Add the following line to .bashrc:
+
+```
+. ~/.config/dotfiles/prompt/prompt.sh
+```
+
+Changing colors
+===============
+Run `bgcolor` to change background
+```
+bgcolor fffaf1
+```
+
+Run `fgcolor` to change foreground
+```
+fgcolor 444444
+```
+
+Run `gradient` to change prompt gradient:
+```
+gradient  0 b1e874  100 00d4ff
+```
+The `gradient` command has a simple syntax which gives an easy translation of gradients from https://cssgradient.io/ and https://uigradients.com.
+
+Run `gradienttext` to change prompt gradient text:
+```
+gradienttext  0 ffffff  100 444444
+```
+
+
+Favicon titles
+==============
+![Multiple tabs where each tab has their own emoji icon](images/favicons.png)
+
+Use an emoji in the title as a favicon so the context of the terminal tab can be easily visualized even if the full text is not shown.
+
+
+Different folders have their own icons, being in a git folder shows the construction icon for instance.
+
+
+Icons can be added to apps with aliases:
+
+```
+alias vim="_ICON 📝 vim"
+```
+
+Timing statistics
+=================
+![Long running command finished with statistics, and popup visible](images/timing.png)
+
+By default, long-running commands (> 30s) are measured and will emit a popup notification and audible beep when finished.
+
+To disable statistics for a command, create an alias with the `_NO_MEASURE` function as follows:
+
+```
+alias top='_NO_MEASURE _ICON 📈 top'
+```
+
+Supported shells
+================
+Tested on bash 5.2.
+
+
+ZSH is not supported (help wanted!).
+
+Supported terminals
+===================
+gradient colors are availible on
 * libvte based terminals: gnome-terminal, xfce4-terminal
 * kitty
 * alacritty
 * konsole
 * xterm
-* screen
 * stterm
+* terminology
+* tmux
+* GNU screen
 
-truecolor is not supported on
+gradient colors are NOT available on the following due to missing truecolor color attributes:
 * rxvt, rxvt-unicode
 * vt100
 * Mac OS X Terminal
@@ -31,5 +103,22 @@ truecolor is not supported on
 FAQ
 ===
 Q: Gradient turns grey or disappears mid-line/mid-text, why?
+
+
 A: The gradient look-up-table may be malformed. Verify that all elements have three parameters in the range of 0-255, separated by semicolons ';', eg. "64;29;128".
+
+Credits
+=======
+Oklab: A perceptual color space for image processing: https://bottosson.github.io/posts/oklab/
+
+How to calculate color contrast: https://www.leserlich.info/werkzeuge/kontrastrechner/index-en.php
+
+
+`bc(1)` helper functions: http://phodd.net/gnu-bc/code/logic.bc
+
+
+bash-preexec which enables timing statistics: https://github.com/rcaloras/bash-preexec
+
+StackExchange discussion on how to differentiate if user pressed ENTER or entered a command: https://unix.stackexchange.com/questions/226909/tell-if-last-command-was-empty-in-prompt-command
+
 

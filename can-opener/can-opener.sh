@@ -29,6 +29,7 @@
 # 
 # most known graphical programs will be Can Opened.
 #
+# TODO: pandoc --standalone -c ./github-markdown.css -f gfm -t html README.md >README.md.html
 
 function _CAN_OPENER_ALL ()
 {

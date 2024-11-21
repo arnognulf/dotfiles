@@ -1,18 +1,18 @@
-[![Build Status](https://travis-ci.org/rcaloras/bash-preexec.svg?branch=master)](https://travis-ci.org/rcaloras/bash-preexec)
+[![Build Status](https://github.com/rcaloras/bash-preexec/actions/workflows/bats.yaml/badge.svg)](https://github.com/rcaloras/bash-preexec/actions/)
 [![GitHub version](https://badge.fury.io/gh/rcaloras%2Fbash-preexec.svg)](https://badge.fury.io/gh/rcaloras%2Fbash-preexec)
 
 Bash-Preexec 
 ============
 
-**preexec** and **precmd** hook functions for Bash in the style of Zsh. They aim to emulate the behavior [as described for Zsh](http://zsh.sourceforge.net/Doc/Release/Functions.html#Hook-Functions).
+**preexec** and **precmd** hook functions for Bash 3.1+ in the style of Zsh. They aim to emulate the behavior [as described for Zsh](http://zsh.sourceforge.net/Doc/Release/Functions.html#Hook-Functions).
 
 <a href="https://bashhub.com" target="_blank"><img src="https://bashhub.com/assets/images/bashhub-logo.png" alt="Bashhub Logo" width="200"></a>
 
-This project is currently being used in production by [Bashhub](https://github.com/rcaloras/bashhub-client) and [iTerm2](https://github.com/gnachman/iTerm2). Hype!
+This project is currently being used in production by [Bashhub](https://github.com/rcaloras/bashhub-client), [iTerm2](https://github.com/gnachman/iTerm2), and [Fig](https://fig.io). Hype!
 
 ## Quick Start
 ```bash
-# Pull down our file from GitHub and write it to our home directory as a hidden file.
+# Pull down our file from GitHub and write it to your home directory as a hidden file.
 curl https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec.sh -o ~/.bash-preexec.sh
 # Source our file to bring it into our environment
 source ~/.bash-preexec.sh
@@ -24,7 +24,7 @@ precmd() { echo "printing the prompt"; }
 ## Install
 You'll want to pull down the file and add it to your bash profile/configuration (i.e ~/.bashrc, ~/.profile, ~/.bash_profile, etc). **It must be the last thing imported in your bash profile.**
 ```bash
-# Pull down our file from GitHub and write it to our home directory as a hidden file.
+# Pull down our file from GitHub and write it to your home directory as a hidden file.
 curl https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec.sh -o ~/.bash-preexec.sh
 # Source our file at the end of our bash profile (e.g. ~/.bashrc, ~/.profile, or ~/.bash_profile)
 echo '[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh' >> ~/.bashrc
@@ -91,8 +91,17 @@ export __bp_enable_subshells="true"
 ```
 This is disabled by default due to buggy situations related to to `functrace` and Bash's `DEBUG trap`. See [Issue #25](https://github.com/rcaloras/bash-preexec/issues/25)
 
+## Library authors
+If you want to detect bash-preexec in your library (for example, to add hooks to `preexec_functions` when available), use the Bash variable `bash_preexec_imported`:
+
+```bash
+if [[ -n "${bash_preexec_imported:-}" ]]; then
+    echo "Bash-preexec is loaded."
+fi
+```
+
 ## Tests
-You can run tests using [Bats](https://github.com/sstephenson/bats).
+You can run tests using [Bats](https://github.com/bats-core/bats-core).
 ```bash
 bats test
 ```
