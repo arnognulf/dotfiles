@@ -606,7 +606,7 @@ _CP_LAST_ITEM ()
 {
     if [ "${#@}" -lt 2 ]
     then
-        echo "usage: cp [<FLAGS>] [SOURCE]... [DESTINATION]
+        echo "usage: cplast [<FLAGS>] [SOURCE]... [DESTINATION]
 only the last SOURCE is copied
 will not overwrite destination
 " 1>&2 | tee 1>/dev/null
