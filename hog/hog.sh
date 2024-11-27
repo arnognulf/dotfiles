@@ -175,7 +175,7 @@ if [ -t 1 ]
 then
     COLOR_SET="\033[33m"
     COLOR_RESET="\033[0m"
-    print_objects | less -X -Q -F -j0 -R
+    print_objects | less -d -X -Q -F -j0 -R
 else
     COLOR_SET=""
     COLOR_RESET=""

@@ -1,4 +1,8 @@
 #!/bin/bash
+if [[ $TERM = dumb ]]
+then
+stty iuclc
+fi
 {
 _dotfiles_main ()
 {

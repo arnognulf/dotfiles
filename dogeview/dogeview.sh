@@ -374,7 +374,7 @@ function _DOGEVIEW
 
             if [ "${_DOGE_STDOUT}" = 1 ]
 	    then
-                \less -R -X -F -K +G "${FILE}"
+                \less -d -R -X -F -K +G "${FILE}"
             else
                 \cat "${@}"
 	    fi
@@ -390,7 +390,7 @@ function _DOGEVIEW
 
             if [ "${_DOGE_STDOUT}" = 1 ]
 	    then
-                \less -R -X -F -K +G "${FILE}"
+                \less -d -R -X -F -K +G "${FILE}"
             else
                 \cat "${@}"
 	    fi
@@ -426,7 +426,7 @@ function _DOGEVIEW
         do
             if [ -f "${FILE}" ]
             then
-                _DOGE_DECODE "${FILE}" | \less -R -X -F -K
+                _DOGE_DECODE "${FILE}" | \less -d -R -X -F -K
                 RETURN=$?
                 break
             fi
@@ -434,7 +434,7 @@ function _DOGEVIEW
     else
         for FILE in "$@"
         do
-                _DOGE_DECODE "${FILE}" | \less -R -X -F -K
+                _DOGE_DECODE "${FILE}" | \less -d -R -X -F -K
                 RETURN=$?
         done
     fi
@@ -442,7 +442,7 @@ function _DOGEVIEW
 
     if [ "${_DOGE_STDOUT}" = 1 ]
     then
-        _DOGE_DECODE "${@}" 2>${_DOGE_STDERR_FILE} | \less -R -X -F -K
+        _DOGE_DECODE "${@}" 2>${_DOGE_STDERR_FILE} | \less -d -R -X -F -K
     else
         _DOGE_DECODE "${@}"
     fi

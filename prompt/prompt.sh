@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2021 Thomas Eriksson <thomas.eriksson@gmail.com>
+# Copyright (c) Thomas Eriksson <thomas.eriksson@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,11 @@ then
         PROMPTDIR="$PWD/$PROMPTDIR"
     fi
 fi
-[[ $ZSH_NAME ]] && setopt KSH_ARRAYS
+if [[ $ZSH_NAME ]]
+then
+setopt KSH_ARRAYS
+setopt prompt_subst
+fi
 [[ $_PROMPT_BGCOLOR ]] || _PROMPT_BGCOLOR=ffffff
 [[ $_PROMPT_FGCOLOR ]] || _PROMPT_FGCOLOR=444444
 [[ $TTY ]] || TTY=$(tty)
@@ -143,7 +147,10 @@ function _PROMPT_COMMAND ()
   trap "_PROMPT_CTRLC=1;\echo -n" INT
   trap "_PROMPT_CTRLC=1;\echo -n" ERR
   LC_ALL=C stty echo 2>/dev/null
-  history -a
+  if [[ $BASH_VERSION ]]
+  then
+    history -a
+  fi
 
 }
 
@@ -224,7 +231,7 @@ fi
 )
 _MEASURE=1
 _START_SECONDS=$SECONDS
-if [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
+if [[ $COLORTERM = truecolor ]]
 then
 \printf "\e]11;#${_PROMPT_BGCOLOR}\a\e]10;#${_PROMPT_FGCOLOR}\a\e]12;#${_PROMPT_FGCOLOR}\a"
 fi
@@ -395,6 +402,14 @@ fi
 local ESC=$(\printf '\e')
 local CR=$(\printf '\r')
 local BEL=$(\printf '\a')
+if [[ $ZSH_NAME ]]
+then
+local PREHIDE='%{'
+local POSTHIDE='%}'
+else
+local PREHIDE='\['
+local POSTHIDE='\]'
+fi
 local PREFG="${ESC}[38;2;"
 local PREBG="${ESC}[48;2;"
 local POST="m"
@@ -417,10 +432,11 @@ _PROMPT_LINE="${_PROMPT_LINE}${CHAR}"
 else
 :
 fi
-elif [ "${TERM}" = "linux" ]
+elif [[ $TERM = "linux" ]] || [[ "$TERM" = dumb ]] || [[ $TERM = vt52 ]]
 then
 _PROMPT_LINE="${_PROMPT_LINE}${CHAR}"
-else
+elif [[ $COLORTERM = truecolor ]]
+then
 _PROMPT_LINE="${_PROMPT_LINE}${PREFG}${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}${CHAR}"
 fi
 let INDEX++
@@ -460,20 +476,19 @@ then
 local _PROMPT_TEXT_LUT[0]="$(\printf "%d;%d;%d" ${_PROMPT_BGCOLOR:0:2} ${_PROMPT_BGCOLOR:2:2} ${_PROMPT_BGCOLOR:4:2})"
 fi
 local TEXT_LUT=$(((${#_PROMPT_TEXT_LUT[*]} * ${INDEX} ) / $((${COLUMNS} + 1))))
-if [[ $ZSH_NAME ]]
-then
-# TODO: broken
-_PROMPT_TEXT="${_PROMPT_TEXT}%{${PREBG}${_PROMPT_LUT[${LUT}]}${POST}${PREFG}${_PROMPT_TEXT_LUT[${TEXT_LUT}]}"
-#${POST}%}${PROMPT_TEXT:${INDEX}:1}"
-else
-_PROMPT_TEXT="${_PROMPT_TEXT}\[${PREBG}${_PROMPT_LUT[${LUT}]}${POST}${PREFG}${_PROMPT_TEXT_LUT[${TEXT_LUT}]}${POST}\]${PROMPT_TEXT:${INDEX}:1}"
-fi
+_PROMPT_TEXT="${_PROMPT_TEXT}${PREHIDE}${PREBG}${_PROMPT_LUT[${LUT}]}${POST}${PREFG}${_PROMPT_TEXT_LUT[${TEXT_LUT}]}${POST}${POSTHIDE}${PROMPT_TEXT:${INDEX}:1}"
 fi
 let INDEX++
 done
 
+if [[ "$TERM" =~ "xterm"* ]] || [[ "$TERM" = "alacritty" ]] || [[ "$TERM" = "vt100" ]]
+then
 PS1='$([[ $TERM =~ xterm* ]] && \printf "\033]0;${TITLE}\007")'"${CR}"'${_PROMPT_LINE}'"
-\[${ESC}(1${_PROMPT_ATTRIBUTE}\]${_PROMPT_TEXT}\[${ESC}[0m${ESC}[?25h\] "
+${PREHIDE}${ESC}(1${_PROMPT_ATTRIBUTE}${POSTHIDE}${_PROMPT_TEXT}${PREHIDE}${ESC}[0m${ESC}[?25h${POSTHIDE} "
+else
+PS1='${_PROMPT_LINE}'"
+${PROMPT_TEXT}| "
+fi
 
 }
 

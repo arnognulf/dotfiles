@@ -12,15 +12,14 @@ Install
 mkdir -p ~/.config/
 cd ~/.config
 
-# my dotfiles
-git clone https://github.com/arnognulf/dotfiles
+git clone https://github.com/arnognulf/monorail
 
 ```
 
-Add the following line to .bashrc:
+Add the following line to ~/.bashrc or ~/.zshrc
 
 ```
-. ~/.config/dotfiles/prompt/prompt.sh
+. ~/.config/monorail/prompt.sh
 ```
 
 Changing colors
@@ -77,28 +76,16 @@ alias top='_NO_MEASURE _ICON 📈 top'
 
 Supported shells
 ================
-Tested on bash 5.2.
-
-
-ZSH is not supported (help wanted!).
+Tested on bash 5.2 and zsh 5.9
 
 Supported terminals
 ===================
-gradient colors are availible on
-* libvte based terminals: gnome-terminal, xfce4-terminal
-* kitty
-* alacritty
-* konsole
-* xterm
-* stterm
-* terminology
-* tmux
-* GNU screen
+gradient colors are availible on truecolor terminals
+see https://github.com/termstandard/colors for a comprehensive list of supported terminal status.
 
-gradient colors are NOT available on the following due to missing truecolor color attributes:
-* rxvt, rxvt-unicode
-* vt100
-* Mac OS X Terminal
+
+Notably, Mac OS X Terminal does not support truecolor.
+
 
 FAQ
 ===
@@ -118,6 +105,10 @@ How to calculate color contrast: https://www.leserlich.info/werkzeuge/kontrastre
 
 
 bash-preexec which enables timing statistics: https://github.com/rcaloras/bash-preexec
+
+
+https://github.com/termstandard/colors
+
 
 StackExchange discussion on how to differentiate if user pressed ENTER or entered a command: https://unix.stackexchange.com/questions/226909/tell-if-last-command-was-empty-in-prompt-command
 
