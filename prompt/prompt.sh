@@ -236,7 +236,7 @@ _MEASURE=1
 _START_SECONDS=$SECONDS
 if [[ $COLORTERM = truecolor ]]
 then
-\printf "\e]11;#${_PROMPT_BGCOLOR}\a\e]10;#${_PROMPT_FGCOLOR}\a\e]12;#${_PROMPT_FGCOLOR}\a"
+\printf "\e]11;#%s\a\e]10;#%s\a\e]12;#%s\a" "${_PROMPT_BGCOLOR}" "${_PROMPT_FGCOLOR}" "${_PROMPT_FGCOLOR}"
 fi
 } &>"${TTY}"
 }
@@ -406,11 +406,13 @@ CHAR="_"
 fi
 
 local ESC
-local CR
-local BEL
 ESC=$(\printf '\e')
+local CR
 CR=$(\printf '\r')
+local BEL
 BEL=$(\printf '\a')
+
+
 
 if [[ $ZSH_NAME ]]
 then
@@ -473,11 +475,11 @@ RGB_CUR_R=${RGB_CUR_COLOR%%;*}
 RGB_CUR_GB=${RGB_CUR_COLOR#*;}
 RGB_CUR_G=${RGB_CUR_GB%%;*}
 RGB_CUR_B=${RGB_CUR_GB##*;}
-HEX_CUR_COLOR=$(\printf "%.2x%.2x%.2x" ${RGB_CUR_R} ${RGB_CUR_G} ${RGB_CUR_B})
+HEX_CUR_COLOR=$(\printf "%.2x%.2x%.2x" "${RGB_CUR_R}" "${RGB_CUR_G}" "${RGB_CUR_B}")
 [ -z "${HEX_CUR_COLOR}" ] && HEX_CUR_COLOR="${_PROMPT_FGCOLOR}"
 if [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
 then
-\printf "\e]11;#${_PROMPT_BGCOLOR}\a\e]10;#${_PROMPT_FGCOLOR}\a\e]12;#${HEX_CUR_COLOR}\a"
+\printf "\e]11;#%s\a\e]10;#%s\a\e]12;#%s\a" "${_PROMPT_BGCOLOR}" "${_PROMPT_FGCOLOR}" "${HEX_CUR_COLOR}"
 fi
 
 _PROMPT_TEXT=""
@@ -488,10 +490,12 @@ if [ "$TERM" = "vt100" ] || [ "$TERM" = "linux" ]
 then
 _PROMPT_TEXT="${_PROMPT_TEXT}${PROMPT_TEXT:${INDEX}:1}"
 else
-local LUT=$((${#_PROMPT_LUT[*]} * INDEX / $((${COLUMNS} + 1))))
+local LUT
+LUT=$((${#_PROMPT_LUT[*]} * INDEX / $((COLUMNS + 1))))
 if [ -z "${_PROMPT_TEXT_LUT[0]}" ]
 then
-local _PROMPT_TEXT_LUT[0]="$(\printf "%d;%d;%d" ${_PROMPT_BGCOLOR:0:2} ${_PROMPT_BGCOLOR:2:2} ${_PROMPT_BGCOLOR:4:2})"
+local _PROMPT_TEXT_LUT
+_PROMPT_TEXT_LUT[0]=$(\printf "%d;%d;%d" "${_PROMPT_BGCOLOR:0:2}" "${_PROMPT_BGCOLOR:2:2}" "${_PROMPT_BGCOLOR:4:2}")
 fi
 local TEXT_LUT=$(((${#_PROMPT_TEXT_LUT[*]} * INDEX ) / $((COLUMNS + 1))))
 _PROMPT_TEXT="${_PROMPT_TEXT}${PREHIDE}${PREBG}${_PROMPT_LUT[${LUT}]}${POST}${PREFG}${_PROMPT_TEXT_LUT[${TEXT_LUT}]}${POST}${POSTHIDE}${PROMPT_TEXT:${INDEX}:1}"
