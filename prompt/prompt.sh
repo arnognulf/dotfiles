@@ -22,15 +22,15 @@
 
 # detect _MONORAIL_DIR
 if ! [[ $_MONORAIL_DIR ]]; then
-	_MONORAIL_DIR="${BASH_ARGV[0]}"
+	if [[ ${BASH_ARGV[0]} != "/"* ]]; then
+		_MONORAIL_DIR=$PWD/${BASH_ARGV[0]}
+    else
+	    _MONORAIL_DIR="${BASH_ARGV[0]}"
+	fi
+
 	_MONORAIL_DIR="${_MONORAIL_DIR%/*}"
-	if [[ ${_MONORAIL_DIR} != "*/*" ]]; then
-		_MONORAIL_DIR=$PWD
-	fi
-	if [[ ${_MONORAIL_DIR:0:1} != "/" ]]; then
-		_MONORAIL_DIR="$PWD/$_MONORAIL_DIR"
-	fi
 fi
+
 if [[ $ZSH_NAME ]]; then
 	setopt KSH_ARRAYS
 	setopt prompt_subst
@@ -468,7 +468,7 @@ _PROMPT() {
 	done
 
 	if [[ "$TERM" =~ "xterm"* ]] || [[ "$TERM" = "alacritty" ]] || [[ "$TERM" = "vt100" ]]; then
-		PS1='$([[ $TERM =~ xterm* ]] && \printf "%s]0;%s%s" "${ESC}" "${TITLE}" "${BEL}")'"${CR}"'${_PROMPT_LINE}'"
+		PS1='$(_TITLE_RAW "${TITLE}"))'"${CR}"'${_PROMPT_LINE}'"
 ${PREHIDE}${ESC}(1${_PROMPT_ATTRIBUTE}${POSTHIDE}${_PROMPT_TEXT}${PREHIDE}${ESC}[0m${ESC}[?25h${POSTHIDE} "
 	else
 		PS1='${_PROMPT_LINE}'"
@@ -489,13 +489,13 @@ _TITLE_RAW() {
 
 _INIT_CONFIG() {
 	if [[ -n $XDG_CONFIG_HOME ]]; then
-		_MONORAIL_CONFIG="${XDG_CONFIG_HOME}/monorail-prompt"
+		_MONORAIL_CONFIG="${XDG_CONFIG_HOME}/monorail"
 	else
-		_MONORAIL_CONFIG="${HOME}/.config/monorail-prompt"
+		_MONORAIL_CONFIG="${HOME}/.config/monorail"
 	fi
 	mkdir -p "${_MONORAIL_CONFIG}"
 	unset -f _INIT_CONFIG
-	if [[ ! -f ~/.config/monorail/colors.sh ]]; then
+	if [[ ! -f "${_MONORAIL_DIR}"/colors.sh ]]; then
 		cp "${_MONORAIL_DIR}"/default_colors.sh "${_MONORAIL_CONFIG}"/colors.sh
 	fi
 	. "${_MONORAIL_CONFIG}"/colors.sh

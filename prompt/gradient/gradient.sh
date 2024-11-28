@@ -105,8 +105,6 @@ Note: this script is slow due to using OKLab colorspace with bc(1),
 Examples:
 gradient  0 b1e874  100 00d4ff
 gradient  0 020024  35 1818a1  100 00d4ff
-
-# store colors in a script to make it load faster at startup
 gradient  0 b1e874  100 ff00d3
 
 EOF
