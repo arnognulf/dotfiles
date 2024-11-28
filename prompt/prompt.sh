@@ -20,18 +20,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# detect PROMPTDIR
-if ! [[ $PROMPTDIR ]]
+# detect _MONORAIL_DIR
+if ! [[ $_MONORAIL_DIR ]]
 then
-    PROMPTDIR="${BASH_ARGV[0]}"
-    PROMPTDIR="${PROMPTDIR%/*}"
-    if [[ ${PROMPTDIR} != "*/*" ]]
+    _MONORAIL_DIR="${BASH_ARGV[0]}"
+    _MONORAIL_DIR="${_MONORAIL_DIR%/*}"
+    if [[ ${_MONORAIL_DIR} != "*/*" ]]
     then
-        PROMPTDIR=$PWD
+        _MONORAIL_DIR=$PWD
     fi
-    if [[ ${PROMPTDIR:0:1} != "/" ]]
+    if [[ ${_MONORAIL_DIR:0:1} != "/" ]]
     then
-        PROMPTDIR="$PWD/$PROMPTDIR"
+        _MONORAIL_DIR="$PWD/$_MONORAIL_DIR"
     fi
 fi
 if [[ $ZSH_NAME ]]
@@ -42,16 +42,15 @@ fi
 [[ $_PROMPT_BGCOLOR ]] || _PROMPT_BGCOLOR=ffffff
 [[ $_PROMPT_FGCOLOR ]] || _PROMPT_FGCOLOR=444444
 [[ $TTY ]] || TTY=$(tty)
-[[ ${_PROMPT_TEXT_LUT[0]} ]] || _PROMPT_TEXT_LUT[0]='255;255;255'
-[[ ${_PROMPT_LUT[0]} ]] || _PROMPT_LUT[0]='68;68;68'
 
-. ${PROMPTDIR}/gradient/gradient.sh
+. "${_MONORAIL_DIR}"/gradient/gradient.sh
 
 # vendored from https://github.com/rcaloras/bash-preexec (8926de0)
-. ${PROMPTDIR}/bash-preexec/bash-preexec.sh
+. "${_MONORAIL_DIR}"/bash-preexec/bash-preexec.sh
 
 # load system git sh prompt 
 [ -f /usr/lib/git-core/git-sh-prompt ] && . /usr/lib/git-core/git-sh-prompt
+
 function _PROMPT_ALERT ()
 {
 ( exec mplayer -quiet /usr/share/sounds/gnome/default/alerts/glass.ogg &>/dev/null & )
@@ -398,7 +397,6 @@ else
 local CHAR="_"
 fi
 
-
 local ESC=$(\printf '\e')
 local CR=$(\printf '\r')
 local BEL=$(\printf '\a')
@@ -515,7 +513,11 @@ _INIT_CONFIG ()
     fi
     mkdir -p ${_MONORAIL_CONFIG}
     unset -f _INIT_CONFIG
-    . ~/.config/monorail-prompt/colors.sh
+    if [[ ! -f  ~/.config/monorail/colors.sh ]]
+    then
+        cp "${_MONORAIL_DIR}"/default_colors.sh "${_MONORAIL_CONFIG}"/colors.sh
+    fi
+    . "${_MONORAIL_CONFIG}"/colors.sh
 }
 _INIT_CONFIG
 

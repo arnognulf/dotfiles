@@ -9,8 +9,8 @@ Install
 =======
 
 ```
-mkdir -p ~/.config/
-cd ~/.config
+mkdir -p ~/.local/share
+cd ~/.local/share
 
 git clone https://github.com/arnognulf/monorail
 
@@ -19,8 +19,10 @@ git clone https://github.com/arnognulf/monorail
 Add the following line to ~/.bashrc or ~/.zshrc
 
 ```
-. ~/.config/monorail/prompt.sh
+. ~/.local/share/monorail/prompt.sh
 ```
+
+Open a new terminal for changes to take effect.
 
 Changing colors
 ===============
@@ -80,8 +82,10 @@ Tested on bash 5.2 and zsh 5.9
 
 Supported terminals
 ===================
-gradient colors are availible on truecolor terminals
-see https://github.com/termstandard/colors for a comprehensive list of supported terminal status.
+Gradient colors are availible on truecolor terminals.
+
+
+See https://github.com/termstandard/colors for a comprehensive list of supported terminal status.
 
 
 Notably, Mac OS X Terminal does not support truecolor.

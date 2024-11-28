@@ -67,7 +67,15 @@ function _CAN_OPENER_ALL ()
             fi
             ;;
             *)
+            case "${FILE,,}" in
+            *.md)
+                pandoc --standalone -c ../can-opener/github-markdown.css -f gfm -t html README.md 2>/dev/null >.${FILE}.html
+                exec x-www-browser ".${FILE}.html" &>/dev/null &
+                ( sleep 5; \rm -f ".${FILE}.html"; ) &
+                ;;
+            *)
                 exec xdg-open "${FILE}" &>/dev/null &
+            esac
             esac
         )
     done
