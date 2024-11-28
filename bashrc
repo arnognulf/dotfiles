@@ -168,6 +168,7 @@ _EDITOR ()
 [ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o _LOW_PRIO ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
 [ -x  ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
+alias shellcheck='_ICON 🛠️ _LOG shellcheck'
 alias clang='_ICON 🛠️ _LOG clang'
 alias gcc='_ICON 🛠️ _LOG gcc'
 alias g++='_ICON 🛠️ _LOG g++'

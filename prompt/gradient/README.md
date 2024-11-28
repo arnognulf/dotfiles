@@ -16,8 +16,8 @@ Eg. design your gradient at https://cssgradient.io/ and transfer these to gradie
 Examples
 --------
 ```
-eval \$(./gradient  0 b1e874  100 00d4ff)
-eval \$(./gradient  0 020024  35 1818a1  100 00d4ff)
+gradient  0 b1e874  100 00d4ff
+gradient  0 020024  35 1818a1  100 00d4ff
 
 # This script is slow due to using OKLab colorspace with BC,
 # store colors in a script to make it load faster at startup

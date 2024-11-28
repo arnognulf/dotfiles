@@ -101,6 +101,8 @@ function _PROMPT_MAGIC_SHELLBALL ()
 
 function _PROMPT_COMMAND ()
 {
+  local CMD_STATUS
+  CMD_STATUS=$?
   # disconnect other clients and resize window to current size
   ( [ -n "$TMUX" ] && { LC_ALL=C tmux detach-client -a;for CLIENT in 1 2 3; do LC_ALL=C tmux -L "$CLIENT" resize-window -A; done; } &>/dev/null & )
   local _SOURCED=1
@@ -117,7 +119,7 @@ function _PROMPT_COMMAND ()
     :
   elif [[ $HISTCMD_before_last = "$_PROMPT_HISTCMD_PREV" ]]; then
     # cancelled prompt
-    if [[ -z "$CR_FIRST" ]] && [[ "$?" = 0 ]] && [[ -z "$_PROMPT_CTRLC" ]]; then
+    if [[ -z "$CR_FIRST" ]] && [[ "$CMD_STATUS" = 0 ]] && [[ -z "$_PROMPT_CTRLC" ]]; then
         case "${CR_LEVEL}" in
         0)
         _LS_HIDDEN -w${COLUMNS}
@@ -315,7 +317,7 @@ _PROMPT ()
     fi
     _PROMPT_PWD="${_PROMPT_PWD%/*}"
   done
-    _PROMPT_GIT_PS1=$(NO_TITLE=1 LC_ALL=C __git_ps1 2>/dev/null)
+    _PROMPT_GIT_PS1=$(NO_TITLE=1 LC_ALL=C __git_ps1 "" 2>/dev/null)
   esac
 
 if [ "${TITLE_OVERRIDE}" = "" ]
@@ -355,24 +357,24 @@ case "${PWD}" in
 */bin|*/sbin) TITLE="️⚙️  ${PWD##*/}";;
 */lib|*/lib64|*/lib32) TITLE="🔩  ${PWD##*/}";;
 */tmp|*/tmp/*|*/.cache|*/.cache/*) TITLE="🚽  ${PWD##*/}";;
-#${HOME}"/.local/share/Trash/files"*) PROMPT_REPO=""; ️TITLE="🗑️  ${PWD##*/}";;
-${HOME}"/.local/share/Trash/files"*) TITLE="♻️  ${PWD##*/}";;
+#"${HOME}/.local/share/Trash/files"*) PROMPT_REPO=""; ️TITLE="🗑️  ${PWD##*/}";;
+"${HOME}/.local/share/Trash/files"*) TITLE="♻️  ${PWD##*/}";;
 /boot|/boot/*) TITLE="🥾  ${PWD##*/}";;
 /) TITLE="💻  /";;
 */.*) TITLE="📌  ${PWD##*/}";;
 /media/*) TITLE="💾  ${PWD##*/}";;
 /proc/*|/sys/*|/dev/*|/proc|/sys|/dev) TITLE="🤖  ${PWD##*/}";;
-*/Documents|*/Documents/*|*/doc|*/docs|*/doc/*|*/docs/*|${XDG_DOCUMENTS_DIR}|${XDG_DOCUMENTS_DIR}/*) TITLE="📄  ${PWD##*/}";;
+*/Documents|*/Documents/*|*/doc|*/docs|*/doc/*|*/docs/*|"${XDG_DOCUMENTS_DIR}"|"${XDG_DOCUMENTS_DIR}"/*) TITLE="📄  ${PWD##*/}";;
 */out|*/out/*) TITLE="🚀  ${PWD##*/}";;
 */src|*/src/*|*/sources|*/sources/*) TITLE="🚧  ${PWD##*/}";;
-${XDG_MUSIC_DIR}|${XDG_MUSIC_DIR}/*) TITLE="🎵  ${PWD##*}";;
-${XDG_PICTURES_DIR}|${XDG_PICTURES_DIR}/*) TITLE="🖼️  ${PWD##*/}";;
-${XDG_VIDEOS_DIR}|${XDG_VIDEOS_DIR}/*) TITLE="🎬  ${PWD##*/}";;
-*/Downloads|*/Downloads/*|${XDG_DOWNLOAD_DIR}|${XDG_DOWNLOAD_DIR}/*) TITLE="📦  ${PWD##*/}";;
+"${XDG_MUSIC_DIR}"|"${XDG_MUSIC_DIR}"/*) TITLE="🎵  ${PWD##*}";;
+"${XDG_PICTURES_DIR}"|"${XDG_PICTURES_DIR}"/*) TITLE="🖼️  ${PWD##*/}";;
+"${XDG_VIDEOS_DIR}"|"${XDG_VIDEOS_DIR}"/*) TITLE="🎬  ${PWD##*/}";;
+*/Downloads|*/Downloads/*|"${XDG_DOWNLOAD_DIR}"|"${XDG_DOWNLOAD_DIR}"/*) TITLE="📦  ${PWD##*/}";;
 *) TITLE="📂  ${PWD##*/}";;
 esac
 case "${_PROMPT_REALPWD}" in
-${HOME}) 
+"${HOME}") 
     if [ -n "${SCHROOT_ALIAS_NAME}" ]
     then
         TITLE="🏠  ${SCHROOT_ALIAS_NAME}"
@@ -456,7 +458,7 @@ done
 local PWD_BASENAME="${PWD##*/}"
 [ -z "${PWD_BASENAME}" ] && PWD_BASENAME=/
 case ${PWD} in
-${HOME}) _PROMPT_PWD_BASENAME="~";;
+"${HOME}") _PROMPT_PWD_BASENAME="~";;
 *) _PROMPT_PWD_BASENAME="${NAME-${PWD_BASENAME}}"
 esac
 PROMPT_TEXT=" ${_PROMPT_PWD_BASENAME}${_PROMPT_GIT_PS1} "$([ $UID = 0 ] && \echo "# ")
@@ -470,7 +472,7 @@ local RGB_CUR_B
 local HEX_CUR_COLOR
 
 CURSORPOS=$((${#PROMPT_TEXT} + 1 ))
-RGB_CUR_COLOR=${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${CURSORPOS} / $((COLUMNS + 1))))]}
+RGB_CUR_COLOR=${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * CURSORPOS / $((COLUMNS + 1))))]}
 RGB_CUR_R=${RGB_CUR_COLOR%%;*}
 RGB_CUR_GB=${RGB_CUR_COLOR#*;}
 RGB_CUR_G=${RGB_CUR_GB%%;*}
@@ -505,7 +507,7 @@ done
 
 if [[ "$TERM" =~ "xterm"* ]] || [[ "$TERM" = "alacritty" ]] || [[ "$TERM" = "vt100" ]]
 then
-PS1='$([[ $TERM =~ xterm* ]] && \printf "${ESC}]0;${TITLE}${BEL}")'"${CR}"'${_PROMPT_LINE}'"
+PS1='$([[ $TERM =~ xterm* ]] && \printf "%s]0;%s%s" "${ESC}" "${TITLE}" "${BEL}")'"${CR}"'${_PROMPT_LINE}'"
 ${PREHIDE}${ESC}(1${_PROMPT_ATTRIBUTE}${POSTHIDE}${_PROMPT_TEXT}${PREHIDE}${ESC}[0m${ESC}[?25h${POSTHIDE} "
 else
 PS1='${_PROMPT_LINE}'"
@@ -514,16 +516,16 @@ fi
 
 }
 
-PROMPT_COMMAND="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
+PROMPT_COMMAND[0]="_PROMPT_STOP_TIMER;_PROMPT_COMMAND;_PROMPT"
 precmd ()
 {
-eval ${PROMPT_COMMAND}
+eval "${PROMPT_COMMAND[0]}"
 }
 _TITLE_RAW ()
 {
 if [[ -z "$NO_TITLE" ]] && [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
 then
-\printf "\e]0;$*\a" 1>"${TTY}" 2>/dev/null
+\printf "\e]0;%s\a" "$*" 1>"${TTY}" 2>/dev/null
 fi
 }
 

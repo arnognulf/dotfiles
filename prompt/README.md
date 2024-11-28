@@ -11,7 +11,6 @@ Install
 ```
 mkdir -p ~/.local/share
 cd ~/.local/share
-
 git clone https://github.com/arnognulf/monorail
 
 ```
