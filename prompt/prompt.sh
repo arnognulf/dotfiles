@@ -91,10 +91,10 @@ function _PROMPT_MAGIC_SHELLBALL ()
   esac
   local SPACES=""
   local i=0
-  while [ ${i} -lt $((${COLUMNS} / 2 - ${#ANSWER} / 2)) ]
+  while [ ${i} -lt $((COLUMNS / 2 - ${#ANSWER} / 2)) ]
   do
   SPACES="${SPACES} "
-  let i++
+  i=$((i+1))
   done
   \echo -e "\e[?25l\e[3A\r\e[K${SPACES}${ANSWER}"
 }
@@ -117,7 +117,7 @@ function _PROMPT_COMMAND ()
     :
   elif [[ $HISTCMD_before_last = "$_PROMPT_HISTCMD_PREV" ]]; then
     # cancelled prompt
-    if [ -z "$CR_FIRST" -a "$?" = 0 -a -z "$_PROMPT_CTRLC" ]; then
+    if [[ -z "$CR_FIRST" ]] && [[ "$?" = 0 ]] && [[ -z "$_PROMPT_CTRLC" ]]; then
         case "${CR_LEVEL}" in
         0)
         _LS_HIDDEN -w${COLUMNS}
@@ -185,26 +185,30 @@ _TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\z')/\\\\\z}"
 _TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\033')/<ESC>}"
 _TIMER_CMD="${_TIMER_CMD/$(\printf '\\\\007')/<BEL>}"
 (
+local CHAR
+local SHORT_HOSTNAME
+local CMD
 case "${_TIMER_CMD}" in
 "c "*|"cd "*|".."*) :;;
 *)
 # TODO: break out
-local DATE=$(date +%m-%d)
+local DATE
+DATE=$(date +%m-%d)
 case ${DATE} in
 10-2*|10-3*)
-local CHAR=🎃
+CHAR=🎃
 ;;
 12*)
-local CHAR=🎄
+CHAR=🎄
 ;;
 *)
-local CHAR=▶️
+CHAR=▶️
 esac
 esac
 LINE="${CHAR}  ${_TIMER_CMD}"
 if [ -n "$TMUX" ]
 then
-local SHORT_HOSTNAME=${HOSTNAME%%.*}
+SHORT_HOSTNAME=${HOSTNAME%%.*}
 SHORT_HOSTNAME=${SHORT_HOSTNAME,,}
 LINE="${LINE} on ${SHORT_HOSTNAME}"
 fi
@@ -215,8 +219,8 @@ fi
 CUSTOM_TITLE=0
 local CMD=${_TIMER_CMD%% *}
 local CMD=${CMD%%;*}
-alias ${CMD} &>/dev/null && CUSTOM_TITLE=1
-for COMMAND in ${CUSTOM_TITLE_COMMANDS[@]}
+alias "${CMD}" &>/dev/null && CUSTOM_TITLE=1
+for COMMAND in "${CUSTOM_TITLE_COMMANDS[@]}"
 do
 if [ "${COMMAND}" = "${_TIMER_CMD:0:${#COMMAND}}" ]
 then
@@ -248,7 +252,7 @@ local CURRENT_SECONDS
 local DURATION
 CURRENT_SECONDS=${SECONDS}
 local DIFF=$((CURRENT_SECONDS - _START_SECONDS))
-if [ ${_MEASURE-0} -gt 0 -a ${DIFF} -gt 29 ]
+if [[ ${_MEASURE-0} -gt 0 ]] && [[ ${DIFF} -gt 29 ]]
 then
 SECONDS_M=$((DIFF % 3600))
 
@@ -292,12 +296,16 @@ _PROMPT ()
   unset _PROMPT_LONGRUNNING
   return 0
   fi
-  local _PROMPT_REALPWD="${PWD}"
+  local _PROMPT_REALPWD
+  _PROMPT_REALPWD="${PWD}"
   case "${PWD}" in
-  /run/user/*/gvfs/*) GIT_PS1="";;
+  /run/user/*/gvfs/*) _PROMPT_GIT_PS1="";;
   *)
-  local _PROMPT_PWD="${PWD}"
-  local _PROMPT_REPO=""
+  local _PROMPT_PWD
+  local _PROMPT_REPO
+  _PROMPT_PWD="${PWD}"
+  _PROMPT_REPO=""
+
   while [ -n "${_PROMPT_PWD}" ]
   do
     if [ -d "${_PROMPT_PWD}/.repo" ]
@@ -388,18 +396,22 @@ TITLE="${TITLE_OVERRIDE}"
 fi
 if [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
 then
-local CHAR="▁"
+CHAR="▁"
 command printf "\e[0m"
-elif [ $TERM = vt100 ]
+elif [[ $TERM = vt100 ]]
 then
 CHAR=$(\printf "\xF3")
 else
-local CHAR="_"
+CHAR="_"
 fi
 
-local ESC=$(\printf '\e')
-local CR=$(\printf '\r')
-local BEL=$(\printf '\a')
+local ESC
+local CR
+local BEL
+ESC=$(\printf '\e')
+CR=$(\printf '\r')
+BEL=$(\printf '\a')
+
 if [[ $ZSH_NAME ]]
 then
 local PREHIDE='%{'
@@ -435,9 +447,9 @@ then
 _PROMPT_LINE="${_PROMPT_LINE}${CHAR}"
 elif [[ $COLORTERM = truecolor ]]
 then
-_PROMPT_LINE="${_PROMPT_LINE}${PREFG}${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))]}${POST}${CHAR}"
+_PROMPT_LINE="${_PROMPT_LINE}${PREFG}${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * INDEX / $((COLUMNS + 1))))]}${POST}${CHAR}"
 fi
-let INDEX++
+INDEX=$((INDEX+1))
 done
 local PWD_BASENAME="${PWD##*/}"
 [ -z "${PWD_BASENAME}" ] && PWD_BASENAME=/
@@ -447,13 +459,21 @@ ${HOME}) _PROMPT_PWD_BASENAME="~";;
 esac
 PROMPT_TEXT=" ${_PROMPT_PWD_BASENAME}${_PROMPT_GIT_PS1} "$([ $UID = 0 ] && \echo "# ")
 
-local CURSORPOS=$((${#PROMPT_TEXT} + 1 ))
-local RGB_CUR_COLOR=${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${CURSORPOS} / $((${COLUMNS} + 1))))]}
-local RGB_CUR_R=${RGB_CUR_COLOR%%;*}
-local RGB_CUR_GB=${RGB_CUR_COLOR#*;}
-local RGB_CUR_G=${RGB_CUR_GB%%;*}
-local RGB_CUR_B=${RGB_CUR_GB##*;}
-local HEX_CUR_COLOR=$(\printf "%.2x%.2x%.2x" ${RGB_CUR_R} ${RGB_CUR_G} ${RGB_CUR_B})
+local CURSORPOS
+local RGB_CUR_COLOR
+local RGB_CUR_R
+local RGB_CUR_GB
+local RGB_CUR_G
+local RGB_CUR_B
+local HEX_CUR_COLOR
+
+CURSORPOS=$((${#PROMPT_TEXT} + 1 ))
+RGB_CUR_COLOR=${_PROMPT_LUT[$((${#_PROMPT_LUT[*]} * ${CURSORPOS} / $((COLUMNS + 1))))]}
+RGB_CUR_R=${RGB_CUR_COLOR%%;*}
+RGB_CUR_GB=${RGB_CUR_COLOR#*;}
+RGB_CUR_G=${RGB_CUR_GB%%;*}
+RGB_CUR_B=${RGB_CUR_GB##*;}
+HEX_CUR_COLOR=$(\printf "%.2x%.2x%.2x" ${RGB_CUR_R} ${RGB_CUR_G} ${RGB_CUR_B})
 [ -z "${HEX_CUR_COLOR}" ] && HEX_CUR_COLOR="${_PROMPT_FGCOLOR}"
 if [[ "$TERM" =~ "xterm"* ]] || [ "$TERM" = "alacritty" ]
 then
@@ -468,20 +488,20 @@ if [ "$TERM" = "vt100" ] || [ "$TERM" = "linux" ]
 then
 _PROMPT_TEXT="${_PROMPT_TEXT}${PROMPT_TEXT:${INDEX}:1}"
 else
-local LUT=$((${#_PROMPT_LUT[*]} * ${INDEX} / $((${COLUMNS} + 1))))
+local LUT=$((${#_PROMPT_LUT[*]} * INDEX / $((${COLUMNS} + 1))))
 if [ -z "${_PROMPT_TEXT_LUT[0]}" ]
 then
 local _PROMPT_TEXT_LUT[0]="$(\printf "%d;%d;%d" ${_PROMPT_BGCOLOR:0:2} ${_PROMPT_BGCOLOR:2:2} ${_PROMPT_BGCOLOR:4:2})"
 fi
-local TEXT_LUT=$(((${#_PROMPT_TEXT_LUT[*]} * ${INDEX} ) / $((${COLUMNS} + 1))))
+local TEXT_LUT=$(((${#_PROMPT_TEXT_LUT[*]} * INDEX ) / $((COLUMNS + 1))))
 _PROMPT_TEXT="${_PROMPT_TEXT}${PREHIDE}${PREBG}${_PROMPT_LUT[${LUT}]}${POST}${PREFG}${_PROMPT_TEXT_LUT[${TEXT_LUT}]}${POST}${POSTHIDE}${PROMPT_TEXT:${INDEX}:1}"
 fi
-let INDEX++
+INDEX=$((INDEX+1))
 done
 
 if [[ "$TERM" =~ "xterm"* ]] || [[ "$TERM" = "alacritty" ]] || [[ "$TERM" = "vt100" ]]
 then
-PS1='$([[ $TERM =~ xterm* ]] && \printf "\033]0;${TITLE}\007")'"${CR}"'${_PROMPT_LINE}'"
+PS1='$([[ $TERM =~ xterm* ]] && \printf "${ESC}]0;${TITLE}${BEL}")'"${CR}"'${_PROMPT_LINE}'"
 ${PREHIDE}${ESC}(1${_PROMPT_ATTRIBUTE}${POSTHIDE}${_PROMPT_TEXT}${PREHIDE}${ESC}[0m${ESC}[?25h${POSTHIDE} "
 else
 PS1='${_PROMPT_LINE}'"
@@ -511,7 +531,7 @@ _INIT_CONFIG ()
     else
         _MONORAIL_CONFIG="${HOME}/.config/monorail-prompt"
     fi
-    mkdir -p ${_MONORAIL_CONFIG}
+    mkdir -p "${_MONORAIL_CONFIG}"
     unset -f _INIT_CONFIG
     if [[ ! -f  ~/.config/monorail/colors.sh ]]
     then
@@ -561,7 +581,7 @@ fi
 _BGCOLOR ()
 {
 # reload in case user has manually modified colors.sh
-. ${_MONORAIL_CONFIG}/colors.sh
+. "${_MONORAIL_CONFIG}"/colors.sh
 
 if [[ "${#1}" != 6 ]]
 then
@@ -569,7 +589,7 @@ then
 return 1
 fi
 
-_PROMPT_CONTRAST ${_PROMPT_FGCOLOR} $1||return 1
+_PROMPT_CONTRAST "${_PROMPT_FGCOLOR}" "$1"||return 1
 
 _PROMPT_BGCOLOR="$1"
 {
@@ -577,13 +597,13 @@ declare -p _PROMPT_LUT|cut -d" " -f3-1024
 declare -p _PROMPT_TEXT_LUT|cut -d" " -f3-1024
 declare -p _PROMPT_FGCOLOR|cut -d" " -f3-1024
 declare -p _PROMPT_BGCOLOR|cut -d" " -f3-1024
-} >${_MONORAIL_CONFIG}/colors.sh
+} >"${_MONORAIL_CONFIG}"/colors.sh
 }
 
 _FGCOLOR ()
 {
 # reload in case user has manually modified colors.sh
-. ${_MONORAIL_CONFIG}/colors.sh
+. "${_MONORAIL_CONFIG}"/colors.sh
 
 if [ "${#1}" != 6 ]
 then
@@ -591,7 +611,7 @@ then
 return 1
 fi
 
-_PROMPT_CONTRAST ${_PROMPT_BGCOLOR} $1||return 1
+_PROMPT_CONTRAST "${_PROMPT_BGCOLOR}" "$1"||return 1
 
 _PROMPT_FGCOLOR="$1"
 {
@@ -599,7 +619,7 @@ declare -p _PROMPT_LUT|cut -d" " -f3-1024
 declare -p _PROMPT_TEXT_LUT|cut -d" " -f3-1024
 declare -p _PROMPT_FGCOLOR|cut -d" " -f3-1024
 declare -p _PROMPT_BGCOLOR|cut -d" " -f3-1024
-} >${_MONORAIL_CONFIG}/colors.sh
+} >"${_MONORAIL_CONFIG}"/colors.sh
 }
 
 alias bgcolor=_BGCOLOR
