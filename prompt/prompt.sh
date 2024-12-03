@@ -41,11 +41,11 @@ fi
 
 . "${_MONORAIL_DIR}"/gradient/gradient.sh
 
-# avoid opening /dev/null for stdout/stderr for each call to 'type -P'
+# avoid opening /dev/null for stdout/stderr for each call to 'command -v'
 # this improves startup time
 {
 # chrt(1) sets lowest priority on Linux and FreeBSD
-if type -P chrt
+if command -v chrt
 then
 _LOW_PRIO ()
 {
@@ -62,16 +62,16 @@ _INTERACTIVE_COMMAND ()
 {
 # Disable nonsensical error from shellcheck:
 #In prompt.sh line 68:
-# type -P "${2}" && alias "${2}=_ICON ${1} _LOW_PRIO ${2}"
-#                          ^--^ SC2139 (warning): This expands when defined, not when used. Consider escaping.
+# command -v "${2}" && alias "${2}=_ICON ${1} _LOW_PRIO ${2}"
+#                             ^--^ SC2139 (warning): This expands when defined, not when used. Consider escaping.
 #
 #shellcheck disable=SC2139
-type -P "${2}" && alias "${2}=_ICON ${1} ${2}"
+command -v "${2}" && alias "${2}=_NO_MEASURE _ICON ${1} ${2}"
 }
 _BATCH_COMMAND ()
 {
 #shellcheck disable=SC2139
-type -P "${2}" && alias "${2}=_ICON ${1} _LOW_PRIO ${2}"
+command -v "${2}" && alias "${2}=_ICON ${1} _LOW_PRIO ${2}"
 }
 alias interactive_command=_INTERACTIVE_COMMAND
 alias batch_command=_BATCH_COMMAND
@@ -491,7 +491,7 @@ _PROMPT() {
 		if [ "$TERM" = "vt100" ] || [ "$TERM" = "linux" ]; then
 			_PROMPT_TEXT="${_PROMPT_TEXT}${PROMPT_TEXT:${INDEX}:1}"
 		else
-			local LUT
+			local LUT &>/dev/null
 			LUT=$((${#_PROMPT_LUT[*]} * INDEX / $((COLUMNS + 1))))
 			if [ -z "${_PROMPT_TEXT_LUT[0]}" ]; then
 				local _PROMPT_TEXT_LUT
@@ -522,21 +522,6 @@ _TITLE_RAW() {
 		\printf "\e]0;%s\a" "$*" 1>"${TTY}" 2>/dev/null
 	fi
 }
-
-_INIT_CONFIG() {
-	if [[ -n $XDG_CONFIG_HOME ]]; then
-		_MONORAIL_CONFIG="${XDG_CONFIG_HOME}/monorail"
-	else
-		_MONORAIL_CONFIG="${HOME}/.config/monorail"
-	fi
-	mkdir -p "${_MONORAIL_CONFIG}"
-	unset -f _INIT_CONFIG
-	if [[ ! -f "${_MONORAIL_DIR}"/colors.sh ]]; then
-		cp "${_MONORAIL_DIR}"/default_colors.sh "${_MONORAIL_CONFIG}"/colors.sh
-	fi
-	. "${_MONORAIL_CONFIG}"/colors.sh
-}
-_INIT_CONFIG
 
 _PROMPT_CONTRAST() {
 	COLOR1=$1
@@ -620,6 +605,12 @@ _TITLE() {
 	_TITLE_RAW "$* in ${PWD##*/} at $(date +%H:%M)"
 }
 
+_NO_MEASURE ()
+{
+    _MEASURE=0
+    "$@"
+}
+
 _ICON() {
 	local ICON="$1"
 	shift
@@ -650,6 +641,21 @@ _ICON() {
 	) &>"${TTY}"
 	"$@"
 }
+
+_INIT_CONFIG() {
+	if [[ -n $XDG_CONFIG_HOME ]]; then
+		_MONORAIL_CONFIG="${XDG_CONFIG_HOME}/monorail"
+	else
+		_MONORAIL_CONFIG="${HOME}/.config/monorail"
+	fi
+	mkdir -p "${_MONORAIL_CONFIG}"
+	unset -f _INIT_CONFIG
+	if [[ ! -f "${_MONORAIL_DIR}"/colors.sh ]]; then
+		cp "${_MONORAIL_DIR}"/default_colors.sh "${_MONORAIL_CONFIG}"/colors.sh
+	fi
+	. "${_MONORAIL_CONFIG}"/colors.sh
+}
+_INIT_CONFIG
 
 name() {
 	NAME="$*"

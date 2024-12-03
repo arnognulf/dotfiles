@@ -152,11 +152,6 @@ alias v='nvim'
 alias nano='nvim'
 
 export EDITOR
-_NO_MEASURE ()
-{
-    _MEASURE=0
-    "$@"
-}
 _EDITOR ()
 {
     _MEASURE=0

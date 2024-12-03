@@ -59,20 +59,34 @@ Different folders have their own icons, being in a git folder shows the construc
 
 Timing statistics
 =================
+
+By default, commands are measured and will emit a popup notification and audible beep if they take longer than 30 seconds.
+
+
+This is useful for starting a long-running task, and then reading up on another subject, or drinking a coffee until the computer notifies that the task is complete.
+
+
+
 ![Long running command finished with statistics, and popup visible](images/timing.png)
-
-By default, long-running commands (> 30s) are measured and will emit a popup notification and audible beep when finished.
-
 
 Defining icons, statistics, and priorities
 ==========================================
-Commands can be categorized as two kinds: interactive and batch-commands.
+
+To configure app icons, and wether to emit a notification or not, we need to define what "kind" of category a command is:
+
+* interactive command - reponsive to user input, no notification when ended.
+* batch command - user input is either not possible or not frequent, can be long-running and thus a notification is needed when ending.
 
 Interactive commands
 --------------------
 This is a type of command that should be responsive for user input.
+
+
+
 Interactive commands should have a high priority in order for the system to appear responsive to the user.
-It is of no interest how long such a command has been running since often the user themselves orders the command to exit.
+
+
+It is of little interest how long such a command has been running since often the user themselves stops the command.
 
 * no measurement of running time.
 * no notification when exiting.
@@ -95,8 +109,6 @@ This is a command that consumes lots of CPU resources.
 A batch command is run with low priority since it would otherwise make the system unresponsive.
 
 
-It is very useful to know when the command exits.
-
 * measurement of time is important, so artifacts can be used for next task.
 * notification so user can focus on other task until batch process is complete.
 * low priority, user interactivity is more important than a batch process.
@@ -111,7 +123,10 @@ batch_command ⚒️  make
 
 Predefined list of commands
 ---------------------------
-For simplicity, a default list of commands and icons are defined in commands.sh .
+For simplicity, a default list of commands and icons are defined in default_commands.sh.
+
+
+The commands can be overridden by re-defining them in ~/.bashrc
 
 
 Supported shells
