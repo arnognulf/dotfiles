@@ -1,11 +1,17 @@
 #!/bin/bash
+{
+_dotfiles_main ()
+{
+# if shell is started on a network drive, startup will be very slow
+# change to a presumed fast local drive, and then change back at the end
+# of bashrc
+local ORIG_PATH
+ORIG_PATH="$PWD"
+\cd "/tmp"
 if [[ $TERM = dumb ]]
 then
 stty iuclc
 fi
-{
-_dotfiles_main ()
-{
 if [ -n "${TMUX}" ]
 then
 (
@@ -193,7 +199,6 @@ alias loimpress='o loimpress --norestore --view'
 alias lowriter='o lowriter --norestore --view'
 alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
-alias tar='_ICON 📼 _LOW_PRIO tar'
 alias scrcpy='_RETRY scrcpy'
 alias adb='_NO_MEASURE _ICON 🤖 _RETRY adb'
 if [ -n "$WAYLAND_DISPLAY" ]
@@ -281,10 +286,6 @@ else
 _ICON ♻️  _LOW_PRIO $(type -P fclones) "$@"
 fi
 }
-_LOW_PRIO ()
-{
-chrt -i 0 "$@"
-}
 _REPO ()
 {
     if [ -z "$SSH_AUTH_SOCK" ]
@@ -294,7 +295,7 @@ _REPO ()
     fi
 	\repo "$@"
 }
-alias repo="_ICON 🪣 _LOW_PRIO repo"
+alias repo="_ICON 🪣 _REPO"
 
 export LESS='-Q -R'
 alias gl="LESS='-Q -R --pattern ^(commit|diff)' git log -p"
@@ -323,6 +324,9 @@ _LS_HIDDEN ()
 {
 case "${PWD}" in
 ${HOME}/Network/*|/run/user/*/gvfs/*|/mnt/*|/media/*)
+# do not print colors on network drives
+# this is faster since `ls(1)` do not need to run statx(2) or getdents64(2)
+# on listed files
 _MOAR ls -C "$@"
 ;;
 *)
@@ -800,6 +804,9 @@ rm -f "~/.cache/logs/${TTY//\//_}"
 background_startup_tasks &
 )
 unset -f _dotfiles_main
+
+# change back to startup path
+\cd "${ORIG_PATH}"
 }
 } &>/dev/null
 

@@ -41,6 +41,44 @@ fi
 
 . "${_MONORAIL_DIR}"/gradient/gradient.sh
 
+# avoid opening /dev/null for stdout/stderr for each call to 'type -P'
+# this improves startup time
+{
+# chrt(1) sets lowest priority on Linux and FreeBSD
+if type -P chrt
+then
+_LOW_PRIO ()
+{
+    chrt -i 0 "$@"
+}
+else
+# nice(1) is a fallback with higher priority than chrt can achieve
+_LOW_PRIO ()
+{
+    nice -n19 "$@"
+}
+fi
+_INTERACTIVE_COMMAND ()
+{
+# Disable nonsensical error from shellcheck:
+#In prompt.sh line 68:
+# type -P "${2}" && alias "${2}=_ICON ${1} _LOW_PRIO ${2}"
+#                          ^--^ SC2139 (warning): This expands when defined, not when used. Consider escaping.
+#
+#shellcheck disable=SC2139
+type -P "${2}" && alias "${2}=_ICON ${1} ${2}"
+}
+_BATCH_COMMAND ()
+{
+#shellcheck disable=SC2139
+type -P "${2}" && alias "${2}=_ICON ${1} _LOW_PRIO ${2}"
+}
+alias interactive_command=_INTERACTIVE_COMMAND
+alias batch_command=_BATCH_COMMAND
+. "${_MONORAIL_DIR}"/default_commands.sh
+}
+#&>/dev/null
+
 # vendored from https://github.com/rcaloras/bash-preexec (8926de0)
 . "${_MONORAIL_DIR}"/bash-preexec/bash-preexec.sh
 
@@ -386,8 +424,6 @@ _PROMPT() {
 	ESC=$(\printf '\e')
 	local CR
 	CR=$(\printf '\r')
-	local BEL
-	BEL=$(\printf '\a')
 
 	if [[ $ZSH_NAME ]]; then
 		local PREHIDE='%{'

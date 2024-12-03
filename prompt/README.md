@@ -1,9 +1,10 @@
 🚝 Monorail Prompt
 ==================
 
+Monorail is a simple and beautiful shell prompt with customizable gradient colors.
+
 ![Terminal showing four different gradient colored prompts loaded.](images/screenshot.png)
 
-Monorail is a simple and beautiful shell prompt with customizable gradient colors.
 
 Install
 =======
@@ -56,24 +57,62 @@ Use an emoji in the title as a favicon so the context of the terminal tab can be
 
 Different folders have their own icons, being in a git folder shows the construction icon for instance.
 
-
-Icons can be added to apps with aliases:
-
-```
-alias vim="_ICON 📝 vim"
-```
-
 Timing statistics
 =================
 ![Long running command finished with statistics, and popup visible](images/timing.png)
 
 By default, long-running commands (> 30s) are measured and will emit a popup notification and audible beep when finished.
 
-To disable statistics for a command, create an alias with the `_NO_MEASURE` function as follows:
+
+Defining icons, statistics, and priorities
+==========================================
+Commands can be categorized as two kinds: interactive and batch-commands.
+
+Interactive commands
+--------------------
+This is a type of command that should be responsive for user input.
+Interactive commands should have a high priority in order for the system to appear responsive to the user.
+It is of no interest how long such a command has been running since often the user themselves orders the command to exit.
+
+* no measurement of running time.
+* no notification when exiting.
+* high priority, important for a responsive system.
+* examples: text editors, media players, and debuggers.
+
+
+Declaring an interactive process:
 
 ```
-alias top='_NO_MEASURE _ICON 📈 top'
+interactive_command 📝 vim
 ```
+
+Batch commands
+--------------
+This is a command that consumes lots of CPU resources.
+
+
+
+A batch command is run with low priority since it would otherwise make the system unresponsive.
+
+
+It is very useful to know when the command exits.
+
+* measurement of time is important, so artifacts can be used for next task.
+* notification so user can focus on other task until batch process is complete.
+* low priority, user interactivity is more important than a batch process.
+* examples: compilation tools, encoding of video, and text search utilities such as grep and find.
+
+
+Declaring a batch command:
+
+```
+batch_command ⚒️  make
+```
+
+Predefined list of commands
+---------------------------
+For simplicity, a default list of commands and icons are defined in commands.sh .
+
 
 Supported shells
 ================
@@ -108,9 +147,6 @@ How to calculate color contrast: https://www.leserlich.info/werkzeuge/kontrastre
 
 
 bash-preexec which enables timing statistics: https://github.com/rcaloras/bash-preexec
-
-
-https://github.com/termstandard/colors
 
 
 StackExchange discussion on how to differentiate if user pressed ENTER or entered a command: https://unix.stackexchange.com/questions/226909/tell-if-last-command-was-empty-in-prompt-command
