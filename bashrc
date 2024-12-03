@@ -183,7 +183,26 @@ alias ksh='_ICON 🐚 _LOG ksh'
 alias sh='_ICON 🐚 _LOG sh'
 alias cat="_ICON 🐱 _MOAR cat"
 alias delta='_ICON Δ _LOW_PRIO delta --light'
-alias cp='_ICON 💽 _LOW_PRIO cp --reflink=auto'
+_DONT_COPY_THAT_FLOPPY ()
+{
+_ICON 💽 
+if [ "${#@}" = 2 ]
+then
+if [[ -d "${2}" ]]
+then
+DEST=${2}/$(basename "${1}")
+else
+DEST=${2}
+fi
+(
+set -o noclobber
+chrt -i 0 pv "${1}" > "${DEST}"
+)
+else
+chrt -i 0 cp --reflink=auto "$@"
+fi
+}
+alias cp='_DONT_COPY_THAT_FLOPPY'
 alias dd='_ICON 💽 _LOW_PRIO dd status=progress'
 alias dl=_UBER_FOR_MV
 alias octave=octave-cli
