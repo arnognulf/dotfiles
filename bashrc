@@ -110,7 +110,7 @@ export VIM=${DOTFILESDIR}/vim
 export VIMRUNTIME=${DOTFILESDIR}/vim
 BGCOLOR="FFFAF1"
 FGCOLOR="312D2A"
-. "${DOTFILESDIR}"/prompt/prompt.sh
+. "${DOTFILESDIR}"/monorail/prompt.sh
 . "${DOTFILESDIR}"/chdir-all-the-things/chdir-all-the-things.sh
 . "${DOTFILESDIR}"/can-opener/can-opener.sh
 . "${DOTFILESDIR}"/shabacus/shabacus.sh
