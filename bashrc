@@ -5,9 +5,6 @@ _dotfiles_main ()
 # if shell is started on a network drive, startup will be very slow
 # change to a presumed fast local drive, and then change back at the end
 # of bashrc
-local ORIG_PATH
-ORIG_PATH="$PWD"
-\cd "/tmp"
 if [[ $TERM = dumb ]]
 then
 stty iuclc
@@ -177,6 +174,8 @@ alias snapcraft='_ICON 🛠️ _LOG snapcraft --verbose'
 alias ninja='_ICON 🛠️ _LOG ninja'
 alias make='_ICON 🛠️ _LOG make -j$(nproc)'
 alias bitbake='_ICON 🛠️ _LOG bitbake'
+alias just='_ICON 🛠️ _LOG just'
+alias jhbuild='_ICON 🛠️ _LOG jhbuild'
 alias bash='_ICON 🐚 _LOG bash'
 alias zsh='_ICON 🐚 _LOG zsh'
 alias ksh='_ICON 🐚 _LOG ksh'
@@ -801,6 +800,7 @@ kill_tracker ()
 # faster
 background_startup_tasks ()
 {
+mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo
 update_recent
 ignore_chrome_crash
 kill_tracker
@@ -818,9 +818,6 @@ rm -f "~/.cache/logs/${TTY//\//_}"
 background_startup_tasks &
 )
 unset -f _dotfiles_main
-
-# change back to startup path
-\cd "${ORIG_PATH}"
 }
 } &>/dev/null
 

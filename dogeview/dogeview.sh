@@ -175,7 +175,7 @@ function _DOGE_DECODE_DOC
     *.org) \pandoc -s --from=org --to=man "${TEMP}";;
     *.tex) \pandoc -s --from=latex --to=man "${TEMP}";;
     *.rst) \pandoc -s --from=rst --to=man "${TEMP}";;
-    *screenlog.0) dos2unix -f "${TEMP}" &>/dev/null; \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' "${TEMP}";return 0;;
+    *screenlog.0|*.log) dos2unix -f "${TEMP}" &>/dev/null; \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' "${TEMP}";return 0;;
     *.man) \cat "${1}";;
     *.asciidoc|*.adoc|*.asc) pandoc -s --from=asciidoc --to=man "${TEMP}";;
     esac > "${TEMP}.man" #end case1
@@ -296,7 +296,7 @@ function _DOGE_DECODE
             ;;
             *" "application/octet-stream)
             case "${FILE,,}" in
-            *screenlog.0) dos2unix -f "${TEMP}" &>/dev/null; \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' "${TEMP}";return 0;;
+            *screenlog.0|*.log) dos2unix -f "${TEMP}" &>/dev/null; \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' "${TEMP}";return 0;;
             *.wri|*.dtb)
             _DOGE_DECODE_DOC "${FILE}";;
             *.dlt)
