@@ -144,7 +144,6 @@ return ${RETURN_VALUE}
 # chdir(2) ALL THE THINGS
 function _CHDIR_ALL_THE_THINGS () 
 { 
-    local _SOURCED=1
     local _KEEP
     if [ "$1" = '-k' ] || [ "$1" = '--keep' ]
     then
@@ -314,7 +313,7 @@ function _CHDIR_ALL_THE_THINGS ()
         case "${LAST_ENTRY,,}" in 
             *.tar)
                 7z x -pDUMMY_PASSWORD -y "${LAST_ENTRY}" &> /dev/null || 7z x -y "${LAST_ENTRY}";
-                _SOURCED="" rm -f "${LAST_ENTRY}" &> /dev/null
+                rm -f "${LAST_ENTRY}" &> /dev/null
             ;;
         esac;
         local COUNT=0;

@@ -93,7 +93,6 @@ fi
 TTY=$(tty)
 export HISTSIZE=100000                   # big big history
 export HISTFILESIZE=100000               # big big history
-_SOURCED=1
 shopt -s globstar
 export BAT_THEME=GitHub
 
@@ -289,9 +288,9 @@ fi
 done
 }
 alias timer=_TIMER
-fclones ()
+_FCLONES ()
 {
-[ -z "$(type -P fclones)" ] && { _NO; return 255;}
+[ -z "$(type -P fclones)" ] && _NO
 if [ -z "$1" ]
 then
 _ICON ♻️  _LOW_PRIO $(type -P fclones) group "$PWD" | _LOW_PRIO $(type -P fclones) dedupe
@@ -299,6 +298,7 @@ else
 _ICON ♻️  _LOW_PRIO $(type -P fclones) "$@"
 fi
 }
+alias fclones=_FCLONES
 _REPO ()
 {
     if [ -z "$SSH_AUTH_SOCK" ]
@@ -358,7 +358,7 @@ esac
 
 _BRANCHY_MCBRANCHFACE ()
 {
-\git rev-parse --show-toplevel &>/dev/null || { _NO; return 1;}
+\git rev-parse --show-toplevel &>/dev/null || _NO
 _TITLE "🐙  Branchy McBranchFace"
 BRANCH=$({ \git branch -a|\cut -c3-1024; \git reflog;}|fzf --no-mouse)||return 1
 \git checkout ${BRANCH%% *}
@@ -549,6 +549,7 @@ alias retry=_RETRY
 _NO ()
 {
     \printf "\r\e[JCOMPUTER SAYS NO\n" >&2 | \tee >/dev/null
+    return 255
 }
 
 # loop is an xscreensaver module 
@@ -601,17 +602,8 @@ jetzt ()
     return 255
 }
 
-reboot ()
-{
-    _NO
-    return 255
-}
-
-shutdown ()
-{
-    _NO
-    return 255
-}
+alias reboot=_NO
+alias shutdown=_NO
 
 /sbin/shutdown ()
 {
@@ -744,7 +736,6 @@ _STACKTRACE () {
    done
 }
 . ~/.bashrc.local
-unset _SOURCED
 bind 'set completion-ignore-case on'
 bind 'set bell-style none'
 #https://stackoverflow.com/questions/6250698/how-to-decode-url-encoded-string-in-shell

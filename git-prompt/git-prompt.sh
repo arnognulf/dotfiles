@@ -297,7 +297,6 @@ __git_eread ()
 # In this mode you can request colored hints using GIT_PS1_SHOWCOLORHINTS=true
 __git_ps1 ()
 {
-	local _SOURCED=1
 	# preserve exit status
 	local exit=$?
 	local pcmode=no

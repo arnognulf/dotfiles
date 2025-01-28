@@ -25,12 +25,6 @@
 
 function _ERMAHGERD
 {
-    if [ -n "${_SOURCED}" ]
-    then
-        \rm "$@"
-        return $?
-    fi
-
     local RMDIR
     local RMFORCE
     local ARG

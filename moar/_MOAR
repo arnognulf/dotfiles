@@ -28,239 +28,214 @@
 # * Pipes are not affected by moar (except for conversion)
 # * Moar-ified commands can be disabled by prepending backslash: '\' : eg. \grep
 
+_MOAR() {
+	if [ "${#@}" = 0 ]; then yes 'MOAR!'; fi
+	command rm -rf /tmp/.MOAR* &>/dev/null
+	local PIPEFAIL_ENABLED
+	if set -o | command egrep -q "pipefail(.*)off"; then
+		set -o pipefail
+		PIPEFAIL_ENABLED=0
+	else
+		PIPEFAIL_ENABLED=1
+	fi
 
-_MOAR ()
-{
-    if [ "${#@}" = 0 ]; then yes 'MOAR!';fi
-    command rm -rf /tmp/.MOAR* &>/dev/null
-    local PIPEFAIL_ENABLED
-    if set -o|command egrep -q "pipefail(.*)off"
-    then
-        set -o pipefail
-        PIPEFAIL_ENABLED=0
-    else
-        PIPEFAIL_ENABLED=1
-    fi
+	local RETURN
+	local _MOAR_STDERR_FILE=/tmp/.MOAR_STDERR."${RANDOM}"
+	_MEASURE=0
+	if [ -t 1 ]; then
+		local _MOAR_STDOUT=1
+	else
+		local _MOAR_STDOUT=0
+	fi
+	case "${1}" in
+	ls)
+		local CMD="$1"
+		shift
+		if [ "${_MOAR_STDOUT}" = 1 ]; then
+			command "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			RETURN=$?
+		else
+			exec -a "$1" "${CMD}" "$@"
+			RETURN=$?
+		fi
+		;;
+	*grep)
+		local CMD="$1"
+		shift
+		if [ "${_MOAR_STDOUT}" = 1 ]; then
+			command chrt -i 0 "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			RETURN=$?
+		else
+			exec -a "$1" chrt -i 0 "${CMD}" "$@"
+			RETURN=$?
+		fi
+		;;
+	tail)
+		if [ "${_MOAR_STDOUT}" = 1 ]; then
+			if [ "$1" = "-f" ]; then
+				shift 2
+				command less -d -Q -R -X -F -S +F "$@"
+				RETURN=$?
+			else
+				exec -a "$1" chrt -i 0 "$@" | less -d -Q -R -X -F -S
+			fi
+		else
+			command chrt -i 0 "$@"
+			RETURN=$?
+		fi
+		;;
+	snap)
+		case "${2}" in
+		search | list)
+			if [ "${_MOAR_STDOUT}" = 1 ]; then
+				command chrt -i 0 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} | tail -n +2 | command less -d -Q -R -X -F -S
+				RETURN=$?
+			else
+				exec -a "$1" chrt -i 0 "$@"
+				RETURN=$?
+			fi
+			;;
+		*)
+			exec -a "$1" chrt -i 0 "$@"
+			RETURN=$?
+			;;
+		esac
+		;;
+	apt)
+		case "${2}" in
+		list)
+			if [ "${_MOAR_STDOUT}" = 1 ]; then
+				command chrt -i 0 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} | tail -n +2 | command less -d -Q -R -X -F -S
+				RETURN=$?
+			else
+				exec -a "$1" chrt -i 0 "$@"
+				RETURN=$?
+			fi
+			;;
+		search)
+			if [ "${_MOAR_STDOUT}" = 1 ]; then
+				command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				RETURN=$?
+			else
+				exec -a "$1" chrt -i 0 "$@"
+				RETURN=$?
+			fi
+			;;
+		*)
+			exec -a "$1" chrt -i 0 "$@"
+			RETURN=$?
+			;;
+		esac
+		;;
+	*git)
+		case "$2" in
+		log | reflog | status | remote | branch | diff)
+			shift
+			if [ "${_MOAR_STDOUT}" = 1 ]; then
+				command git -c color.ui=always "${@}" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				RETURN=$?
+			else
+				command git -c color.ui=never "${@}"
+				RETURN=$?
+			fi
+			;;
+		*)
+			exec -a "$1" chrt -i 0 "$@"
+			RETURN=$?
+			;;
+		esac
+		;;
+	less | more)
+		if [ "${_MOAR_STDOUT}" = 1 ]; then
+			command chrt -i 0 "$@"
+			RETURN=$?
+		else
+			shift
+			exec -a "$1" chrt -i 0 cat "${@}"
+			RETURN=$?
+		fi
+		;;
+	find | od | hexdump)
+		if [ "${_MOAR_STDOUT}" = 1 ]; then
+			command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			RETURN=$?
+		else
+			exec -a "$1" chrt -i 0 "$@"
+			RETURN=$?
+		fi
+		;;
+	declare)
+		if [ "${_MOAR_STDOUT}" = 1 ]; then
+			command "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			RETURN=$?
+		else
+			exec -a "$1" "$@"
+			RETURN=$?
+		fi
+		;;
 
-    local RETURN
-    local _MOAR_STDERR_FILE=/tmp/.MOAR_STDERR."${RANDOM}"
-    _MEASURE=0
-    if [ -z "${_SOURCED}" ]
-    then
-    if [ -t 1 ]
-    then
-        local _MOAR_STDOUT=1 
-    else
-        local _MOAR_STDOUT=0 
-    fi
-    case "${1}" in
-        ls)
-        local CMD="$1"
-        shift
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
-            RETURN=$?
-        else
-            exec -a "$1" "${CMD}" "$@"
-            RETURN=$?
-        fi
-        ;;
-        *grep)
-        local CMD="$1"
-        shift
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command chrt -i 0 "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
-            RETURN=$?
-        else
-            exec -a "$1" chrt -i 0 "${CMD}" "$@"
-            RETURN=$?
-        fi
-        ;;
-        tail)
-            if [ "${_MOAR_STDOUT}" = 1 ]
-            then
-                if [ "$1" = "-f" ]
-                then
-                    shift 2
-                    command less -d -Q -R -X -F -S +F "$@"
-                    RETURN=$?
-                else
-                    exec -a "$1" chrt -i 0 "$@" | less -d -Q -R -X -F -S 
-                fi
-            else
-                command chrt -i 0 "$@"
-                RETURN=$?
-            fi
-        ;;
-        snap)
-        case "${2}" in
-        search|list)
-            if [ "${_MOAR_STDOUT}" = 1 ]
-            then
-                command chrt -i 0 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} |tail -n +2| command less -d -Q -R -X -F -S
-                RETURN=$?
-            else
-                exec -a "$1" chrt -i 0 "$@"
-                RETURN=$?
-            fi
-            ;;
-        *)
-            exec -a "$1" chrt -i 0 "$@"
-            RETURN=$?
-        esac
-        ;;
-        apt)
-        case "${2}" in
-        list)
-            if [ "${_MOAR_STDOUT}" = 1 ]
-            then
-                command chrt -i 0 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} |tail -n +2| command less -d -Q -R -X -F -S
-                RETURN=$?
-            else
-                exec -a "$1" chrt -i 0 "$@"
-                RETURN=$?
-            fi
-        ;;
-        search)
-            if [ "${_MOAR_STDOUT}" = 1 ]
-            then
-                command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
-                RETURN=$?
-            else
-                exec -a "$1" chrt -i 0 "$@"
-                RETURN=$?
-            fi
-        ;;
-        *)
-            exec -a "$1" chrt -i 0 "$@"
-            RETURN=$?
-        esac
-        ;;
-        *git)
-        case "$2" in
-        log|reflog|status|remote|branch|diff)
-        shift
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command git -c color.ui=always "${@}"  2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
-            RETURN=$?
-        else
-            command git -c color.ui=never "${@}"
-            RETURN=$?
-        fi
-        ;;
-        *)
-            exec -a "$1" chrt -i 0 "$@"
-            RETURN=$?
-        esac
-    ;;
-    less|more)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command chrt -i 0 "$@"
-            RETURN=$?
-        else
-            shift
-            exec -a "$1" chrt -i 0 cat "${@}"
-            RETURN=$?
-        fi
-        ;;
-    find|od|hexdump)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
-            RETURN=$?
-        else
-            exec -a "$1" chrt -i 0 "$@"
-            RETURN=$?
-        fi
-    ;;
-    declare)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
-            RETURN=$?
-        else
-            exec -a "$1" "$@"
-            RETURN=$?
-        fi
-    ;;
+	rg)
+		if [ "${_MOAR_STDOUT}" = 1 ]; then
+			command chrt -i 0 "$@" --color=always 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			RETURN=$?
+		else
+			exec -a "$1" chrt -i 0 "$@" --color=never
+			RETURN=$?
+		fi
+		;;
+	systemctl)
+		if [ "${_MOAR_STDOUT}" = 1 ]; then
+			command chrt -i 0 "$@" --no-pager 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			RETURN=$?
+		else
+			exec -a "$1" chrt -i 0 "$@" --color=never
+			RETURN=$?
+		fi
+		;;
 
-    rg)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command chrt -i 0 "$@" --color=always 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
-            RETURN=$?
-        else
-            exec -a "$1" chrt -i 0 "$@" --color=never
-            RETURN=$?
-        fi
-    ;;
-    systemctl)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command chrt -i 0 "$@" --no-pager 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
-            RETURN=$?
-        else
-            exec -a "$1" chrt -i 0 "$@" --color=never
-            RETURN=$?
-        fi
-    ;;
- 
-    rga)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command chrt -i 0 "$@" --color=always 2>/dev/null | command less -d -Q -R -X -F -S
-            RETURN=$?
-        else
-            exec -a "$1" chrt -i 0 "$@" --color=never 2>/dev/null
-            RETURN=$?
-        fi
-    ;;
+	rga)
+		if [ "${_MOAR_STDOUT}" = 1 ]; then
+			command chrt -i 0 "$@" --color=always 2>/dev/null | command less -d -Q -R -X -F -S
+			RETURN=$?
+		else
+			exec -a "$1" chrt -i 0 "$@" --color=never 2>/dev/null
+			RETURN=$?
+		fi
+		;;
 
-    fd|fdfind)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command chrt -i 0 "$@" --color always 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
-            RETURN=$?
-        else
-            exec -a "$1" chrt -i 0 "$@" --color never
-            RETURN=$?
-        fi
-    ;;
-    *)
-        if [ "${_MOAR_STDOUT}" = 1 ]
-        then
-            command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
-            RETURN=$?
-        else
-            exec -a "$1" chrt -i 0 "$@"
-            RETURN=$?
-        fi
-    esac
-    if [ -s "${_MOAR_STDERR_FILE}" ]
-    then
-        local STDERR_LINES=$(wc -l "${_MOAR_STDERR_FILE}")
-        STDERR_LINES=${STDERR_LINES% *}
-        if [ ${STDERR_LINES} -gt ${LINES} ]
-        then
-            command less -d -Q -R -X -F -S "${_MOAR_STDERR_FILE}"
-        else
-            exec -a "$1" cat "${_MOAR_STDERR_FILE}"
-        fi
-        command rm ${_MOAR_STDERR_FILE}
-    fi
-else
-    command "$@"
-    RETURN=$?
-fi
-    if [ "${PIPEFAIL_ENABLED}" = 0 ]
-    then
-        set +o pipefail
-    fi
-    return ${RETURN}
+	fd | fdfind)
+		if [ "${_MOAR_STDOUT}" = 1 ]; then
+			command chrt -i 0 "$@" --color always 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			RETURN=$?
+		else
+			exec -a "$1" chrt -i 0 "$@" --color never
+			RETURN=$?
+		fi
+		;;
+	*)
+		if [ "${_MOAR_STDOUT}" = 1 ]; then
+			command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			RETURN=$?
+		else
+			exec -a "$1" chrt -i 0 "$@"
+			RETURN=$?
+		fi
+		;;
+	esac
+	if [ -s "${_MOAR_STDERR_FILE}" ]; then
+		local STDERR_LINES=$(wc -l "${_MOAR_STDERR_FILE}")
+		STDERR_LINES=${STDERR_LINES% *}
+		if [ ${STDERR_LINES} -gt ${LINES} ]; then
+			command less -d -Q -R -X -F -S "${_MOAR_STDERR_FILE}"
+		else
+			exec -a "$1" cat "${_MOAR_STDERR_FILE}"
+		fi
+		command rm ${_MOAR_STDERR_FILE}
+	fi
+	if [ "${PIPEFAIL_ENABLED}" = 0 ]; then
+		set +o pipefail
+	fi
+	return ${RETURN}
 }
 
 _MOAR "$@"

@@ -454,7 +454,6 @@ echo "${FORMATTED_RESULT}"
 
 function _SHABACUS_command_not_found ()
 {
-   _SOURCED=1
 if [ -n "${ZSH_VERSION}" ]
 then
 exec zsh -s -c "${@}"
