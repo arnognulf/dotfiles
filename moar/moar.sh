@@ -147,7 +147,7 @@ _MOAR true || PATH=$PATH:${DOTFILESDIR}/moar
 _MOAR ()
 {
 _NO_MEASURE
-if [[ "${FUNCNAME[1]}" ]] 
+if [[ "${FUNCNAME[1]}" ]]
 then
 (
 unset -f _MOAR
