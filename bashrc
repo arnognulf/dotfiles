@@ -631,8 +631,7 @@ will not overwrite destination
 				script -a -q -e -c "bash \"${TEMP}\"" "${LOG}"
 				local RETURN=$?
 				{
-					\sed -i -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' "${LOG}"
-					\dos2unix -f "${LOG}"
+					\sed -i -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' -e "s/$'\x0d'/\n/g" -e "s/$'\x0a'$'\x0a'/\n/g" "${LOG}"
 					/bin/rm -f "${TEMP}"
 				} &>/dev/null
 				return ${RETURN}
