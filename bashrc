@@ -114,6 +114,13 @@ EOF
 		. "${DOTFILESDIR}"/zipit/zipit.sh
 		. "${DOTFILESDIR}"/dogeview/dogeview.sh
 
+        if _PROMPT_DUMB_TERMINAL
+        then
+            _BASHRC_COLOR=never
+        else
+            _BASHRC_COLOR=always
+        fi
+
 		if type -P nvim; then
 			EDITOR="nvim"
 			alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
@@ -250,7 +257,7 @@ EOF
 		type -P fdfind && alias fdfind='_ICON 🔎 _MOAR fdfind -H -I'
 		type -P fdfind && alias fd='_ICON 🔎 _MOAR fdfind -H -I'
 		alias find='_ICON 🔎 _MOAR find'
-		alias rga='_ICON 🔎 _MOAR rga --color=always'
+		alias rga="_ICON 🔎 _MOAR rga --color=$_BASHRC_COLOR"
 		alias rg='_ICON 🔎 _MOAR rg'
 		alias strace='_ICON 👣 _LOG strace'
 		alias top='_NO_MEASURE _ICON 📈 top'
@@ -342,7 +349,7 @@ EOF
 						hide+=("--hide=${line}")
 					done <.hidden
 				fi
-				_MOAR ls "${hide[@]}" --color=always "$@"
+				_MOAR ls "${hide[@]}" --color=$_BASHRC_COLOR "$@"
 				;;
 			esac
 		}
@@ -364,7 +371,7 @@ EOF
 		}
 		alias fz=_FUZZY_FD
 
-		alias ll='\ls -al --color=always'
+		alias ll="\ls -al --color=${_BASHRC_COLOR}"
 		alias l='_LS_HIDDEN -v -C'
 		alias ls='_LS_HIDDEN -v -C'
 		alias sl=ls
