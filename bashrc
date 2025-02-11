@@ -1,10 +1,7 @@
 #/bin/bash
 {
 	_dotfiles_main() {
-		# if shell is started on a network drive, startup will be very slow
-		# change to a presumed fast local drive, and then change back at the end
-		# of bashrc
-		if [[ $TERM = dumb ]]; then
+	    if [[ $TERM = dumb ]]; then
 			stty iuclc
 		fi
 		if [ -n "${TMUX}" ]; then
@@ -208,8 +205,12 @@ EOF
 					DEST=${2}
 				fi
 				(
-					set -o noclobber
-					chrt -i 0 pv "${1}" >"${DEST}"
+                    [[ -e "${1}" ]] || { echo "ERROR: source is missing"; exit 42;}
+                    [[ -e "${DEST}" ]] && { echo "ERROR: will not overwrite existing file"; exit 42;}
+                    if ! _LOW_PRIO cp --reflink=always "$1" "$DEST" 2>/dev/null
+                    then
+					    chrt -i 0 pv "${1}" >"${DEST}"
+                    fi
 				)
 			else
 				chrt -i 0 cp --reflink=auto "$@"
@@ -235,6 +236,8 @@ EOF
 		alias code-insiders='o code-insiders'
 		alias code='o code-insiders'
 		_GIT() {
+            local TERM
+            _PROMPT_DUMB_TERMINAL && export TERM=dumb
 
 			# avoid printing title if using completion
 			case "${*}" in
@@ -294,6 +297,7 @@ _NO_MEASURE
 
     ${minutes}:${seconds}"
 				if [ ${time} -le 0 ]; then
+                    clear
 					mplayer "${DOTFILESDIR}"/kitchen_timer.ogg &>/dev/null
 					printf '\033]0;⏲️  Time is up!\007Time is up! Press key to continue'
 					read -n1
@@ -305,12 +309,12 @@ _NO_MEASURE
 		_FCLONES() {
 			[ -z "$(type -P fclones)" ] && _NO
 			if [ -z "$1" ]; then
-				_ICON ♻️ _LOW_PRIO $(type -P fclones) group "$PWD" | _LOW_PRIO $(type -P fclones) dedupe
+				_LOW_PRIO $(type -P fclones) group "$PWD" | _LOW_PRIO $(type -P fclones) dedupe
 			else
-				_ICON ♻️ _LOW_PRIO $(type -P fclones) "$@"
+				_LOW_PRIO $(type -P fclones) "$@"
 			fi
 		}
-		alias fclones=_FCLONES
+		alias fclones="_ICON ♻️  _FCLONES"
 		_REPO() {
 			if [ -z "$SSH_AUTH_SOCK" ]; then
 				eval $(ssh-agent)
@@ -545,6 +549,19 @@ _NO_MEASURE
 		}
 
 		alias retry=_RETRY
+
+        _BLANK ()
+        {
+            _NO_MEASURE
+            _TITLE_RAW " "
+            printf "\033[?25l"
+            clear
+            while sleep 100000000000000000
+            do
+                true
+            done
+        }
+        alias blank=_BLANK
 
 		_NO() {
 			\printf "\r\e[JCOMPUTER SAYS NO\n" >&2 | \tee >/dev/null
