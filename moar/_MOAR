@@ -52,7 +52,11 @@ _MOAR() {
 		local CMD="$1"
 		shift
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
-			command "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			if [[ $NO_COLOR ]]; then
+				command "${CMD}" --color=no "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			else
+				command "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			fi
 			RETURN=$?
 		else
 			exec -a "$1" "${CMD}" "$@"
@@ -63,7 +67,11 @@ _MOAR() {
 		local CMD="$1"
 		shift
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
-			command chrt -i 0 "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			if [[ $NO_COLOR ]]; then
+				command chrt -i 0 "${CMD}" --color=no "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			else
+				command chrt -i 0 "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			fi
 			RETURN=$?
 		else
 			exec -a "$1" chrt -i 0 "${CMD}" "$@"
@@ -132,7 +140,11 @@ _MOAR() {
 		log | reflog | status | remote | branch | diff)
 			shift
 			if [ "${_MOAR_STDOUT}" = 1 ]; then
-				command git -c color.ui=always "${@}" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				if [[ $NO_COLOR ]]; then
+					command git -c color.ui=never "${@}" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				else
+					command git -c color.ui=always "${@}" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				fi
 				RETURN=$?
 			else
 				command git -c color.ui=never "${@}"
@@ -176,7 +188,11 @@ _MOAR() {
 
 	rg)
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
-			command chrt -i 0 "$@" --color=always 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			if [[ $NO_COLOR ]]; then
+				command chrt -i 0 "$@" --color=never 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			else
+				command chrt -i 0 "$@" --color=always 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			fi
 			RETURN=$?
 		else
 			exec -a "$1" chrt -i 0 "$@" --color=never
@@ -185,7 +201,11 @@ _MOAR() {
 		;;
 	systemctl)
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
-			command chrt -i 0 "$@" --no-pager 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			if [[ $NO_COLOR ]]; then
+				command chrt -i 0 "$@" --color=never --no-pager 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			else
+				command chrt -i 0 "$@" --no-pager 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			fi
 			RETURN=$?
 		else
 			exec -a "$1" chrt -i 0 "$@" --color=never
@@ -195,7 +215,11 @@ _MOAR() {
 
 	rga)
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
-			command chrt -i 0 "$@" --color=always 2>/dev/null | command less -d -Q -R -X -F -S
+			if [[ $NO_COLOR ]]; then
+				command chrt -i 0 "$@" --color=never 2>/dev/null | command less -d -Q -R -X -F -S
+			else
+				command chrt -i 0 "$@" --color=always 2>/dev/null | command less -d -Q -R -X -F -S
+			fi
 			RETURN=$?
 		else
 			exec -a "$1" chrt -i 0 "$@" --color=never 2>/dev/null
@@ -205,7 +229,11 @@ _MOAR() {
 
 	fd | fdfind)
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
-			command chrt -i 0 "$@" --color always 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			if [[ $NO_COLOR ]]; then
+				command chrt -i 0 "$@" --color never 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			else
+				command chrt -i 0 "$@" --color always 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			fi
 			RETURN=$?
 		else
 			exec -a "$1" chrt -i 0 "$@" --color never
@@ -223,9 +251,10 @@ _MOAR() {
 		;;
 	esac
 	if [ -s "${_MOAR_STDERR_FILE}" ]; then
-		local STDERR_LINES=$(wc -l "${_MOAR_STDERR_FILE}")
+		local STDERR_LINES
+		STDERR_LINES=$(wc -l "${_MOAR_STDERR_FILE}")
 		STDERR_LINES=${STDERR_LINES% *}
-		if [ ${STDERR_LINES} -gt ${LINES} ]; then
+		if [[ ${STDERR_LINES} -gt ${LINES} ]]; then
 			command less -d -Q -R -X -F -S "${_MOAR_STDERR_FILE}"
 		else
 			exec -a "$1" cat "${_MOAR_STDERR_FILE}"

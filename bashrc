@@ -10,7 +10,6 @@
 		if [ -n "${TMUX}" ]; then
 			(
 				setup_tmux() {
-					export LC_ALL=C
 					tmux set -g status off
 					tmux set-option -g set-titles-string "#T"
 					tmux set-option -g set-titles on
@@ -46,7 +45,7 @@ bind-key p paste-buffer
 set -g status off
 EOF
 
-			LC_ALL=${OLD_LC_ALL} tmux -L ${NUM} attach-session || LC_ALL=${OLD_LC_ALL} tmux -L ${NUM}
+			LC_ALL=${ORIG_LC_ALL} tmux -L ${NUM} attach-session || LC_ALL=${ORIGF_LC_ALL} tmux -L ${NUM}
 			sleep 30
 			clear
 			\printf "\e7\n"
@@ -114,11 +113,19 @@ EOF
 		. "${DOTFILESDIR}"/zipit/zipit.sh
 		. "${DOTFILESDIR}"/dogeview/dogeview.sh
 
+        _DOTFILES_COLOR ()
+        {
+        if [[ $NO_COLOR = 1 ]]
+        then
+            \echo "never"
+        else
+            \echo "always"
+        fi
+        }
+
         if _PROMPT_DUMB_TERMINAL
         then
-            _BASHRC_COLOR=never
-        else
-            _BASHRC_COLOR=always
+            NO_COLOR=1
         fi
 
 		if type -P nvim; then
@@ -193,7 +200,7 @@ EOF
 		alias cat="_ICON 🐱 _MOAR cat"
 		alias delta='_ICON Δ _LOW_PRIO delta --light'
 		_DONT_COPY_THAT_FLOPPY() {
-			_ICON 💽
+			
 			if [ "${#@}" = 2 ]; then
 				if [[ -d "${2}" ]]; then
 					DEST=${2}/$(basename "${1}")
@@ -208,7 +215,7 @@ EOF
 				chrt -i 0 cp --reflink=auto "$@"
 			fi
 		}
-		alias cp='_DONT_COPY_THAT_FLOPPY'
+		alias cp='_ICON 💽 _DONT_COPY_THAT_FLOPPY'
 		alias dd='_ICON 💽 _LOW_PRIO dd status=progress'
 		alias dl=_UBER_FOR_MV
 		alias octave=octave-cli
@@ -228,6 +235,7 @@ EOF
 		alias code-insiders='o code-insiders'
 		alias code='o code-insiders'
 		_GIT() {
+
 			# avoid printing title if using completion
 			case "${*}" in
 			*'--git-dir='*) : ;;
@@ -245,7 +253,8 @@ EOF
 				;;
 			*)
 				_MEASURE=0
-				_MOAR git "$@"
+
+                _MOAR git "$@"
 				;;
 			esac
 		}
@@ -257,7 +266,7 @@ EOF
 		type -P fdfind && alias fdfind='_ICON 🔎 _MOAR fdfind -H -I'
 		type -P fdfind && alias fd='_ICON 🔎 _MOAR fdfind -H -I'
 		alias find='_ICON 🔎 _MOAR find'
-		alias rga="_ICON 🔎 _MOAR rga --color=$_BASHRC_COLOR"
+		alias rga="_ICON 🔎 _MOAR rga --color=$(_DOTFILES_COLOR)"
 		alias rg='_ICON 🔎 _MOAR rg'
 		alias strace='_ICON 👣 _LOG strace'
 		alias top='_NO_MEASURE _ICON 📈 top'
@@ -267,10 +276,11 @@ EOF
 		alias rm='_ICON ♻️  _ERMAHGERD'
 		alias trash='_ICON ♻️  gio trash'
 		alias jdupes='_ICON ♻️  jdupes --dedupe -R'
-		alias hog='~/.config/dotfiles/hog/hog.sh'
+		alias hog="${DOTFILESDIR}"/hog/hog.sh
 		alias g="_ICON 🔎 egrep"
 		alias gv="_ICON 🔎 grep -v"
 		_TIMER() {
+_NO_MEASURE
 			local time=$(($1 * 60))
 			while sleep 1; do
 				let time--
@@ -349,7 +359,7 @@ EOF
 						hide+=("--hide=${line}")
 					done <.hidden
 				fi
-				_MOAR ls "${hide[@]}" --color=$_BASHRC_COLOR "$@"
+				_MOAR ls "${hide[@]}" --color=$(_DOTFILES_COLOR) "$@"
 				;;
 			esac
 		}
@@ -371,7 +381,7 @@ EOF
 		}
 		alias fz=_FUZZY_FD
 
-		alias ll="\ls -al --color=${_BASHRC_COLOR}"
+		alias ll="\ls -al --color=$(_DOTFILES_COLOR)"
 		alias l='_LS_HIDDEN -v -C'
 		alias ls='_LS_HIDDEN -v -C'
 		alias sl=ls
@@ -771,28 +781,27 @@ will not overwrite destination
 	}
 } &>/dev/null
 
-OLD_LC_ALL=${LC_ALL}
 # Avoid starting dotfiles if login shell. unless...
 [[ ${PS1} ]] && if ! shopt -q login_shell; then
 	# print startup statistics
 	if [ -f ~/.bashrc.statistics ]; then
-		time LC_ALL=C _dotfiles_main &>/dev/null
+		time ORIG_LC_MESSAGES="$LC_MESSAGES" ORIG_LC_ALL="$LC_ALL" LC_MESSAGES=C LC_ALL=C _dotfiles_main &>/dev/null
 	# enable debugging
 	elif [ -f ~/.bashrc.debug ]; then
 		set -x
 		export PS4='+ $EPOCHREALTIME ($LINENO) '
-		LC_ALL=C _dotfiles_main
+		ORIG_LC_MESSAGES="$LC_MESSAGES" ORIG_LC_ALL="$LC_ALL" LC_MESSAGES=C LC_ALL=C _dotfiles_main
 		unset PS4
 	else
 		# normal case
 		# most programs run faster if not needing to parse UTF-8
 		# by only redirecting stdout and stderr to /dev/null once we get significant
 		# startup speedup
-		LC_ALL=C _dotfiles_main &>/dev/null
+		ORIG_LC_MESSAGES="$LC_MESSAGES" ORIG_LC_ALL="$LC_ALL" LC_MESSAGES=C LC_ALL=C _dotfiles_main &>/dev/null
 	fi
 # if linux/bsd console, start dotfiles function anyway
 elif [ -z "${DISPLAY}${WAYLAND_DISPLAY}" ]; then
-	LC_ALL=C _dotfiles_main &>/dev/null
+	ORIG_LC_MESSAGES="$LC_MESSAGES" ORIG_LC_ALL="$LC_ALL" LC_MESSAGES=C LC_ALL=C _dotfiles_main &>/dev/null
 else
 	unset OLD_LC_ALL
 fi
