@@ -439,6 +439,7 @@ _NO_MEASURE
 		alias chrome=_CHROME-POLISHER
 		alias dos="bash ${DOTFILESDIR}/dos/sh-dos.sh"
 		alias sudo="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\";_ICON ⚠️  _LOG sudo"
+		alias su="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\";_ICON ⚠️  _LOG su"
 		_SCP() {
 			local ARG
 			local SERVER
