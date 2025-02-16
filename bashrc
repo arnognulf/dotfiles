@@ -1,7 +1,7 @@
 #/bin/bash
 {
 	_dotfiles_main() {
-	    if [[ $TERM = dumb ]]; then
+	    if [[ $TERM = dumb ]] || [[ $TERM = vt50 ]]; then
 			stty iuclc
 		fi
 		if [ -n "${TMUX}" ]; then
@@ -120,7 +120,7 @@ EOF
         fi
         }
 
-        if _PROMPT_DUMB_TERMINAL
+        if _MONORAIL_DUMB_TERMINAL
         then
             NO_COLOR=1
         fi
@@ -237,7 +237,7 @@ EOF
 		alias code='o code-insiders'
 		_GIT() {
             local TERM
-            _PROMPT_DUMB_TERMINAL && export TERM=dumb
+            _MONORAIL_DUMB_TERMINAL && export TERM=dumb
 
 			# avoid printing title if using completion
 			case "${*}" in
