@@ -97,7 +97,7 @@ EOF
 		export VIMRUNTIME=${DOTFILESDIR}/vim
 		BGCOLOR="FFFAF1"
 		FGCOLOR="312D2A"
-		. "${DOTFILESDIR}"/monorail/prompt.sh
+		. "${DOTFILESDIR}"/monorail/monorail.sh
 		. "${DOTFILESDIR}"/chdir-all-the-things/chdir-all-the-things.sh
 		. "${DOTFILESDIR}"/can-opener/can-opener.sh
 		. "${DOTFILESDIR}"/shabacus/shabacus.sh
