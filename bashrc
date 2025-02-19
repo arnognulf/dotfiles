@@ -218,7 +218,7 @@ EOF
 		}
 		alias cp='_ICON 💽 _DONT_COPY_THAT_FLOPPY'
 		alias dd='_ICON 💽 _LOW_PRIO dd status=progress'
-		alias dl=_UBER_FOR_MV
+		alias dl=${DOTFILESDIR}/uber-for-mv/dl.sh
 		alias octave=octave-cli
 		alias excel='o localc --norestore --view'
 		alias word='o lowriter --norestore --view'
@@ -638,7 +638,7 @@ will not overwrite destination
 			local LAST_ITEM
 			local SECOND_LAST_ITEM
 			for FILE in "$@"; do
-				if [[ -e "${FILE}" ]]; then
+				if [[ -f "${FILE}" ]]; then
 					SECOND_LAST_ITEM="${LAST_ITEM}"
 				fi
 				LAST_ITEM="${FILE}"
