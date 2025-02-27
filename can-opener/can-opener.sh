@@ -29,18 +29,12 @@
 # 
 # most known graphical programs will be Can Opened.
 #
-# TODO: pandoc --standalone -c ./github-markdown.css -f gfm -t html README.md >README.md.html
 
 function _CAN_OPENER_ALL ()
 {
     local FILE
     local MIME
-    while [ "${#@}" -gt 1 ]
-    do
-        shift
-    done
-    for FILE in "$@"
-    do
+    FILE=$(_LATEST "$@")
         (
             if [ -h "${FILE}" ]
             then
@@ -78,7 +72,6 @@ function _CAN_OPENER_ALL ()
             esac
             esac
         )
-    done
 }
 function _CAN_OPENER ()
 {

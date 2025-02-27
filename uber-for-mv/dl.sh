@@ -20,54 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# move the latest downloaded file to the current directory with the 'm' command.
-_SPINNER_START() {
-	kill -9 "${_SPINNER_PID}" &>/dev/null
-	unset _SPINNER_PID
-	_SPINNER_PID_FILE=$(mktemp)
-	(
-		SPINNER() {
-			{
-				\echo $! >"${_SPINNER_PID_FILE}"
-				\printf "\\e[?25l"
-				while sleep 0.04 && [ -f "${_SPINNER_PID_FILE}" ]; do
-					\printf "\\r\\e[J"
-					sleep 0.04
-					[ -f "${_SPINNER_PID_FILE}" ] && \printf "\\r\\e[J  ."
-					sleep 0.04
-					[ -f "${_SPINNER_PID_FILE}" ] && \printf "\\r\\e[J .."
-					sleep 0.04
-					[ -f "${_SPINNER_PID_FILE}" ] && \printf "\\r\\e[J..."
-					sleep 0.04
-					[ -f "${_SPINNER_PID_FILE}" ] && \printf "\\r\\e[J.. "
-					sleep 0.04
-					[ -f "${_SPINNER_PID_FILE}" ] && \printf "\\r\\e[J.  "
-				done
-			} >&2 | tee 2>/dev/null
-		}
-		SPINNER &
-	)
-	while [[ -n ${_SPINNER_PID} ]]; do
-		sleep 0.1
-		read _SPINNER_PID <_SPINNER_PID_FILE
-	done
-}
-
-_SPINNER_STOP() {
-	{
-		/bin/rm -f "${_SPINNER_PID_FILE}"
-		kill -9 "${_SPINNER_PID}"
-		unset _SPINNER_PID_FILE _SPINNER_PID
-	} &>/dev/null
-	\printf "\\r\\e[J" >&2 | tee 2>/dev/null
-}
-
-_UBER_FOR_MV() {
-	if [[ "$1" ]]; then
-		DIR="$1"
-	else
-		DIR="$(xdg-user-dir DOWNLOAD)"
-	fi
+main() {
+    DIR="$1"
 	while true; do
 		local NEWEST_FILE
 		local FILE
@@ -100,8 +54,11 @@ _UBER_FOR_MV() {
 			if [[ -w "${DIR}" ]]; then
 				mv "${NEWEST_FILE}" .
 			else
-				pv "${NEWEST_FILE}" >"${NEWEST_FILE##*/}" 2>/dev/null || dd status=progress if="${NEWEST_FILE}" of="${NEWEST_FILE##*/}"
-
+                if type -P pv &>/dev/null;then
+				    pv "${NEWEST_FILE}" >"${NEWEST_FILE##*/}" 2>/dev/null 
+                else
+                    dd status=progress if="${NEWEST_FILE}" of="${NEWEST_FILE##*/}"
+                fi
 			fi
 			((COUNT++))
 			return 0
@@ -109,4 +66,4 @@ _UBER_FOR_MV() {
 		esac
 	done
 }
-_UBER_FOR_MV "$@"
+main "$@"

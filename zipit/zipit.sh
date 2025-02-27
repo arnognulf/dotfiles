@@ -6,21 +6,12 @@ function _SHOVEIT
 	return 1
     fi
     local FILE
-    for FILE in "$@"
-    do
-        :
-    done
-
+    FILE=$(_LATEST "$@")
     if [ ! -t 1 ]
     then
         \echo "${FILE}"
     elif [ -t 0 ]
     then
-        local FILE
-        for FILE in "$@"
-        do
-            :
-        done
         case "${FILE}" in
         /*) :;; 
         *) FILE="${PWD}/${FILE}"
@@ -73,26 +64,6 @@ function _ZIPIT
     fi
 )
 
-function _XZIBIT
-(
-    FOLDER='/tmp/Yo Dawg!/'
-    \rm -rf "${FOLDER}"
-    \mkdir -p "${FOLDER}" &>/dev/null
-    UNDERSCORE_NAME="${1// /_}"
-    NAME="${UNDERSCORE_NAME##*/}"
-    [ -z "${NAME}" ] && NAME="${UNDERSCORE_NAME//\//}"
-    DEST="${FOLDER}/$(\date +%Y-%m-%d_%H-%M-%S)_${NAME}".tar.xz
-    _SPINNER_START
-    \tar -I'pixz -e' -cf "${DEST}" "$@" &>/dev/null
-    _SPINNER_STOP
-    if [ -s "${DEST}" ]
-    then
-        _SHOVEIT "${DEST}"
-    else
-        _NO
-    fi
-)
-alias x=_XZIBIT
 alias z=_ZIPIT
 alias s=_SHOVEIT
 

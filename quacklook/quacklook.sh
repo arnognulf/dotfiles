@@ -29,7 +29,7 @@
 
 
 
-function _DOGE_DECODE_DOC
+function _QUACKLOOK_DECODE_DOC
 {
 
     local BASENAME="${1##*/}"
@@ -37,7 +37,7 @@ function _DOGE_DECODE_DOC
     then
         BASENAME="${1}"
     fi
-    local TEMP="/tmp/.DOGE.${RANDOM}.${BASENAME##*.}"
+    local TEMP="/tmp/.QUACKLOOK.${RANDOM}.${BASENAME##*.}"
     if \cp -s "${PWD}/${1}" "${TEMP}" 2>/dev/null
     then
         :
@@ -46,11 +46,11 @@ function _DOGE_DECODE_DOC
     fi
 
 
-    [ "${_DOGE_STDOUT}" != 1 ] && local _DOGE_COLOROPT=-c
+    [ "${_QUACKLOOK_STDOUT}" != 1 ] && local _QUACKLOOK_COLOROPT=-c
     case "${1,,}" in
     *.markdown|*.mdown|*.mkdn|*.md) 
         \pandoc -s --from=gfm --to=man "${TEMP}" > "${TEMP}.man" 
-        \nroff ${_DOGE_COLOROPT} -man "${TEMP}.man" 2>/dev/null | \sed 's/()//g'
+        \nroff ${_QUACKLOOK_COLOROPT} -man "${TEMP}.man" 2>/dev/null | \sed 's/()//g'
         \rm -f "${TEMP}" "${TEMP}.man" "${TEMP}.docx" 
 	return 0
 ;;
@@ -58,35 +58,35 @@ function _DOGE_DECODE_DOC
     \dtc -I dtb -O dts -o - "${TEMP}" | \batcat --language c --theme=GitHub -pp --color always 
     ;;
     *.aidl|*.hal)
-        if [ "${_DOGE_STDOUT}" = 1 ]
+        if [ "${_QUACKLOOK_STDOUT}" = 1 ]
         then
             \batcat --language 'C++' --theme=GitHub -pp --color always "${1}" || \cat "${1}"
             return 0
         fi
         ;;
     *.cs|*.vala|*.java|*.js|*.c|*.xml|*.kt)
-        if [ "${_DOGE_STDOUT}" = 1 ]
+        if [ "${_QUACKLOOK_STDOUT}" = 1 ]
         then
             \batcat --theme=GitHub -pp --color always "${1}" || \cat "${1}"
             return 0
         fi
         ;;
     *.mk)
-        if [ "${_DOGE_STDOUT}" = 1 ]
+        if [ "${_QUACKLOOK_STDOUT}" = 1 ]
         then
             \batcat --theme=GitHub -pp --color always -l Makefile "${1}" || \cat "${1}"
             return 0
         fi
     ;;
     *.bp)
-        if [ "${_DOGE_STDOUT}" = 1 ]
+        if [ "${_QUACKLOOK_STDOUT}" = 1 ]
         then
             \batcat --theme=GitHub -pp --color always -l json "${1}" || \cat "${1}"
             return 0
         fi
 	;;
     *.json)
-        if [ "${_DOGE_STDOUT}" = 1 ]
+        if [ "${_QUACKLOOK_STDOUT}" = 1 ]
         then
             \jq . -C "${1}" || \cat "${1}"
             return 0
@@ -101,7 +101,7 @@ function _DOGE_DECODE_DOC
         \openssl x509 -in "${1}" -text -noout
         ;;
         *)
-        case "${_DOGE_MIME}" in
+        case "${_QUACKLOOK_MIME}" in
         *" "text/x-c|*" "text/x-c++) 
             \batcat --theme=GitHub -pp --language=c++ --color always "${1}" || \cat "${1}"
             return 0
@@ -132,8 +132,8 @@ function _DOGE_DECODE_DOC
             ;;
         *" "text/rtf) : ;;
         *" "text/*)
-        local _DOGE_ENCODING=$(\file -L --mime-encoding "$1")
-        case ${_DOGE_ENCODING} in #case3
+        local _QUACKLOOK_ENCODING=$(\file -L --mime-encoding "$1")
+        case ${_QUACKLOOK_ENCODING} in #case3
         *": ebcdic")
         \iconv -f EBCDIC-CP-SE -t UTF-8 "${1}"
         return 0
@@ -180,9 +180,9 @@ function _DOGE_DECODE_DOC
     *.asciidoc|*.adoc|*.asc) pandoc -s --from=asciidoc --to=man "${TEMP}";;
     esac > "${TEMP}.man" #end case1
 
-    [ -s "${TEMP}.man" ] || case ${_DOGE_ENCODING} in #case994
+    [ -s "${TEMP}.man" ] || case ${_QUACKLOOK_ENCODING} in #case994
     *": "us-ascii|*" "utf-8)
-        if [ "${_DOGE_STDOUT}" = 1 ]
+        if [ "${_QUACKLOOK_STDOUT}" = 1 ]
         then
             \batcat --theme=GitHub -pp --color always "${1}" || \cat "${1}"
             return 0
@@ -195,27 +195,27 @@ function _DOGE_DECODE_DOC
     esac
     if [ -s "${TEMP}.man" ]
     then
-        \nroff ${_DOGE_COLOROPT} -man "${TEMP}.man" 2>/dev/null | \sed 's/()//g'
+        \nroff ${_QUACKLOOK_COLOROPT} -man "${TEMP}.man" 2>/dev/null | \sed 's/()//g'
         \rm -f "${TEMP}" "${TEMP}.man" "${TEMP}.docx"
     else
         \strings "${TEMP}"
     fi
 }
 
-function _DOGE_DECODE
+function _QUACKLOOK_DECODE
 {
     local FILE
     for FILE in "$@"
     do
-        local TEMP=$(mktemp -u /tmp/.DOGE.XXXXXXXXXXXX)
+        local TEMP=$(mktemp -u /tmp/.QUACKLOOK.XXXXXXXXXXXX)
         if [ ! -s "${FILE}" ] && \cat "${FILE}" &>"${TEMP}" && [ ! -s "${TEMP}" ]
         then
             printf "\e[91m<EMPTY>\e[0m" 2>/dev/null
         elif [ -f "${FILE}" ]
         then
             {
-            local _DOGE_MIME=$(\file -L --mime-type "${FILE}")
-            case "${_DOGE_MIME}" in
+            local _QUACKLOOK_MIME=$(\file -L --mime-type "${FILE}")
+            case "${_QUACKLOOK_MIME}" in
             *" "application/gzip*)
             gzip -cd "${FILE}"
             ;;
@@ -239,7 +239,7 @@ function _DOGE_DECODE
                 \rm -f "${TEMP_PNM}"
             ;;
             *" "video/*)
-                local TEMP_GIF=$(mktemp /tmp/.DOGE.XXXXXXXXXXXX.gif)
+                local TEMP_GIF=$(mktemp /tmp/.QUACKLOOK.XXXXXXXXXXXX.gif)
                 ffmpeg -ss 00:00:00.000 -i "${FILE}" -vf "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,setsar=1" -pix_fmt rgb8 -s 500x240 -t 00:00:5.000 "${TEMP_GIF}" &>/dev/null
                 chafa "${TEMP_GIF}" >${TTY}
                 \rm -f "${TEMP_GIF}" &>/dev/null
@@ -253,11 +253,11 @@ function _DOGE_DECODE
                 chafa "${FILE}" >${TTY}
 	    ;;
             *" "image/*)
-            [ "${_DOGE_STDOUT}" = 1 ] && \chafa -s ${COLUMNS}x$((LINES-3)) "${FILE}"
+            [ "${_QUACKLOOK_STDOUT}" = 1 ] && \chafa -s ${COLUMNS}x$((LINES-3)) "${FILE}"
             \tesseract "${FILE}" - 2>/dev/null
             ;;
             *" text/"*|*" "application/vnd.apple.keynote|*" "application/vnd.wordperfect|*" "application/rtf|*" "application/vnd.oasis.opendocument.text|*" "application/vnd.openxmlformats-officedocument.presentationml.presentation|*" "application/vnd.openxmlformats-officedocument.wordprocessingml.document|*" "application/vnd.openxmlformats-officedocument.presentationml.presentation|*" "application/doc|*" "application/ms-doc|*" "application/msword|*" "application/json)
-            _DOGE_DECODE_DOC "${FILE}"
+            _QUACKLOOK_DECODE_DOC "${FILE}"
             ;;
             *" "application/x-sharedlib|*" "application/x-pie-executable|*" "application/x-executable|*" application/x-dosexec")
             case $(\file -L "${FILE}") in
@@ -298,9 +298,9 @@ function _DOGE_DECODE
             case "${FILE,,}" in
             *screenlog.0|*.log) dos2unix -f "${TEMP}" &>/dev/null; \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' "${TEMP}";return 0;;
             *.wri|*.dtb)
-            _DOGE_DECODE_DOC "${FILE}";;
+            _QUACKLOOK_DECODE_DOC "${FILE}";;
             *.dlt)
-            local TEMP=$(mktemp -u /tmp/.DOGE.XXXXXXXXXXXX.txt)
+            local TEMP=$(mktemp -u /tmp/.QUACKLOOK.XXXXXXXXXXXX.txt)
             \dlt-viewer -c "${FILE}" "${TEMP}"
             \cat "${TEMP}"
             \rm -f "${TEMP}"
@@ -317,10 +317,10 @@ function _DOGE_DECODE
             \pdftotext -layout "${FILE}" -
             ;;
             *" "application/excel|*" "application/vnd.ms-excel|*" "application/x-excel|*" "application/x-msexcel|*" "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet)
-            local TEMP="/tmp/.DOGE.${RANDOM}.${FILE##*.}"
+            local TEMP="/tmp/.QUACKLOOK.${RANDOM}.${FILE##*.}"
             if \cp -l "${FILE}" "${TEMP}"
             then
-                TEMP=$(mktemp /tmp/.DOGE.XXXXXXXXXXXX.${FILE##*.})
+                TEMP=$(mktemp /tmp/.QUACKLOOK.XXXXXXXXXXXX.${FILE##*.})
                 \cp "${FILE}" "${TEMP}"
             fi
             \unoconv -f csv --stdout "${TEMP}" 2>/dev/null
@@ -345,7 +345,7 @@ function _DOGE_DECODE
             {
             local TEMP_HTML=${TEMP_HTML}
             \curl -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36' "${FILE}" >"${TEMP_HTML}"
-            _DOGE_DECODE_HTML "${TEMP_HTML}"
+            _QUACKLOOK_DECODE_HTML "${TEMP_HTML}"
             } 2>/dev/null
             ;;
             *)
@@ -355,13 +355,13 @@ function _DOGE_DECODE
     done
 }
 
-function _DOGEVIEW
+function _QUACKLOOK
 {
     if [ -t 0 ]
     then
-        local _DOGE_STDOUT=1
+        local _QUACKLOOK_STDOUT=1
     fi
-    ( \rm -rf /tmp/.DOGE* &>/dev/null & )
+    ( \rm -rf /tmp/.QUACKLOOK* &>/dev/null & )
     _MEASURE=0
     if [ "${#@}" = 0 ]
     then
@@ -370,9 +370,9 @@ function _DOGEVIEW
         then
 	local LINE
 	    read -r LINE < "${FILE}"
-	    \printf "\e]0;⏪  replay ${LINE%% *}\a"
+	    \printf "\e]0;⏪  replay ${LINE%% *}\a" 1>${TTY} 2>/dev/null
 
-            if [ "${_DOGE_STDOUT}" = 1 ]
+            if [ "${_QUACKLOOK_STDOUT}" = 1 ]
 	    then
                 \less -d -R -X -F -K +G "${FILE}"
             else
@@ -388,7 +388,7 @@ function _DOGEVIEW
         if [ -f "${FILE}" ]
         then
 
-            if [ "${_DOGE_STDOUT}" = 1 ]
+            if [ "${_QUACKLOOK_STDOUT}" = 1 ]
 	    then
                 \less -d -R -X -F -K +G "${FILE}"
             else
@@ -405,7 +405,7 @@ function _DOGEVIEW
         do
             :
         done
-        _DOGEVIEW "${FILE}"
+        _QUACKLOOK "${FILE}"
         return $?
     fi
     local PIPEFAIL_ENABLED
@@ -418,7 +418,7 @@ function _DOGEVIEW
     fi
     local TTY=$(tty) 2>/dev/null
     local RETURN
-    local _DOGE_STDERR_FILE=/tmp/.DOGE.STDERR."${RANDOM}"
+    local _QUACKLOOK_STDERR_FILE=/tmp/.QUACKLOOK.STDERR."${RANDOM}"
     if [ "${#@}" = 0 ]
     then
         shift
@@ -426,7 +426,7 @@ function _DOGEVIEW
         do
             if [ -f "${FILE}" ]
             then
-                _DOGE_DECODE "${FILE}" | \less -d -R -X -F -K
+                _QUACKLOOK_DECODE "${FILE}" | \less -d -R -X -F -K
                 RETURN=$?
                 break
             fi
@@ -434,17 +434,17 @@ function _DOGEVIEW
     else
         for FILE in "$@"
         do
-                _DOGE_DECODE "${FILE}" | \less -d -R -X -F -K
+                _QUACKLOOK_DECODE "${FILE}" | \less -d -R -X -F -K
                 RETURN=$?
         done
     fi
     shift
 
-    if [ "${_DOGE_STDOUT}" = 1 ]
+    if [ "${_QUACKLOOK_STDOUT}" = 1 ]
     then
-        _DOGE_DECODE "${@}" 2>${_DOGE_STDERR_FILE} | \less -d -R -X -F -K
+        _QUACKLOOK_DECODE "${@}" 2>${_QUACKLOOK_STDERR_FILE} | \less -d -R -X -F -K
     else
-        _DOGE_DECODE "${@}"
+        _QUACKLOOK_DECODE "${@}"
     fi
     if [ "${PIPEFAIL_ENABLED}" = 0 ]
     then
@@ -452,12 +452,12 @@ function _DOGEVIEW
     fi
     return ${RETURN}
 }
-alias d="_ICON 🐶 _DOGEVIEW"
-_FUZZY_DOGEVIEW ()
+alias d="_ICON 🦆 _QUACKLOOK"
+_FUZZY_QUACKLOOK ()
 {
-local tmp=$(_DOGEVIEW "$@"|sed -e 's/"/ /g' -e 's/\x1b\[[0-9;]*[a-zA-Z]//g'|fzf --no-mouse)
+local tmp=$(_QUACKLOOK "$@"|sed -e 's/"/ /g' -e 's/\x1b\[[0-9;]*[a-zA-Z]//g'|fzf --no-mouse)
 f=$(for line in $tmp; do \echo $line;done|fzf --no-mouse)
 [ -n "$f" ] && \echo "f=$f"
 }
-alias dz="_ICON 🐶 _FUZZY_DOGEVIEW"
+alias dz="_ICON 🦆 _FUZZY_QUACKLOOK"
 

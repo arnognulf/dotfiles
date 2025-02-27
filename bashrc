@@ -108,7 +108,7 @@ EOF
 		. "${DOTFILESDIR}"/fuuuu/fuuuu.sh
 		. "${DOTFILESDIR}"/stawkastic/stawkastic.sh
 		. "${DOTFILESDIR}"/zipit/zipit.sh
-		. "${DOTFILESDIR}"/dogeview/dogeview.sh
+		. "${DOTFILESDIR}"/quacklook/quacklook.sh
 
         _DOTFILES_COLOR ()
         {
@@ -152,14 +152,6 @@ EOF
 		# set the correct xdg user dir defaults
 		[[ -f ~/.config/user-dirs.dirs ]] || xdg-user-dirs-update
 		. ~/.config/user-dirs.dirs
-
-		alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 nvim -u "${VIM}"/nvimrc -p '
-		alias ivm='nvim'
-		alias vi='nvim'
-		alias vim='nvim'
-		alias im='nvim'
-		alias v='nvim'
-		alias nano='nvim'
 
 		export EDITOR
 		_EDITOR() {
@@ -218,7 +210,7 @@ EOF
 		}
 		alias cp='_ICON 💽 _DONT_COPY_THAT_FLOPPY'
 		alias dd='_ICON 💽 _LOW_PRIO dd status=progress'
-		alias dl=${DOTFILESDIR}/uber-for-mv/dl.sh
+		alias dl="${DOTFILESDIR}/uber-for-mv/dl.sh $(xdg-user-dir DOWNLOAD)"
 		alias octave=octave-cli
 		alias excel='o localc --norestore --view'
 		alias word='o lowriter --norestore --view'
