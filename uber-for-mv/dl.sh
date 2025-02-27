@@ -55,7 +55,7 @@ main() {
 				mv "${NEWEST_FILE}" .
 			else
                 if type -P pv &>/dev/null;then
-				    pv "${NEWEST_FILE}" >"${NEWEST_FILE##*/}" 2>/dev/null 
+				    pv "${NEWEST_FILE}" >"${NEWEST_FILE##*/}"
                 else
                     dd status=progress if="${NEWEST_FILE}" of="${NEWEST_FILE##*/}"
                 fi
