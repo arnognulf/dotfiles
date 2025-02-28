@@ -148,7 +148,7 @@ _MOAR true || PATH=$PATH:${DOTFILESDIR}/moar
 _MOAR ()
 {
 _NO_MEASURE
-if [[ -z "${FUNCNAME[1]}" ]] || { [[ "${FUNCNAME[1]}" = _ICON ]] && [[ -z "${FUNCNAME[2]}" ]]; }
+if [[ -z "${FUNCNAME[1]}" ]] || { [[ "${FUNCNAME[1]}" = "_ICON" ]] && [[ -z "${FUNCNAME[2]}" ]]; } || [[ "${FUNCNAME[1]}" = "_LS_HIDDEN" ]]
 then
 (
 unset -f _MOAR

@@ -1,6 +1,7 @@
 #/bin/bash
 {
 	_dotfiles_main() {
+        unset PROMPT_COMMAND
 	    if [[ $TERM = dumb ]] || [[ $TERM = vt50 ]]; then
 			stty iuclc
 		fi
@@ -109,6 +110,15 @@ EOF
 		. "${DOTFILESDIR}"/stawkastic/stawkastic.sh
 		. "${DOTFILESDIR}"/zipit/zipit.sh
 		. "${DOTFILESDIR}"/quacklook/quacklook.sh
+
+        _DOTFILES_RESIZE_TMUX ()
+        {
+        ([ -n "$TMUX" ] && {
+        LC_MESSAGES=C LC_ALL=C tmux detach-client -a
+        for CLIENT in 1 2 3; do LC_MESSAGES=C LC_ALL=C tmux -L "$CLIENT" resize-window -A; done
+        } &>/dev/null &)
+        }
+        PROMPT_COMMAND="$PROMPT_COMMAND;_DOTFILES_RESIZE_TMUX"
 
         _DOTFILES_COLOR ()
         {
