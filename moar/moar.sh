@@ -32,7 +32,7 @@ _MOAR_BUILTIN ()
 {
     _NO_MEASURE
     if [ -t 1 ];then
-        command "$@" | command less -Q -R -X -F -K -S 
+        command "$@" | \less -Q -R -X -F -K -S 
     else
         command "$@"
     fi

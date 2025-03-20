@@ -1,4 +1,19 @@
 #!/bin/bash
+_LATEST ()
+{
+    local NEWEST_FILE
+    local FILE
+    NEWEST_FILE=
+    for FILE in "${@}"
+    do
+        if [[ -z "${NEWEST_FILE}" || "${FILE}" -nt "${NEWEST_FILE}" ]]
+        then
+            NEWEST_FILE="${FILE}"
+        fi
+    done
+    echo "${NEWEST_FILE}"
+    return 0
+}
 function _SHOVEIT
 (
     if [ -z "$1" ];then

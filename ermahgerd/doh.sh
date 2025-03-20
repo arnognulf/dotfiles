@@ -23,51 +23,31 @@
 # rm emulator which puts the files in the XDG trash if possible
 # restore files with 'doh'
 
-function _ERMAHGERD
+function _DOH
 {
-    local RMDIR
-    local RMFORCE
-    local ARG
-    RMFORCE=''
-    RMDIR=''
-    test -z "${*}" && { $(type -P rm); return $?;}
-    for ARG in "${@}"
+    local INDEX
+    local SOURCE
+    local DEST
+    local DIR=~/.local/share/Trash/files
+    local NEWEST_FILE
+    local SECOND_NEWEST_FILE
+    local FILE
+    NEWEST_FILE=
+    for FILE in ${DIR}/*
     do
-    case "${ARG}" in
-    -h|--|--help|--version|-d|--dir|-fd|-df|--preserve-root*|--no-preserve-root|--one-file-system|--interactive*|-I|-i)
-    $(type -P rm) "${@}"
-    return $?
-    esac
-    done
-    for ARG in "${@}"
-    do
-    case "${ARG}" in
-    -rf|-Rf|-fR|-fr)
-    RMFORCE=-f
-    RMDIR=-r
-    ;;
-    -f|--force)
-    RMFORCE=-f
-    ;;
-    -r|-R|--recursive)
-    RMDIR=-r
-    ;;
-    esac
+        if [[ -z ${NEWEST_FILE} || ${FILE} -nt ${NEWEST_FILE} ]]
+        then
+            SECOND_NEWEST_FILE="${NEWEST_FILE}"
+            NEWEST_FILE=${FILE}
+        fi
     done
 
-    for ARG in "${@}"
-    do
-    case "${ARG}" in
-    -rf|-Rf|-fR|-fr|-r|-f|-R|--recursive) : ;;
-    *)
-    if [ -d "${ARG}" -a -z "${RMDIR}" ]
-    then
-        $(type -P rm) ${RMDIR} ${RMFORCE} "${ARG}"
-    else
-        gio trash "${ARG}" &>/dev/null || $(type -P rm) ${RMFORCE} ${RMDIR} "${ARG}"
-    fi
-    esac
-    done
+    test -f "${NEWEST_FILE}" || test -d "${NEWEST_FILE}" || { echo "no files to restore"; return 1; }
+
+    DEST=$(\cat ${DIR}/../info/${NEWEST_FILE##*/}.trashinfo|\grep ^Path=)
+    DEST=${DEST##*/}
+    echo -e "Restored ${DEST}"
+    test -n "${SECOND_NEWEST_FILE}" && echo -e "\nNext: ${SECOND_NEWEST_FILE##*/}"
+    \mv "${DIR}/${NEWEST_FILE##*/}" "${DEST}"
 }
-_ERMAHGERD "$@"
-
+_DOH "$@"

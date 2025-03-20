@@ -468,18 +468,18 @@ ln -s "${PWD}" "${BOOKMARKDIR}${1##*/}"
 esac
 }
 
-function _CATT_BOOKMARK_INIT ()
-{
-local BOOKMARK
-local BOOKMARKDIR=~/.config/bookmark-all-the-things/
-for BOOKMARK in "${BOOKMARKDIR}"/*
-do
-eval "${BOOKMARK##*/}="${BOOKMARK}"
-eval "${BOOKMARK##*/} () { local DIR=\"\$(redlink '${BOOKMARK}')\"; if [ -n \"\$1\" ]; then ( cd \"$DIR\" || { _NO; exit 42;}; \"$@\";); else cd \"\$DIR\"fi;}"
-
-done
-unset -f function _CATT_BOOKMARK_INIT
-}
+#function _CATT_BOOKMARK_INIT ()
+#{
+#local BOOKMARK
+#local BOOKMARKDIR=~/.config/bookmark-all-the-things/
+#for BOOKMARK in "${BOOKMARKDIR}"/*
+#do
+#eval "${BOOKMARK##*/}="${BOOKMARK}"
+#eval "${BOOKMARK##*/} () { local DIR=\"\$(redlink '${BOOKMARK}')\"; if [ -n \"\$1\" ]; then ( cd \"$DIR\" || { _NO; exit 42;}; \"$@\";); else cd \"\$DIR\"fi;}"
+#
+#done
+#unset -f function _CATT_BOOKMARK_INIT
+#}
 
 if [[ -t 0 || -p /dev/stdin ]]
 then

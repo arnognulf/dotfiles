@@ -27,7 +27,21 @@
 # * Pipes are not affected by moar (except for conversion)
 # * Moar-ified commands can be disabled by prepending backslash: '\' : eg. \grep
 
-
+_LATEST ()
+{
+    local NEWEST_FILE
+    local FILE
+    NEWEST_FILE=
+    for FILE in "${@}"
+    do
+        if [[ -z "${NEWEST_FILE}" || "${FILE}" -nt "${NEWEST_FILE}" ]]
+        then
+            NEWEST_FILE="${FILE}"
+        fi
+    done
+    echo "${NEWEST_FILE}"
+    return 0
+}
 
 function _QUACKLOOK_DECODE_DOC
 {
@@ -452,12 +466,4 @@ function _QUACKLOOK
     fi
     return ${RETURN}
 }
-alias d="_ICON 🦆 _QUACKLOOK"
-_FUZZY_QUACKLOOK ()
-{
-local tmp=$(_QUACKLOOK "$@"|sed -e 's/"/ /g' -e 's/\x1b\[[0-9;]*[a-zA-Z]//g'|fzf --no-mouse)
-f=$(for line in $tmp; do \echo $line;done|fzf --no-mouse)
-[ -n "$f" ] && \echo "f=$f"
-}
-alias dz="_ICON 🦆 _FUZZY_QUACKLOOK"
-
+_QUACKLOOK "$@"

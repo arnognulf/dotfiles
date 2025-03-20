@@ -5,7 +5,7 @@
 	    if [[ $TERM = dumb ]] || [[ $TERM = vt50 ]]; then
 			stty iuclc
 		fi
-		if [ -n "${TMUX}" ]; then
+		if [[ "${TMUX}" ]]; then
 			(
 				setup_tmux() {
 					tmux set -g status off
@@ -82,8 +82,8 @@ EOF
 			exit 1
 		fi
 		TTY=$(tty)
-		export HISTSIZE=100000     # big big history
-		export HISTFILESIZE=100000 # big big history
+		export HISTSIZE=-1     # big big history
+		export HISTFILESIZE=-1 # big big history
 		shopt -s globstar
 		export BAT_THEME=GitHub
 
@@ -96,24 +96,22 @@ EOF
 
 		export VIM=${DOTFILESDIR}/vim
 		export VIMRUNTIME=${DOTFILESDIR}/vim
-		BGCOLOR="FFFAF1"
-		FGCOLOR="312D2A"
 		. "${DOTFILESDIR}"/monorail/monorail.sh
-		. "${DOTFILESDIR}"/chdir-all-the-things/chdir-all-the-things.sh
-		. "${DOTFILESDIR}"/can-opener/can-opener.sh
-		. "${DOTFILESDIR}"/shabacus/shabacus.sh
-		. "${DOTFILESDIR}"/uber-for-mv/uber-for-mv.sh
+		#. "${DOTFILESDIR}"/chdir-all-the-things/chdir-all-the-things.sh
+		. "${DOTFILESDIR}"/can-opener/can-opener.inc.sh
+		. "${DOTFILESDIR}"/shabacus/shabacus.inc.sh
+		#. "${DOTFILESDIR}"/uber-for-mv/uber-for-mv.sh
 		. "${DOTFILESDIR}"/moar/moar.sh
-		. "${DOTFILESDIR}"/ermahgerd/ermahgerd.sh
-		. "${DOTFILESDIR}"/i-like-to-move-it/i-like-to-move-it.sh
-		. "${DOTFILESDIR}"/fuuuu/fuuuu.sh
+		. "${DOTFILESDIR}"/ermahgerd/ermahgerd.inc.sh
+		#. "${DOTFILESDIR}"/i-like-to-move-it/i-like-to-move-it.sh
+		#. "${DOTFILESDIR}"/fuuuu/fuuuu.sh
 		. "${DOTFILESDIR}"/stawkastic/stawkastic.sh
-		. "${DOTFILESDIR}"/zipit/zipit.sh
-		. "${DOTFILESDIR}"/quacklook/quacklook.sh
+		#. "${DOTFILESDIR}"/zipit/zipit.sh
+		#. "${DOTFILESDIR}"/quacklook/quacklook.inc.sh
 
         _DOTFILES_RESIZE_TMUX ()
         {
-        ([ -n "$TMUX" ] && {
+        ([[ "$TMUX" ]] && {
         LC_MESSAGES=C LC_ALL=C tmux detach-client -a
         for CLIENT in 1 2 3; do LC_MESSAGES=C LC_ALL=C tmux -L "$CLIENT" resize-window -A; done
         } &>/dev/null &)
@@ -122,7 +120,7 @@ EOF
 
         _DOTFILES_COLOR ()
         {
-        if [[ $NO_COLOR = 1 ]]
+        if [[ $NO_COLOR ]]
         then
             \echo "never"
         else
@@ -188,6 +186,7 @@ EOF
 		alias g++='_ICON 🛠️ _LOG g++'
 		alias snapcraft='_ICON 🛠️ _LOG snapcraft --verbose'
 		alias ninja='_ICON 🛠️ _LOG ninja'
+		alias mvn='_ICON 🛠️ _LOG mvn'
 		alias make='_ICON 🛠️ _LOG make -j$(nproc)'
 		alias bitbake='_ICON 🛠️ _LOG bitbake'
 		alias just='_ICON 🛠️ _LOG just'
@@ -197,6 +196,7 @@ EOF
 		alias ksh='_ICON 🐚 _LOG ksh'
 		alias sh='_ICON 🐚 _LOG sh'
 		alias cat="_ICON 🐱 _MOAR cat"
+        alias stress-ng="_ICON 🔥 stress-ng"
 		alias delta='_ICON Δ _LOW_PRIO delta --light'
 		_DONT_COPY_THAT_FLOPPY() {
 			
@@ -231,14 +231,17 @@ EOF
 		alias visio='o lodraw --norestore --view'
 		alias scrcpy='_RETRY scrcpy'
 		alias adb='_NO_MEASURE _ICON 🤖 _RETRY adb'
-		if [ -n "$WAYLAND_DISPLAY" ]; then
-			local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
-		fi
+		#if [ "$WAYLAND_DISPLAY" ]; then
+		#	local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
+		#fi
 		alias chrome='o google-chrome-beta ${WAYLAND_OPTS}'
 		alias code-insiders='o code-insiders'
 		alias code='o code-insiders'
 		_GIT() {
+            local ORIG_TERM
+            ORIG_TERM=$TERM
             local TERM
+            TERM=$ORIG_TERM
             _MONORAIL_DUMB_TERMINAL && export TERM=dumb
 
 			# avoid printing title if using completion
@@ -274,6 +277,8 @@ EOF
 		alias rga="_ICON 🔎 _MOAR rga --color=$(_DOTFILES_COLOR)"
 		alias rg='_ICON 🔎 _MOAR rg'
 		alias strace='_ICON 👣 _LOG strace'
+		alias valgrind='_ICON 👣 _LOG valgrind'
+		alias apitrace='_ICON 👣 _LOG apitrace'
 		alias top='_NO_MEASURE _ICON 📈 top'
 		alias ntop='_NO_MEASURE _ICON 📈 ntop'
 		alias htop='_NO_MEASURE _ICON 📈 htop'
@@ -348,28 +353,6 @@ _NO_MEASURE
 		alias v=_EDITOR
 		alias keepass='o keepassxc'
 		alias kp=keepassxc
-
-		_LS_HIDDEN() {
-			case "${PWD}" in
-			${HOME}/Network/* | /run/user/*/gvfs/* | /mnt/* | /media/*)
-				# do not print colors on network drives
-				# this is faster since `ls(1)` do not need to run statx(2) or getdents64(2)
-				# on listed files
-				_MOAR ls -C "$@"
-				;;
-			*)
-				local hide=()
-				if [ -f .hidden ]; then
-					while IFS="
-" read -r line; do
-						hide+=("--hide=${line}")
-					done <.hidden
-				fi
-				_MOAR ls "${hide[@]}" --color=$(_DOTFILES_COLOR) "$@"
-				;;
-			esac
-		}
-
 		_BRANCHY_MCBRANCHFACE() {
 			\git rev-parse --show-toplevel &>/dev/null || _NO
 			_TITLE "🐙  Branchy McBranchFace"
@@ -383,8 +366,19 @@ _NO_MEASURE
 
 		_FUZZY_FD() {
 			f=$(fd "$@" | fzf --no-mouse)
-			[ -n "$f" ] && \echo "f=$f"
+			[ "$f" ] && \echo "f=$f"
 		}
+		# lazy load functions
+		c () { unset -f c; . ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh;  c "$@"; }
+		_LS_HIDDEN () { unset -f _LS_HIDDEN; . ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh; _LS_HIDDEN "$@"; }
+		_LAZY_D () { unset -f _LAZY_D; . "${DOTFILESDIR}"/quacklook/quacklook.inc.sh; d "$@";}
+		alias d=_LAZY_D
+		_LS_HIDDEN () { unset -f _LS_HIDDEN; . ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh; _LS_HIDDEN "$@"; }
+        _LAZY_ZIPIT () { unset -f _LAZY_ZIPIT; . "${DOTFILESDIR}"/zipit/zipit.sh"; "$@";}
+        alias z="_LAZY_ZIPIT z"
+        alias s="_LAZY_ZIPIT s"
+        _LAZY_FUUU () { unset -f _LAZY_FUUU; . "${DOTFILESDIR}"/zipit/zipit.sh"; "$@";}
+        alias f="_LAZY_FUUU f"
 		alias fz=_FUZZY_FD
 
 		alias ll="\ls -al --color=$(_DOTFILES_COLOR)"
@@ -400,6 +394,9 @@ _NO_MEASURE
 		#alias y=_YANKY
 		#alias p=_PANKY
 		alias grep="_ICON 🔎 _MOAR grep -a"
+		alias ica="o google-chrome-beta  ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/ica --no-default-browser-check --no-first-run --app=https://ica.se"
+		alias coop="o google-chrome-beta  ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/coop --no-default-browser-check --no-first-run --app=https://coop.se"
+		alias citygross="o google-chrome-beta  ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/citygross --no-default-browser-check --no-first-run --app=https://citygross.se"
 		alias willys="o google-chrome-beta  ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/willys --no-default-browser-check --no-first-run --app=https://willys.se"
 		alias hbo="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/hbo --no-default-browser-check --no-first-run --app=https://www.hbomax.com"
 		alias dn="google-chrome-beta ${WAYLAND_OPTS} -user-data-dir=${HOME}/.config/dn --no-default-browser-check --no-first-run --app=https://dn.se"
@@ -418,18 +415,18 @@ _NO_MEASURE
 		pidof chrome || /bin/rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome" "~/.config/google-chrome-beta" "~/.config/google-chrome"
 
 		_CHROME-POLISHER() {
-			if [ -n "$WAYLAND_DISPLAY" ]; then
-				local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
-			fi
+		#if [ "$WAYLAND_DISPLAY" ]; then
+		#	local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
+		#fi
 			local DIR=/run/user/${UID}/_CHROME-POLISHER-${USER}
 			pidof chrome &>/dev/null || /bin/rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome" "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
 			\mkdir -p "${DIR}" &>/dev/null
 			_CAN_OPENER google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
 		}
 		_CHROME-POLISHER-tmp() {
-			if [ -n "$WAYLAND_DISPLAY" ]; then
-				local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
-			fi
+		#if [ "$WAYLAND_DISPLAY" ]; then
+		#	local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
+		#fi
 			local DIR="/run/user/${UID}/_CHROME-POLISHER-${USER}/${1}"
 			pidof chrome &>/dev/null || /bin/rm -rf "${DIR}"
 			\mkdir -p ${DIR}
@@ -461,53 +458,6 @@ _NO_MEASURE
 			/usr/bin/scp "${@}"
 		}
 		alias scp=_SCP
-
-		c() {
-			_CHDIR_ALL_THE_THINGS "$@" && {
-				local TMP FILE
-				if [[ -w "/run/user/${UID}" ]]; then
-					TMP="/run/user/${UID}/ls-${RANDOM}.txt"
-				else
-					TMP="/tmp/ls-${RANDOM}.txt"
-				fi
-				for FILE in README.md README.txt README README.doc README.rst README.android README.* "READ *" "Read *" "Read *" "readme"*; do
-					if [ -f "${FILE}" ]; then
-						\printf "\n   \e[1;4m"
-						\sed -e '/^=.*/d' -e 's/^[[:space:]]*//g' -e '/^!.*/d' -e '/^\[!.*/d' -e 's/# //g' -e 's/<[^>]*>//g' -e '/^[[:space:]]*$/d' "${FILE}" | \head -n1
-						\printf "\e[0m\n"
-						break
-					fi
-				done
-				if [ -d .git ]; then
-					local MAXLINES=$((LINES - 8))
-				else
-					local MAXLINES=$((LINES - 6))
-				fi
-				_LS_HIDDEN -v -C -w${COLUMNS} | \tee "${TMP}" | \head -n${MAXLINES}
-				local LS_LINES=$(wc -l <$TMP)
-				[ ${LS_LINES} -gt ${MAXLINES} ] && \printf "...\n"
-				if [ ${LS_LINES} = 0 ]; then
-					local COUNT=0
-					local FILES
-					for FILES in .*; do
-						let COUNT++
-					done
-					if [ ${COUNT} -gt 2 ]; then
-						_LS_HIDDEN -v -A -C -w${COLUMNS} | \tee "${TMP}" | \tee "${TMP}" | \head -n${MAXLINES}
-						local LS_LINES=$(wc -l <$TMP)
-						[ ${LS_LINES} -gt ${MAXLINES} ] && \printf "...\n"
-					else
-						\printf "<empty>\n"
-					fi
-				fi
-				[ -d ".git" ] && {
-					\printf "\n"
-					PAGER= $(type -P git) log --oneline -1 --color=never 2>/dev/null
-				}
-				(/bin/rm -f "${TMP}" &>/dev/null &)
-			}
-		}
-
 		untilfail() {
 			if [ "${#@}" = 0 ]; then
 				_NO
@@ -557,7 +507,7 @@ _NO_MEASURE
         {
             _NO_MEASURE
             _TITLE_RAW " "
-            printf "\033[?25l"
+            printf "\033[?25l\033[8m"
             clear
             while sleep 100000000000000000
             do
@@ -709,7 +659,7 @@ will not overwrite destination
 				}
 				SPINNER &
 			)
-			while [[ -n ${_SPINNER_PID} ]]; do
+			while [[ ${_SPINNER_PID} ]]; do
 				sleep 0.1
 				read _SPINNER_PID <_SPINNER_PID_FILE
 			done
@@ -735,6 +685,7 @@ will not overwrite destination
 		. ~/.bashrc.local
 		bind 'set completion-ignore-case on'
 		bind 'set bell-style none'
+		(
 		#https://stackoverflow.com/questions/6250698/how-to-decode-url-encoded-string-in-shell
 		urldecode() {
 			: "${*//+/ }"
@@ -757,7 +708,7 @@ will not overwrite destination
 				\ln -s "${SRC_ITEM}" "${HOME}/Recent/${ITEM}"
 			done
 		}
-		(
+
 			ignore_chrome_crash() {
 				exec sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
 					~/.config/google-chrome/Default/Preferences \
@@ -799,6 +750,15 @@ will not overwrite destination
 		)
 		unset -f _dotfiles_main
 	}
+
+task() {
+	title "$*"
+
+	name "$*"
+
+	alias c='echo "Terminal is locked to task: ${NAME}\a";: '
+	alias cd='echo "Terminal is locked to task: ${NAME}\a";: '
+}
 } &>/dev/null
 
 # Avoid starting dotfiles if login shell. unless...
