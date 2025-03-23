@@ -102,7 +102,7 @@ EOF
 		. "${DOTFILESDIR}"/shabacus/shabacus.inc.sh
 		#. "${DOTFILESDIR}"/uber-for-mv/uber-for-mv.sh
 		. "${DOTFILESDIR}"/moar/moar.sh
-		. "${DOTFILESDIR}"/ermahgerd/ermahgerd.inc.sh
+		#. "${DOTFILESDIR}"/ermahgerd/ermahgerd.inc.sh
 		#. "${DOTFILESDIR}"/i-like-to-move-it/i-like-to-move-it.sh
 		#. "${DOTFILESDIR}"/fuuuu/fuuuu.sh
 		. "${DOTFILESDIR}"/stawkastic/stawkastic.sh
@@ -169,7 +169,7 @@ EOF
 				case "${FILE,,}" in
 				-*) : ;;
 				*.kt | *.java)
-					type -P studio.sh &>/dev/null && _CAN_OPENER studio.sh "${PWD}/${FILE}"
+					type -P studio.sh &>/dev/null && ${DOTFILESDIR}/can-opener/can-opener.sh studio.sh "${PWD}/${FILE}"
 					return
 					;;
 				esac
@@ -177,8 +177,8 @@ EOF
 			XDG_DATA_HOME="${VIM}" $(type -P "nvim" 2>/dev/null || type -P "vim" 2>/dev/null || type -P "vi" 2>/dev/null) -u "${VIM}"/nvim.vim -p "${@}"
 		}
 
-		[ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='o _LOW_PRIO ~/.local/share/android-studio/bin/studio.sh'
-		[ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='o mono ~/.local/bin/PabloDraw.exe'
+		[ -x ~/.local/share/android-studio/bin/studio.sh ] && alias studio='/home/arno/.config/dotfiles/can-opener/can-opener.sh _LOW_PRIO ~/.local/share/android-studio/bin/studio.sh'
+		[ -x ~/.local/bin/PabloDraw.exe ] && alias pablodraw='/home/arno/.config/dotfiles/can-opener/can-opener.sh mono ~/.local/bin/PabloDraw.exe'
 		[ -x ~/.local/share/ghidra/ghidraRun ] && alias ghidra='o ~/.local/share/ghidra/ghidraRun'
 		alias shellcheck='_ICON 🛠️ _LOG shellcheck'
 		alias clang='_ICON 🛠️ _LOG clang'
@@ -369,6 +369,10 @@ _NO_MEASURE
 			[ "$f" ] && \echo "f=$f"
 		}
 		# lazy load functions
+        _LAZY_ERMAHGERD () { unset -f _LAZY_ERMAHGERD; . "${DOTFILESDIR}"/ermahgerd/ermahgerd.inc.sh; "$@"; }
+        alias rm="_LAZY_ERMAHGERD rm"
+        alias doh="_LAZY_ERMAHGERD doh"
+
 		c () { unset -f c; . ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh;  c "$@"; }
 		_LS_HIDDEN () { unset -f _LS_HIDDEN; . ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh; _LS_HIDDEN "$@"; }
 		_LAZY_D () { unset -f _LAZY_D; . "${DOTFILESDIR}"/quacklook/quacklook.inc.sh; d "$@";}
@@ -421,7 +425,7 @@ _NO_MEASURE
 			local DIR=/run/user/${UID}/_CHROME-POLISHER-${USER}
 			pidof chrome &>/dev/null || /bin/rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome" "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
 			\mkdir -p "${DIR}" &>/dev/null
-			_CAN_OPENER google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
+			${DOTFILESDIR}/can-opener/can-opener.sh google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
 		}
 		_CHROME-POLISHER-tmp() {
 		#if [ "$WAYLAND_DISPLAY" ]; then
@@ -431,7 +435,7 @@ _NO_MEASURE
 			pidof chrome &>/dev/null || /bin/rm -rf "${DIR}"
 			\mkdir -p ${DIR}
 			shift
-			_CAN_OPENER google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}" --app="${*}"
+			o google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}" --app="${*}"
 		}
 		alias chromium=_CHROME-POLISHER
 		alias google-chrome=_CHROME-POLISHER
