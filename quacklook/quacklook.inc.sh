@@ -38,11 +38,11 @@ if ! [[ $_QUACKLOOK_DIR ]]; then
 	_QUACKLOOK_DIR="${_QUACKLOOK_DIR%/*}"
 fi
 
-alias d="_ICON 🦆 _QUACKLOOK_DIR=_QUACKLOOK_DIR=${_QUACKLOOK_DIR} ${_QUACKLOOK_DIR}/quacklook.sh"
-alias quacklook=_QUACKLOOK_DIR=_QUACKLOOK_DIR=${_QUACKLOOK_DIR} ${_QUACKLOOK_DIR}/quacklook.sh"
+alias d="_ICON 🦆 ${_QUACKLOOK_DIR}/quacklook.sh"
+alias quacklook="${_QUACKLOOK_DIR}/quacklook.sh"
 _FUZZY_QUACKLOOK ()
 {
-local tmp=$(_QUACKLOOK_DIR=_QUACKLOOK_DIR=${_QUACKLOOK_DIR} ${_QUACKLOOK_DIR}/quacklook.sh "$@"|sed -e 's/"/ /g' -e 's/\x1b\[[0-9;]*[a-zA-Z]//g'|fzf --no-mouse)
+local tmp=$(${_QUACKLOOK_DIR}/quacklook.sh "$@"|sed -e 's/"/ /g' -e 's/\x1b\[[0-9;]*[a-zA-Z]//g'|fzf --no-mouse)
 f=$(for line in $tmp; do \echo $line;done|fzf --no-mouse)
 [ -n "$f" ] && \echo "f=$f"
 }

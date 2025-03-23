@@ -375,7 +375,7 @@ _NO_MEASURE
 
 		c () { unset -f c; . ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh;  c "$@"; }
 		_LS_HIDDEN () { unset -f _LS_HIDDEN; . ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh; _LS_HIDDEN "$@"; }
-		_LAZY_D () { unset -f _LAZY_D; . "${DOTFILESDIR}"/quacklook/quacklook.inc.sh; d "$@";}
+		_LAZY_D () { unset -f _LAZY_D; . "${DOTFILESDIR}"/quacklook/quacklook.inc.sh; "${DOTFILESDIR}"/quacklook/quacklook.sh "$@";}
 		alias d=_LAZY_D
 		_LS_HIDDEN () { unset -f _LS_HIDDEN; . ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh; _LS_HIDDEN "$@"; }
         _LAZY_ZIPIT () { unset -f _LAZY_ZIPIT; . "${DOTFILESDIR}"/zipit/zipit.sh"; "$@";}
