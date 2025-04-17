@@ -33,7 +33,9 @@ fi
 #alias c=cd "${_CATT_DIR}/chdir-all-the-things.sh"
 . ${_CATT_DIR}/chdir-all-the-things.sh
 		c() {
+            local PREVPWD=$PWD
 			_CHDIR_ALL_THE_THINGS "$@" && {
+                \rm -d "$PREVPWD" &>/dev/null
 				local TMP FILE
 				if [[ -w "/run/user/${UID}" ]]; then
 					TMP="/run/user/${UID}/ls-${RANDOM}.txt"

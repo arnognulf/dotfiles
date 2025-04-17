@@ -27,6 +27,7 @@
 # * Pipes are not affected by moar (except for conversion)
 # * Moar-ified commands can be disabled by prepending backslash: '\' : eg. \grep
 
+TTY=$(tty)
 _LATEST ()
 {
     local NEWEST_FILE
@@ -189,7 +190,7 @@ function _QUACKLOOK_DECODE_DOC
     *.org) \pandoc -s --from=org --to=man "${TEMP}";;
     *.tex) \pandoc -s --from=latex --to=man "${TEMP}";;
     *.rst) \pandoc -s --from=rst --to=man "${TEMP}";;
-    *screenlog.0|*.log) dos2unix -f "${TEMP}" &>/dev/null; \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' "${TEMP}";return 0;;
+    *screenlog.0|*.log) dos2unix -f < "${FILE}" 2>/dev/null| \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' | tr '\015' '\012';return 0;;
     *.man) \cat "${1}";;
     *.asciidoc|*.adoc|*.asc) pandoc -s --from=asciidoc --to=man "${TEMP}";;
     esac > "${TEMP}.man" #end case1
@@ -310,7 +311,7 @@ function _QUACKLOOK_DECODE
             ;;
             *" "application/octet-stream)
             case "${FILE,,}" in
-            *screenlog.0|*.log) dos2unix -f "${TEMP}" &>/dev/null; \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' "${TEMP}";return 0;;
+            *screenlog.0|*.log) dos2unix -f < "${FILE}" 2>/dev/null| \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' | tr '\015' '\012';return 0;;
             *.wri|*.dtb)
             _QUACKLOOK_DECODE_DOC "${FILE}";;
             *.dlt)
@@ -388,7 +389,7 @@ function _QUACKLOOK
 
             if [ "${_QUACKLOOK_STDOUT}" = 1 ]
 	    then
-                \less -d -R -X -F -K +G "${FILE}"
+                dos2unix -f < "${FILE}" 2>/dev/null| \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' | tr '\015' '\012'|\less -d -R -X -F -K +G
             else
                 \cat "${@}"
 	    fi

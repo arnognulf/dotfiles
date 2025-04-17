@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 {
 	_dotfiles_main() {
         unset PROMPT_COMMAND
@@ -104,10 +104,10 @@ EOF
 		. "${DOTFILESDIR}"/moar/moar.sh
 		#. "${DOTFILESDIR}"/ermahgerd/ermahgerd.inc.sh
 		#. "${DOTFILESDIR}"/i-like-to-move-it/i-like-to-move-it.sh
-		#. "${DOTFILESDIR}"/fuuuu/fuuuu.sh
+		. "${DOTFILESDIR}"/fuuuu/fuuuu.sh
 		. "${DOTFILESDIR}"/stawkastic/stawkastic.sh
 		#. "${DOTFILESDIR}"/zipit/zipit.sh
-		#. "${DOTFILESDIR}"/quacklook/quacklook.inc.sh
+		. "${DOTFILESDIR}"/quacklook/quacklook.inc.sh
 
         _DOTFILES_RESIZE_TMUX ()
         {
@@ -135,8 +135,8 @@ EOF
 
 		if type -P nvim; then
 			EDITOR="nvim"
-			alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
-			alias vim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
+			alias nvim='_NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
+			alias vim='_NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
 		else
 			EDITOR="vim"
 			alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
@@ -252,9 +252,21 @@ EOF
 				;;
 			esac
 			case "$1" in
+            gc)
+                _LOW_PRIO \git "$"
+                ;;
 			clone | push)
 				_LOG \git "$@"
 				;;
+            add)
+                if [[ "$2" ]]
+                then
+                    \git "$@"
+                else
+                    f=$(git status --short|grep "^ "|fzf|cut -c4-1024|sed 's/"//g')
+                    git "$@" "$f"
+                fi
+            ;;
 			log | show | diff)
 				_MEASURE=0
 				\git "$@"
@@ -686,9 +698,10 @@ will not overwrite destination
 				((i++))
 			done
 		}
-		. ~/.bashrc.local
 		bind 'set completion-ignore-case on'
 		bind 'set bell-style none'
+        . /usr/share/doc/fzf/examples/key-bindings.bash
+		. ~/.bashrc.local
 		(
 		#https://stackoverflow.com/questions/6250698/how-to-decode-url-encoded-string-in-shell
 		urldecode() {
@@ -748,7 +761,9 @@ will not overwrite destination
 				ln -sf "${DOTFILESDIR}/home.hidden" ~/.hidden
 				ln -sf "${DOTFILESDIR}/home.xscreensaver" ~/.xscreensaver
 				mount_shares
-				rm -f "~/.cache/logs/${TTY//\//_}"
+				\rm -f "~/.cache/logs/${TTY//\//_}"
+                ln -sf "${DOTFILESDIR}"/vim ~/.config/vim
+                ln -sf "${DOTFILESDIR}"/nvim ~/.config/nvim
 			}
 			background_startup_tasks &
 		)

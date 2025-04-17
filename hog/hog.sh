@@ -61,7 +61,7 @@ print_objects ()
 goto_repo_dir ()
 {
     REPO_DIR=../.${NAME}/${PWD##*/}/
-    while [ ! -d "${REPO_DIR}" ] && [ "$OLDPWD" != "${PWD}" ]
+    while [ ! -d "${REPO_DIR}" ] && [ "${OLDPWD-}" != "${PWD}" ]
     do
         cd ..
         REPO_DIR=../.${NAME}/${PWD##*/}/

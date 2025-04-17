@@ -42,8 +42,8 @@ alias d="_ICON 🦆 ${_QUACKLOOK_DIR}/quacklook.sh"
 alias quacklook="${_QUACKLOOK_DIR}/quacklook.sh"
 _FUZZY_QUACKLOOK ()
 {
-local tmp=$(${_QUACKLOOK_DIR}/quacklook.sh "$@"|sed -e 's/"/ /g' -e 's/\x1b\[[0-9;]*[a-zA-Z]//g'|fzf --no-mouse)
-f=$(for line in $tmp; do \echo $line;done|fzf --no-mouse)
+local tmp=$(${_QUACKLOOK_DIR}/quacklook.sh "$@"|grep -E -v "$^"|grep -E -v "Script started"|grep -E -v "Script done"|fzf --no-mouse --tac)
+f=$(for line in $tmp; do printf "%s\n" $line;done|fzf --no-mouse --tac)
 [ -n "$f" ] && \echo "f=$f"
 }
 alias dz="_ICON 🦆 _FUZZY_QUACKLOOK"
