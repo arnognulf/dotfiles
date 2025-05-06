@@ -1,6 +1,8 @@
 #!/bin/bash
 {
 	_dotfiles_main() {
+    set +x
+    unset PS4
         unset PROMPT_COMMAND
 	    if [[ $TERM = dumb ]] || [[ $TERM = vt50 ]]; then
 			stty iuclc
@@ -96,7 +98,9 @@ EOF
 
 		export VIM=${DOTFILESDIR}/vim
 		export VIMRUNTIME=${DOTFILESDIR}/vim
+        set -x
 		. "${DOTFILESDIR}"/monorail/monorail.sh
+        set +x
 		#. "${DOTFILESDIR}"/chdir-all-the-things/chdir-all-the-things.sh
 		. "${DOTFILESDIR}"/can-opener/can-opener.inc.sh
 		. "${DOTFILESDIR}"/shabacus/shabacus.inc.sh
@@ -782,8 +786,10 @@ task() {
 
 # Avoid starting dotfiles if login shell. unless...
 [[ ${PS1} ]] && if ! shopt -q login_shell; then
+	if [[ $VHS_RECORD = true ]];then
+		. .local/share/dotfiles/monorail/monorail.sh
 	# print startup statistics
-	if [ -f ~/.bashrc.statistics ]; then
+	elif [ -f ~/.bashrc.statistics ]; then
 		time ORIG_LC_MESSAGES="$LC_MESSAGES" ORIG_LC_ALL="$LC_ALL" LC_MESSAGES=C LC_ALL=C _dotfiles_main &>/dev/null
 	# enable debugging
 	elif [ -f ~/.bashrc.debug ]; then

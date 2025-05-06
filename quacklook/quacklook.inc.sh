@@ -38,8 +38,8 @@ if ! [[ $_QUACKLOOK_DIR ]]; then
 	_QUACKLOOK_DIR="${_QUACKLOOK_DIR%/*}"
 fi
 
-alias d="_ICON 🦆 ${_QUACKLOOK_DIR}/quacklook.sh"
-alias quacklook="${_QUACKLOOK_DIR}/quacklook.sh"
+alias d="_ICON 🦆 _NO_MEASURE ${_QUACKLOOK_DIR}/quacklook.sh"
+alias quacklook="_ICON 🦆 _NO_MEASURE ${_QUACKLOOK_DIR}/quacklook.sh"
 _FUZZY_QUACKLOOK ()
 {
 local tmp=$(${_QUACKLOOK_DIR}/quacklook.sh "$@"|grep -E -v "$^"|grep -E -v "Script started"|grep -E -v "Script done"|fzf --no-mouse --tac)
