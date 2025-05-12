@@ -1,10 +1,8 @@
 #!/bin/bash
 {
 	_dotfiles_main() {
-    set +x
-    unset PS4
-        unset PROMPT_COMMAND
-	    if [[ $TERM = dumb ]] || [[ $TERM = vt50 ]]; then
+		unset PROMPT_COMMAND
+		if [[ $TERM = dumb ]] || [[ $TERM = vt50 ]]; then
 			stty iuclc
 		fi
 		if [[ "${TMUX}" ]]; then
@@ -98,9 +96,7 @@ EOF
 
 		export VIM=${DOTFILESDIR}/vim
 		export VIMRUNTIME=${DOTFILESDIR}/vim
-        set -x
 		. "${DOTFILESDIR}"/monorail/monorail.sh
-        set +x
 		#. "${DOTFILESDIR}"/chdir-all-the-things/chdir-all-the-things.sh
 		. "${DOTFILESDIR}"/can-opener/can-opener.inc.sh
 		. "${DOTFILESDIR}"/shabacus/shabacus.inc.sh
@@ -113,29 +109,25 @@ EOF
 		#. "${DOTFILESDIR}"/zipit/zipit.sh
 		. "${DOTFILESDIR}"/quacklook/quacklook.inc.sh
 
-        _DOTFILES_RESIZE_TMUX ()
-        {
-        ([[ "$TMUX" ]] && {
-        LC_MESSAGES=C LC_ALL=C tmux detach-client -a
-        for CLIENT in 1 2 3; do LC_MESSAGES=C LC_ALL=C tmux -L "$CLIENT" resize-window -A; done
-        } &>/dev/null &)
-        }
-        PROMPT_COMMAND="$PROMPT_COMMAND;_DOTFILES_RESIZE_TMUX"
+		_DOTFILES_RESIZE_TMUX() {
+			([[ "$TMUX" ]] && {
+				LC_MESSAGES=C LC_ALL=C tmux detach-client -a
+				for CLIENT in 1 2 3; do LC_MESSAGES=C LC_ALL=C tmux -L "$CLIENT" resize-window -A; done
+			} &>/dev/null &)
+		}
+		PROMPT_COMMAND="$PROMPT_COMMAND;_DOTFILES_RESIZE_TMUX"
 
-        _DOTFILES_COLOR ()
-        {
-        if [[ $NO_COLOR ]]
-        then
-            \echo "never"
-        else
-            \echo "always"
-        fi
-        }
+		_DOTFILES_COLOR() {
+			if [[ $NO_COLOR ]]; then
+				\echo "never"
+			else
+				\echo "always"
+			fi
+		}
 
-        if _MONORAIL_DUMB_TERMINAL
-        then
-            NO_COLOR=1
-        fi
+		if _MONORAIL_DUMB_TERMINAL; then
+			NO_COLOR=1
+		fi
 
 		if type -P nvim; then
 			EDITOR="nvim"
@@ -144,10 +136,10 @@ EOF
 		else
 			EDITOR="vim"
 			alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
+			alias vim='_NO_MEASURE _ICON 📝 $EDITOR -p '
 		fi
 		alias ivm=$EDITOR
 		alias vi=$EDITOR
-		alias vim=$EDITOR
 		alias im=$EDITOR
 		alias v=$EDITOR
 		alias nano=$EDITOR
@@ -199,11 +191,13 @@ EOF
 		alias zsh='_ICON 🐚 _LOG zsh'
 		alias ksh='_ICON 🐚 _LOG ksh'
 		alias sh='_ICON 🐚 _LOG sh'
+        alias python3='_ICON 🐍 _LOG python3'
+        alias python='_ICON 🐍 _LOG python'
 		alias cat="_ICON 🐱 _MOAR cat"
-        alias stress-ng="_ICON 🔥 stress-ng"
+		alias stress-ng="_ICON 🔥 stress-ng"
 		alias delta='_ICON Δ _LOW_PRIO delta --light'
 		_DONT_COPY_THAT_FLOPPY() {
-			
+
 			if [ "${#@}" = 2 ]; then
 				if [[ -d "${2}" ]]; then
 					DEST=${2}/$(basename "${1}")
@@ -211,12 +205,17 @@ EOF
 					DEST=${2}
 				fi
 				(
-                    [[ -e "${1}" ]] || { echo "ERROR: source is missing"; exit 42;}
-                    [[ -e "${DEST}" ]] && { echo "ERROR: will not overwrite existing file"; exit 42;}
-                    if ! _LOW_PRIO cp --reflink=always "$1" "$DEST" 2>/dev/null
-                    then
-					    chrt -i 0 pv "${1}" >"${DEST}"
-                    fi
+					[[ -e "${1}" ]] || {
+						echo "ERROR: source is missing"
+						exit 42
+					}
+					[[ -e "${DEST}" ]] && {
+						echo "ERROR: will not overwrite existing file"
+						exit 42
+					}
+					if ! _LOW_PRIO cp --reflink=always "$1" "$DEST" 2>/dev/null; then
+						chrt -i 0 pv "${1}" >"${DEST}"
+					fi
 				)
 			else
 				chrt -i 0 cp --reflink=auto "$@"
@@ -242,11 +241,11 @@ EOF
 		alias code-insiders='o code-insiders'
 		alias code='o code-insiders'
 		_GIT() {
-            local ORIG_TERM
-            ORIG_TERM=$TERM
-            local TERM
-            TERM=$ORIG_TERM
-            _MONORAIL_DUMB_TERMINAL && export TERM=dumb
+			local ORIG_TERM
+			ORIG_TERM=$TERM
+			local TERM
+			TERM=$ORIG_TERM
+			_MONORAIL_DUMB_TERMINAL && export TERM=dumb
 
 			# avoid printing title if using completion
 			case "${*}" in
@@ -256,21 +255,20 @@ EOF
 				;;
 			esac
 			case "$1" in
-            gc)
-                _LOW_PRIO \git "$"
-                ;;
+			gc)
+				_LOW_PRIO \git "$"
+				;;
 			clone | push)
 				_LOG \git "$@"
 				;;
-            add)
-                if [[ "$2" ]]
-                then
-                    \git "$@"
-                else
-                    f=$(git status --short|grep "^ "|fzf|cut -c4-1024|sed 's/"//g')
-                    git "$@" "$f"
-                fi
-            ;;
+			add)
+				if [[ "$2" ]]; then
+					\git "$@"
+				else
+					f=$(git status --short | grep "^ " | fzf | cut -c4-1024 | sed 's/"//g')
+					git "$@" "$f"
+				fi
+				;;
 			log | show | diff)
 				_MEASURE=0
 				\git "$@"
@@ -278,7 +276,7 @@ EOF
 			*)
 				_MEASURE=0
 
-                _MOAR git "$@"
+				_MOAR git "$@"
 				;;
 			esac
 		}
@@ -306,7 +304,7 @@ EOF
 		alias g="_ICON 🔎 egrep"
 		alias gv="_ICON 🔎 grep -v"
 		_TIMER() {
-_NO_MEASURE
+			_NO_MEASURE
 			local time=$(($1 * 60))
 			while sleep 1; do
 				let time--
@@ -320,7 +318,7 @@ _NO_MEASURE
 
     ${minutes}:${seconds}"
 				if [ ${time} -le 0 ]; then
-                    clear
+					clear
 					mplayer "${DOTFILESDIR}"/kitchen_timer.ogg &>/dev/null
 					printf '\033]0;⏲️  Time is up!\007Time is up! Press key to continue'
 					read -n1
@@ -385,20 +383,48 @@ _NO_MEASURE
 			[ "$f" ] && \echo "f=$f"
 		}
 		# lazy load functions
-        _LAZY_ERMAHGERD () { unset -f _LAZY_ERMAHGERD; . "${DOTFILESDIR}"/ermahgerd/ermahgerd.inc.sh; "$@"; }
-        alias rm="_LAZY_ERMAHGERD rm"
-        alias doh="_LAZY_ERMAHGERD doh"
+		_LAZY_ERMAHGERD() {
+			unset -f _LAZY_ERMAHGERD
+			. "${DOTFILESDIR}"/ermahgerd/ermahgerd.inc.sh
+			"$@"
+		}
+		alias rm="_LAZY_ERMAHGERD rm"
+		alias doh="_LAZY_ERMAHGERD doh"
 
-		c () { unset -f c; . ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh;  c "$@"; }
-		_LS_HIDDEN () { unset -f _LS_HIDDEN; . ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh; _LS_HIDDEN "$@"; }
-		_LAZY_D () { unset -f _LAZY_D; . "${DOTFILESDIR}"/quacklook/quacklook.inc.sh; "${DOTFILESDIR}"/quacklook/quacklook.sh "$@";}
+		c() {
+			unset -f c
+			. ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh
+			c "$@"
+		}
+		_LS_HIDDEN() {
+			unset -f _LS_HIDDEN
+			. ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh
+			_LS_HIDDEN "$@"
+		}
+		_LAZY_D() {
+			unset -f _LAZY_D
+			. "${DOTFILESDIR}"/quacklook/quacklook.inc.sh
+			"${DOTFILESDIR}"/quacklook/quacklook.sh "$@"
+		}
 		alias d=_LAZY_D
-		_LS_HIDDEN () { unset -f _LS_HIDDEN; . ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh; _LS_HIDDEN "$@"; }
-        _LAZY_ZIPIT () { unset -f _LAZY_ZIPIT; . "${DOTFILESDIR}"/zipit/zipit.sh"; "$@";}
-        alias z="_LAZY_ZIPIT z"
-        alias s="_LAZY_ZIPIT s"
-        _LAZY_FUUU () { unset -f _LAZY_FUUU; . "${DOTFILESDIR}"/zipit/zipit.sh"; "$@";}
-        alias f="_LAZY_FUUU f"
+		_LS_HIDDEN() {
+			unset -f _LS_HIDDEN
+			. ${DOTFILESDIR}/chdir-all-the-things/chdir-all-the-things.inc.sh
+			_LS_HIDDEN "$@"
+		}
+		_LAZY_ZIPIT() {
+			unset -f _LAZY_ZIPIT
+			. "${DOTFILESDIR}"/zipit/zipit.sh
+			"$@"
+		}
+		alias z="_LAZY_ZIPIT _ZIPIT"
+		alias s="_LAZY_ZIPIT _SHOVEIT"
+		_LAZY_FUUU() {
+			unset -f _LAZY_FUUU
+			. "${DOTFILESDIR}"/zipit/zipit.sh
+			"$@"
+		}
+		alias f="_LAZY_FUUU f"
 		alias fz=_FUZZY_FD
 
 		alias ll="\ls -al --color=$(_DOTFILES_COLOR)"
@@ -435,18 +461,18 @@ _NO_MEASURE
 		pidof chrome || /bin/rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome" "~/.config/google-chrome-beta" "~/.config/google-chrome"
 
 		_CHROME-POLISHER() {
-		#if [ "$WAYLAND_DISPLAY" ]; then
-		#	local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
-		#fi
+			#if [ "$WAYLAND_DISPLAY" ]; then
+			#	local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
+			#fi
 			local DIR=/run/user/${UID}/_CHROME-POLISHER-${USER}
 			pidof chrome &>/dev/null || /bin/rm -rf "${DIR}" "~/.cache/google-chrome-beta" "~/.cache/google-chrome" "~/.config/google-chrome-beta" "~/.config/google-chrome" &>/dev/null
 			\mkdir -p "${DIR}" &>/dev/null
 			${DOTFILESDIR}/can-opener/can-opener.sh google-chrome-beta ${WAYLAND_OPTS} --disable-notifications --disable-features=Translate --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="${DIR}/chrome" "${*}"
 		}
 		_CHROME-POLISHER-tmp() {
-		#if [ "$WAYLAND_DISPLAY" ]; then
-		#	local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
-		#fi
+			#if [ "$WAYLAND_DISPLAY" ]; then
+			#	local WAYLAND_OPTS="--enable-features=UseOzonePlatform --ozone-platform=wayland"
+			#fi
 			local DIR="/run/user/${UID}/_CHROME-POLISHER-${USER}/${1}"
 			pidof chrome &>/dev/null || /bin/rm -rf "${DIR}"
 			\mkdir -p ${DIR}
@@ -523,18 +549,16 @@ _NO_MEASURE
 
 		alias retry=_RETRY
 
-        _BLANK ()
-        {
-            _NO_MEASURE
-            _TITLE_RAW " "
-            printf "\033[?25l\033[8m"
-            clear
-            while sleep 100000000000000000
-            do
-                true
-            done
-        }
-        alias blank=_BLANK
+		_BLANK() {
+			_NO_MEASURE
+			_TITLE_RAW " "
+			printf "\033[?25l\033[8m"
+			clear
+			while sleep 100000000000000000; do
+				true
+			done
+		}
+		alias blank=_BLANK
 
 		_NO() {
 			\printf "\r\e[JCOMPUTER SAYS NO\n" >&2 | \tee >/dev/null
@@ -634,7 +658,10 @@ will not overwrite destination
 				for ARG in "exec" "-a" "$1" "chrt" "-i" "0" "$@"; do
 					\echo -n "\"${ARG}\" " >>"${TEMP}"
 				done
-				\echo "$*" >"${LOG}"
+				(
+					set +o noclobber
+					\echo "$*" >"${LOG}"
+				)
 				script -a -q -e -c "bash \"${TEMP}\"" "${LOG}"
 				local RETURN=$?
 				{
@@ -660,7 +687,7 @@ will not overwrite destination
 			(
 				SPINNER() {
 					{
-						\echo $! >"${_SPINNER_PID_FILE}"
+						( set +o noclobber; echo $$ >"${_SPINNER_PID_FILE}" );
 						\printf "\\e[?25l"
 						while sleep 0.04 && [ -f "${_SPINNER_PID_FILE}" ]; do
 							\printf "\\r\\e[J"
@@ -694,41 +721,34 @@ will not overwrite destination
 			\printf "\\r\\e[J" >&2 | tee 2>/dev/null
 		}
 
-		# https://stackoverflow.com/questions/51653450/show-call-stack-in-bash
-		_STACKTRACE() {
-			local i=1 line file func
-			while read -r line func file < <(caller $i); do
-				echo >&2 "[$i] $file:$line $func(): $(sed -n ${line}p $file)"
-				((i++))
-			done
-		}
 		bind 'set completion-ignore-case on'
 		bind 'set bell-style none'
-        . /usr/share/doc/fzf/examples/key-bindings.bash
+		set -o noclobber
+		. /usr/share/doc/fzf/examples/key-bindings.bash
 		. ~/.bashrc.local
 		(
-		#https://stackoverflow.com/questions/6250698/how-to-decode-url-encoded-string-in-shell
-		urldecode() {
-			: "${*//+/ }"
-			echo -e "${_//%/\\x}"
-		}
+			#https://stackoverflow.com/questions/6250698/how-to-decode-url-encoded-string-in-shell
+			urldecode() {
+				: "${*//+/ }"
+				echo -e "${_//%/\\x}"
+			}
 
-		update_recent() {
-			\mkdir -p ~/Recent
-			\rm -f ~/Recent/*
-			local ITEM
-			local IFS="
+			update_recent() {
+				\mkdir -p ~/Recent
+				\rm -f ~/Recent/*
+				local ITEM
+				local IFS="
 "
-			for ITEM in $(\gio tree recent:// | \grep ' file://'); do
-				ITEM=${ITEM:47}
-				ITEM=$(urldecode "${ITEM}")
-				ITEM=${ITEM//%20/ }
-				SRC_ITEM=${ITEM}
-				ITEM=${ITEM##*/}
-				\echo "## ${SRC_ITEM} -> ${ITEM} ##\n"
-				\ln -s "${SRC_ITEM}" "${HOME}/Recent/${ITEM}"
-			done
-		}
+				for ITEM in $(\gio tree recent:// | \grep ' file://'); do
+					ITEM=${ITEM:47}
+					ITEM=$(urldecode "${ITEM}")
+					ITEM=${ITEM//%20/ }
+					SRC_ITEM=${ITEM}
+					ITEM=${ITEM##*/}
+					\echo "## ${SRC_ITEM} -> ${ITEM} ##\n"
+					\ln -s "${SRC_ITEM}" "${HOME}/Recent/${ITEM}"
+				done
+			}
 
 			ignore_chrome_crash() {
 				exec sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
@@ -766,27 +786,27 @@ will not overwrite destination
 				ln -sf "${DOTFILESDIR}/home.xscreensaver" ~/.xscreensaver
 				mount_shares
 				\rm -f "~/.cache/logs/${TTY//\//_}"
-                ln -sf "${DOTFILESDIR}"/vim ~/.config/vim
-                ln -sf "${DOTFILESDIR}"/nvim ~/.config/nvim
+				ln -sf "${DOTFILESDIR}"/vim ~/.config/vim
+				ln -sf "${DOTFILESDIR}"/nvim ~/.config/nvim
 			}
 			background_startup_tasks &
 		)
 		unset -f _dotfiles_main
 	}
 
-task() {
-	title "$*"
+	task() {
+		title "$*"
 
-	name "$*"
+		name "$*"
 
-	alias c='echo "Terminal is locked to task: ${NAME}\a";: '
-	alias cd='echo "Terminal is locked to task: ${NAME}\a";: '
-}
+		alias c='echo "Terminal is locked to task: ${NAME}\a";: '
+		alias cd='echo "Terminal is locked to task: ${NAME}\a";: '
+	}
 } &>/dev/null
 
 # Avoid starting dotfiles if login shell. unless...
 [[ ${PS1} ]] && if ! shopt -q login_shell; then
-	if [[ $VHS_RECORD = true ]];then
+	if [[ $VHS_RECORD = true ]]; then
 		. .local/share/dotfiles/monorail/monorail.sh
 	# print startup statistics
 	elif [ -f ~/.bashrc.statistics ]; then

@@ -424,6 +424,7 @@ pfsglview \
 pfsview \
 qimgv \
 qiv \
+tellico \
 slack
 do
 if type -P "${CMD}"
