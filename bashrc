@@ -191,8 +191,8 @@ EOF
 		alias zsh='_ICON 🐚 _LOG zsh'
 		alias ksh='_ICON 🐚 _LOG ksh'
 		alias sh='_ICON 🐚 _LOG sh'
-        alias python3='_ICON 🐍 _LOG python3'
-        alias python='_ICON 🐍 _LOG python'
+		alias python3='_ICON 🐍 _LOG python3'
+		alias python='_ICON 🐍 _LOG python'
 		alias cat="_ICON 🐱 _MOAR cat"
 		alias stress-ng="_ICON 🔥 stress-ng"
 		alias delta='_ICON Δ _LOW_PRIO delta --light'
@@ -213,6 +213,7 @@ EOF
 						echo "ERROR: will not overwrite existing file"
 						exit 42
 					}
+					set +o noclobber
 					if ! _LOW_PRIO cp --reflink=always "$1" "$DEST" 2>/dev/null; then
 						chrt -i 0 pv "${1}" >"${DEST}"
 					fi
@@ -428,8 +429,8 @@ EOF
 		alias fz=_FUZZY_FD
 
 		alias ll="\ls -al --color=$(_DOTFILES_COLOR)"
-		alias l='_LS_HIDDEN -v -C'
-		alias ls='_LS_HIDDEN -v -C'
+		alias l='_LS_HIDDEN -v -C -w${COLUMNS}'
+		alias ls='_LS_HIDDEN -v -C -w${COLUMNS}'
 		alias sl=ls
 		alias task_flash='task "⚡ FLASH ⚡"'
 		alias task_bake='task "🍞 Bake"'
@@ -687,7 +688,10 @@ will not overwrite destination
 			(
 				SPINNER() {
 					{
-						( set +o noclobber; echo $$ >"${_SPINNER_PID_FILE}" );
+						(
+							set +o noclobber
+							echo $$ >"${_SPINNER_PID_FILE}"
+						)
 						\printf "\\e[?25l"
 						while sleep 0.04 && [ -f "${_SPINNER_PID_FILE}" ]; do
 							\printf "\\r\\e[J"
