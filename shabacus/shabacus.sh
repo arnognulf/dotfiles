@@ -45,11 +45,26 @@ x UNIT in UNIT - where UNIT are any of [cm,m,km,ft,in,yd,miles,mil]
 " >&2 | tee /dev/null >/dev/null
 }
 
+_SHABACUS_BRIEF_HELP ()
+{
+\printf "\
+Run \`shabacus --help\` for calculator usage.
+
+" >&2 | tee /dev/null >/dev/null
+}
+
 function _SHABACUS_HELP ()
 {
 \printf "\
 SHABACUS: infix shell decimal calculator
 ========================================
+Precision
+---------
+Number of decimals can be specified by setting the \`$SHABACUS_DECIMALS\` environment variable.
+Example
+
+SHABACUS_DECIMALS=30 4 * pi
+
 "
 _SHABACUS_HELP_CONVERSIONS
 
@@ -62,7 +77,7 @@ x * y    - multiplication
 x / y    - division
 x ^ y    - integer power
 pow x y  - decimal power (NOT IMPLEMENTED)
-x % y    - integer modulo of x and y
+x %% y    - integer modulo of x and y
 mod x y  - integer modulo of x and y (NOT IMPLEMENTED)
 x!       - faculty of x
 e x      - natural exponent
@@ -114,7 +129,7 @@ xor x y  - bitwise XOR of x and y
 not x    - bitwise NOT of x
 bitrev x - bitwise reverse x
 
-" >&2 | tee /dev/null >/dev/null
+"
 _SHABACUS_HELP_CONVERSIONS;
 
 }
@@ -137,7 +152,16 @@ local FUNCTION_CALLS=0
 local NUM_ARGS="${#@}"
 local NUM_GLOB=0
 local SHABACUS_DEFAULT_DECIMALS=4
-
+if [[ $1 = -h ]] || [[ $1 = --help ]]
+then
+if [[ -t 0 ]]
+then
+_SHABACUS_HELP | less
+else
+_SHABACUS_HELP >&2 | tee /dev/null >/dev/null
+fi
+exit 1
+fi
 if [ "${2}" = "in" ]
 then
 case "${3}" in
@@ -249,7 +273,7 @@ case "${4}" in
 F) EXPR="(9/5*${EXPR}+32)+273.15";;
 K) EXPR="${EXPR}";;
 C) EXPR="${EXPR}+273.15";;
-*) _SHABACUS_help_conversions; return 1
+*) _SHABACUS_HELP_CONVERSIONS; return 1
 esac
 ;;
 
@@ -265,7 +289,7 @@ kg) EXPR="${EXPR}";;
 g) EXPR="${EXPR}/1000";;
 lb) EXPR="${EXPR}*2.205";;
 oz) EXPR="${EXPR}*35.274";;
-*) _SHABACUS_help_conversions; return 1
+*) _SHABACUS_HELP_CONVERSIONS; return 1
 esac
 ;;
 
@@ -291,7 +315,7 @@ in) EXPR="${EXPR}*39.37";;
 yd) EXPR="${EXPR}*1.094";; 
 miles) EXPR="${EXPR}/1609.344";; 
 mil) EXPR="${EXPR}/10000";; 
-*) _SHABACUS_help_conversions; return 1
+*) _SHABACUS_HELP_CONVERSIONS; return 1
 esac
 ;;
 
@@ -305,7 +329,7 @@ case "${4}" in
 km/h) EXPR="${EXPR}*3.6";;
 mph) EXPR="${EXPR}*2.237";;
 m/s) EXPR="${EXPR}";;
-*) _SHABACUS_help_conversions; return 1
+*) _SHABACUS_HELP_CONVERSIONS; return 1
 esac
 ;;
 
@@ -317,12 +341,12 @@ esac
 case "${4}" in
 deg) EXPR="${EXPR}/pi*180";;
 rad) EXPR="${EXPR}";;
-*) _SHABACUS_help_conversions; return 1
+*) _SHABACUS_HELP_CONVERSIONS; return 1
 esac
 ;;
 
 *)
-_SHABACUS_help_conversions; return 1
+_SHABACUS_HELP_CONVERSIONS; return 1
 esac
 fi
 case "${EXPR}" in
@@ -426,7 +450,7 @@ esac
 esac
 if [ -z "${RESULT}" ] 
 then
-_SHABACUS_HELP
+_SHABACUS_BRIEF_HELP
 echo -n "shabacus: "
 local ERROR=$(echo "${COMMAND}"| BC_LINE_LENGTH=0 BC_ENV_ARGS="" bc -l 2>&1)
 if [ "x${ERROR}" = x ]

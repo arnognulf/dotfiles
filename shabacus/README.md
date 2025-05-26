@@ -3,7 +3,24 @@ SH-ABACUS
 
 Turn Bash/Zsh into a calculator by intercepting command_not_found_handle(r).   
 Uses bc(1) syntax with a couple of replacement macros.   
+
+Features
+--------
+* 4 decimals by default
+* common mathematical operations.
+* conversions of mass, volume, distance, velocity
+* conversions of hexadecimal, octal, binary, and 10-base numbers
+* ability to specify decimals
+* arbitary number of decimals (limited by computer)
+* rounding based on higher precision calculation.
+  eg. 1/3 + 1/3 + 1/3 => 1
+* no need to escape/quote wildcard (*)
+* precedence based on spaces: eg. 3+3 / 3 => 2; 3 + 3/3 => 4
+
+Limitations
+-----------
 Does not work with the version of bash shipped in OSX.
+
 
 # Usage
 
