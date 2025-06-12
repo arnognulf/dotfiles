@@ -180,6 +180,10 @@ function _QUACKLOOK_DECODE_DOC
     *.htm|*.html) \elinks -dump -dump-width 80 "${TEMP}";return 0;;
     esac
 
+    case "${1,,}" 
+    *screenlog.0|*.log) LC_ALL=C dos2unix -f < "${FILE}" 2>/dev/null| LC_ALL=C \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' | LC_ALL=C tr '\015' '\012';return 0;;
+    esac
+
     case "${1,,}" in #case1
     *.wri) \unoconv --format=doc "${TEMP}" -o "${TEMP}.doc" 2>/dev/null;\pandoc -s --from=html --to=man "${TEMP}.doc";;
     *.markdown|*.mdown|*.mkdn|*.md) \pandoc -s --from=gfm --to=man "${TEMP}";;
@@ -190,7 +194,6 @@ function _QUACKLOOK_DECODE_DOC
     *.org) \pandoc -s --from=org --to=man "${TEMP}";;
     *.tex) \pandoc -s --from=latex --to=man "${TEMP}";;
     *.rst) \pandoc -s --from=rst --to=man "${TEMP}";;
-    *screenlog.0|*.log) LC_ALL=C dos2unix -f < "${FILE}" 2>/dev/null| LC_ALL=C \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' | LC_ALL=C tr '\015' '\012';return 0;;
     *.man) \cat "${1}";;
     *.asciidoc|*.adoc|*.asc) pandoc -s --from=asciidoc --to=man "${TEMP}";;
     esac > "${TEMP}.man" #end case1
