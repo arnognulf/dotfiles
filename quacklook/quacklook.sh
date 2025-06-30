@@ -180,7 +180,7 @@ function _QUACKLOOK_DECODE_DOC
     *.htm|*.html) \elinks -dump -dump-width 80 "${TEMP}";return 0;;
     esac
 
-    case "${1,,}" 
+    case "${1,,}" in
     *screenlog.0|*.log) LC_ALL=C dos2unix -f < "${FILE}" 2>/dev/null| LC_ALL=C \sed -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' | LC_ALL=C tr '\015' '\012';return 0;;
     esac
 

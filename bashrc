@@ -776,23 +776,22 @@ will not overwrite destination
 			# and IO is not stressed at shell startup, this way we will get to prompt
 			# faster
 			background_startup_tasks() {
-				\mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo
+				\mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo ~/.local/share/Trash/files "${GOPATH}"
                 \ln -sf "${HOME}/.local/share/Trash/files" "${HOME}/Trash"
 				\rm -f "~/.cache/logs/${TTY//\//_}"
 				\ln -sf "${DOTFILESDIR}"/vim ~/.config/vim
 				\ln -sf "${DOTFILESDIR}"/nvim ~/.config/nvim
 				\bash ~/.config/dotfiles/deal-with-it/deal-with-it.sh &
-				
+
+				# hide files from nautilus and ls
+				\ln -sf "${DOTFILESDIR}/home.hidden" ~/.hidden
+				\ln -sf "${DOTFILESDIR}/home.xscreensaver" ~/.xscreensaver				
+
 				update_recent
 				ignore_chrome_crash
 				kill_tracker
 				gsettings set org.gnome.settings-daemon.plugins.power idle-brightness 100
 				# mount shares can wait for network I/O quite some time, do this late to not block other tasks
-				\mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo/ "${GOPATH}"
-
-				# hide files from nautilus and ls
-				\ln -sf "${DOTFILESDIR}/home.hidden" ~/.hidden
-				\ln -sf "${DOTFILESDIR}/home.xscreensaver" ~/.xscreensaver
 				mount_shares
 			}
 			background_startup_tasks &
