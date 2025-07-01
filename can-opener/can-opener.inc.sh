@@ -1,21 +1,16 @@
 #!/bin/bash
-if ! [[ $_CAN_OPENER_DIR ]]; then
-	if [[ ${BASH_ARGV[0]} != "/"* ]]; then
-		_CAN_OPENER_DIR=$PWD/${BASH_ARGV[0]}
-	else
-		_CAN_OPENER_DIR="${BASH_ARGV[0]}"
-	fi
-
-	_CAN_OPENER_DIR="${_CAN_OPENER_DIR%/*}"
+if ! [[ $_CAN_OPENER_DIR ]];then
+if [[ ${BASH_ARGV[0]} != "/"* ]];then
+_CAN_OPENER_DIR=$PWD/${BASH_ARGV[0]}
+else
+_CAN_OPENER_DIR="${BASH_ARGV[0]}"
 fi
-
-# shellcheck disable=2139,2140
-alias o || alias "o"="${_CAN_OPENER_DIR}/can-opener.sh"
+_CAN_OPENER_DIR="${_CAN_OPENER_DIR%/*}"
+fi
+alias o||alias "o"="$_CAN_OPENER_DIR/can-opener.sh"
 unset _CAN_OPENER_DIR
-function _CMD_PARSER ()
-{
-if [ -z "${WAYLAND_DISPLAY}${DISPLAY}" ]
-then
+function _CMD_PARSER(){
+if [ -z "$WAYLAND_DISPLAY$DISPLAY" ];then
 return
 fi
 local CMD
@@ -425,54 +420,43 @@ pfsview \
 qimgv \
 qiv \
 tellico \
-slack
-do
-if type -P "${CMD}"
-then
-case "${CMD}" in
-/usr/*/xscreensaver/xscreensaver-*)
+slack;do
+if type -P "$CMD";then
+case "$CMD" in
+/usr/*/xscreensaver/xscreensaver-*);;
+/usr/*/xscreensaver/*)eval "alias ${CMD##*/}=\"o ${CMD//}\""
 ;;
-/usr/*/xscreensaver/*)
-eval "alias ${CMD##*/}=\"o ${CMD/}\""
-;;
-*)
-eval "alias ${CMD##*/}=\"o ${CMD##*/}\""
+*)eval "alias ${CMD##*/}=\"o ${CMD##*/}\""
 esac
 fi
 done
 }
 _CMD_PARSER
 unset -f _CMD_PARSER
-function _FLATPAK_PARSER ()
-{
+function _FLATPAK_PARSER(){
 local APPLICATION
-for APPLICATION in /var/lib/flatpak/exports/bin/* ~/.local/share/flatpak/exports/bin/* 
-do
+for APPLICATION in /var/lib/flatpak/exports/bin/* ~/.local/share/flatpak/exports/bin/*;do
 local CMD=${APPLICATION,,}
 CMD=${CMD##*.}
-eval "alias ${CMD##*/}=\"o ${APPLICATION}\""
+eval "alias ${CMD##*/}=\"o $APPLICATION\""
 done
 }
 _FLATPAK_PARSER
 unset -f _FLATPAK_PARSER
-
-function _APP_PARSER ()
-{
+function _APP_PARSER(){
 local DESKTOP_FILE
-for DESKTOP_FILE in /usr/share/applications/*.desktop
-do
-if \grep Terminal=false "${DESKTOP_FILE}"
-then
-    local NAME=$(\grep "^Name=" "${DESKTOP_FILE}"|\sed -e 's/Name=//g' -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|\head -n1)
-    local NAME_LOCALIZED=$(\grep "^Name\[${LANG%%_*}\]=" "${DESKTOP_FILE}"|cut -d= -f2|\sed -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|\head -n1)
-    local COMMAND=$(\grep "^Exec=" "${DESKTOP_FILE}"|sed -e 's/Exec=//g' -e 's/\%f//g' -e 's/\%F//g' -e 's/\%u//g' -e 's/\%U//g'|\head -n1)
-    eval alias \""${NAME}"\"=\"o ${COMMAND}\"
-    test -n "${NAME_LOCALIZED}" && { eval alias \""${NAME_LOCALIZED}"\"=\"o ${COMMAND}\"; }
-    NAME=""
-    NAME_LOCALIZED=""
-    COMMAND=""
+for DESKTOP_FILE in /usr/share/applications/*.desktop;do
+if \grep Terminal=false "$DESKTOP_FILE";then
+local NAME=$(\grep "^Name=" "$DESKTOP_FILE"|\sed -e 's/Name=//g' -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|\head -n1)
+local NAME_LOCALIZED=$(\grep "^Name\[${LANG%%_*}\]=" "$DESKTOP_FILE"|cut -d= -f2|\sed -e 's/ -/-/g' -e 's/- /-/g' -e 's/ /-/g' -e 's/\(.*\)/\L\1/' -e 's/(//g' -e 's/)//g' -e 's/\//∕/g' -e 's/\&/and/g' -e 's/->//g'|\head -n1)
+local COMMAND=$(\grep "^Exec=" "$DESKTOP_FILE"|sed -e 's/Exec=//g' -e 's/\%f//g' -e 's/\%F//g' -e 's/\%u//g' -e 's/\%U//g'|\head -n1)
+eval alias \""$NAME"\"=\"o $COMMAND\"
+test -n "$NAME_LOCALIZED"&&{ eval alias \""$NAME_LOCALIZED"\"=\"o $COMMAND\";}
+NAME=""
+NAME_LOCALIZED=""
+COMMAND=""
 fi
 done
 }
-true || _APP_PARSER
+true||_APP_PARSER
 unset -f _APP_PARSER
