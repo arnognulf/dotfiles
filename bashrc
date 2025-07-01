@@ -128,14 +128,14 @@ alias vi=$EDITOR
 alias im=$EDITOR
 alias v=$EDITOR
 alias nano=$EDITOR
-XDG_DESKTOP_DIR="$HOME/"
-XDG_DOWNLOAD_DIR="$HOME/Downloads"
-XDG_TEMPLATES_DIR="$HOME/Templates"
-XDG_PUBLICSHARE_DIR="$HOME/Public"
-XDG_DOCUMENTS_DIR="$HOME/Documents"
-XDG_MUSIC_DIR="$HOME/Music"
-XDG_PICTURES_DIR="$HOME/Pictures"
-XDG_VIDEOS_DIR="$HOME/Videos"
+export XDG_DESKTOP_DIR="$HOME/"
+export XDG_DOWNLOAD_DIR="$HOME/Downloads"
+export XDG_TEMPLATES_DIR="$HOME/Templates"
+export XDG_PUBLICSHARE_DIR="$HOME/Public"
+export XDG_DOCUMENTS_DIR="$HOME/Documents"
+export XDG_MUSIC_DIR="$HOME/Music"
+export XDG_PICTURES_DIR="$HOME/Pictures"
+export XDG_VIDEOS_DIR="$HOME/Videos"
 [[ -f ~/.config/user-dirs.dirs ]]||xdg-user-dirs-update
 . ~/.config/user-dirs.dirs
 export EDITOR
@@ -365,11 +365,6 @@ unset -f _LAZY_D
 "$DOTFILESDIR"/quacklook/quacklook.sh "$@"
 }
 alias d=_LAZY_D
-_LS_HIDDEN(){
-unset -f _LS_HIDDEN
-. $DOTFILESDIR/chdir-all-the-things/chdir-all-the-things.inc.sh
-_LS_HIDDEN "$@"
-}
 _LAZY_ZIPIT(){
 unset -f _LAZY_ZIPIT
 . "$DOTFILESDIR"/zipit/zipit.sh
