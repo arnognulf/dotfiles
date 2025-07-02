@@ -111,10 +111,10 @@ else
 \echo "always"
 fi
 }
-if [[ $_MONORAIL_DUMB_TERMINAL ]];then
+if _MONORAIL_DUMB_TERMINAL;then
 NO_COLOR=1
 fi
-if type -P nvim;then
+if type -P nvim >/dev/null;then
 EDITOR="nvim"
 alias nvim='_NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
 alias vim='_NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
@@ -145,11 +145,11 @@ local FILE
 for FILE in "$@";do
 case "${FILE,,}" in
 -*):;;
-*.kt|*.java)type -P studio.sh &>/dev/null&&$DOTFILESDIR/can-opener/can-opener.sh studio.sh "$PWD/$FILE"
+*.kt|*.java)type -P studio.sh >/dev/null 2>&-&&$DOTFILESDIR/can-opener/can-opener.sh studio.sh "$PWD/$FILE"
 return
 esac
 done
-XDG_DATA_HOME="$VIM" $(type -P "nvim" 2>/dev/null||type -P "vim" 2>/dev/null||type -P "vi" 2>/dev/null) -u "$VIM"/nvim.vim -p "$@"
+XDG_DATA_HOME="$VIM" $(type -P "nvim" 2>&-||type -P "vim" 2>/dev/null||type -P "vi" 2>/dev/null) -u "$VIM"/nvim.vim -p "$@"
 }
 [ -x ~/.local/share/android-studio/bin/studio.sh ]&&alias studio='/home/arno/.config/dotfiles/can-opener/can-opener.sh _LOW_PRIO ~/.local/share/android-studio/bin/studio.sh'
 [ -x ~/.local/bin/PabloDraw.exe ]&&alias pablodraw='/home/arno/.config/dotfiles/can-opener/can-opener.sh mono ~/.local/bin/PabloDraw.exe'
@@ -216,7 +216,7 @@ local ORIG_TERM
 ORIG_TERM=$TERM
 local TERM
 TERM=$ORIG_TERM
-[[ $_MONORAIL_DUMB_TERMINAL ]]&&export TERM=dumb
+_MONORAIL_DUMB_TERMINAL&&export TERM=dumb
 case "$*" in
 *'--git-dir='*):;;
 *)_TITLE "🪣  $*"
@@ -247,8 +247,8 @@ alias git="_GIT"
 alias gd='git diff --color-moved --no-prefix'
 alias gc='git commit -p --verbose'
 alias gca='git commit --amend -p --verbose'
-type -P fdfind&&alias fdfind='_ICON 🔎 _MOAR fdfind -H -I'
-type -P fdfind&&alias fd='_ICON 🔎 _MOAR fdfind -H -I'
+type -P fdfind >/dev/null&&alias fdfind='_ICON 🔎 _MOAR fdfind -H -I'
+type -P fdfind >/dev/null&&alias fd='_ICON 🔎 _MOAR fdfind -H -I'
 alias find='_ICON 🔎 _MOAR find'
 alias rga="_ICON 🔎 _MOAR rga --color=$(_DOTFILES_COLOR)"
 alias rg='_ICON 🔎 _MOAR rg'
