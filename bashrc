@@ -111,7 +111,7 @@ else
 \echo "always"
 fi
 }
-if _MONORAIL_DUMB_TERMINAL;then
+if [[ $_MONORAIL_DUMB_TERMINAL ]];then
 NO_COLOR=1
 fi
 if type -P nvim;then
@@ -216,7 +216,7 @@ local ORIG_TERM
 ORIG_TERM=$TERM
 local TERM
 TERM=$ORIG_TERM
-_MONORAIL_DUMB_TERMINAL&&export TERM=dumb
+[[ $_MONORAIL_DUMB_TERMINAL ]]&&export TERM=dumb
 case "$*" in
 *'--git-dir='*):;;
 *)_TITLE "🪣  $*"
@@ -722,6 +722,4 @@ ORIG_LC_MESSAGES="$LC_MESSAGES" ORIG_LC_ALL="$LC_ALL" LC_MESSAGES=C LC_ALL=C _do
 fi
 elif [ -z "$DISPLAY$WAYLAND_DISPLAY" ];then
 ORIG_LC_MESSAGES="$LC_MESSAGES" ORIG_LC_ALL="$LC_ALL" LC_MESSAGES=C LC_ALL=C _dotfiles_main >&- 2>&-
-else
-unset OLD_LC_ALL
 fi
