@@ -1,6 +1,6 @@
 #!/bin/bash
-{
 _dotfiles_main(){
+{
 unset PROMPT_COMMAND
 if [[ $TERM == dumb ]]||[[ $TERM == vt50 ]];then
 stty iuclc
@@ -78,7 +78,6 @@ sleep 0.1
 sleep 0.1
 exit 1
 fi
-TTY=$(tty)
 export HISTSIZE=-1
 export HISTFILESIZE=-1
 shopt -s globstar
@@ -90,7 +89,9 @@ DOTFILESDIR=${DOTFILESDIR%/*}
 export GOPATH=$HOME/.local/share/go
 export VIM=$DOTFILESDIR/vim
 export VIMRUNTIME=$DOTFILESDIR/vim
+} 2>&- >&-
 . "$DOTFILESDIR"/monorail/monorail.sh
+{
 . "$DOTFILESDIR"/can-opener/can-opener.inc.sh
 . "$DOTFILESDIR"/shabacus/shabacus.inc.sh
 . "$DOTFILESDIR"/moar/moar.sh
@@ -426,7 +427,7 @@ alias chromium=_CHROME-POLISHER
 alias google-chrome=_CHROME-POLISHER
 alias chrome=_CHROME-POLISHER
 alias dos="bash $DOTFILESDIR/dos/sh-dos.sh"
-alias sudo="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\";_ICON ⚠️  _LOG sudo"
+alias sudo="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\" >${TTY};_ICON ⚠️  _LOG sudo"
 alias su="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\";_ICON ⚠️  _LOG su"
 _SCP(){
 local ARG
@@ -574,7 +575,7 @@ cp -r --update=none "$SECOND_LAST_ITEM" "$LAST_ITEM"
 }
 alias cplast=_CP_LAST_ITEM
 _LOG(){
-if [ -t 1 ];then
+if [ -t 0 ];then
 local LOGFILE="${TTY//\//_}"
 local LOGDIR="$HOME/.cache/logs"
 \mkdir -p "$LOGDIR"
@@ -699,6 +700,7 @@ mount_shares
 }
 background_startup_tasks&)
 unset -f _dotfiles_main
+} >&- 2>&-
 }
 task(){
 title "$*"
@@ -706,8 +708,7 @@ name "$*"
 alias c='echo "Terminal is locked to task: ${NAME}\a";: '
 alias cd='echo "Terminal is locked to task: ${NAME}\a";: '
 }
-} >&- 2>&-
-[[ $PS1 ]]&&if ! shopt -q login_shell;then
+[[ $PS1 ]]&&if true;then
 if [[ $VHS_RECORD == true ]];then
 . .local/share/dotfiles/monorail/monorail.sh
 elif [ -f ~/.bashrc.statistics ];then
@@ -717,6 +718,9 @@ set -x
 export PS4='+ $EPOCHREALTIME ($LINENO) '
 ORIG_LC_MESSAGES="$LC_MESSAGES" ORIG_LC_ALL="$LC_ALL" LC_MESSAGES=C LC_ALL=C _dotfiles_main
 unset PS4
+elif [ -f ~/.bashrc.monorail ];then
+#set -x
+time . ~/.local/share/dotfiles/monorail/monorail.sh
 else
 ORIG_LC_MESSAGES="$LC_MESSAGES" ORIG_LC_ALL="$LC_ALL" LC_MESSAGES=C LC_ALL=C _dotfiles_main >&- 2>&-
 fi

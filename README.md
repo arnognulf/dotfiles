@@ -3,10 +3,10 @@
 
 You may not like it, but this is what peak dotfiles look like
 
-# link:
-ln -s ${PWD}/bashrc ~/.bashrc
-
-
+# installation
+```
+printf "\n. ${PWD}/bashrc" >> ~/.bashrc
+```
 
 bashrc
 
