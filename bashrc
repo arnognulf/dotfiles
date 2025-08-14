@@ -427,7 +427,7 @@ alias chromium=_CHROME-POLISHER
 alias google-chrome=_CHROME-POLISHER
 alias chrome=_CHROME-POLISHER
 alias dos="bash $DOTFILESDIR/dos/sh-dos.sh"
-alias sudo="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\" >${TTY};_ICON ⚠️  _LOG sudo"
+alias sudo="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\" >/dev/tty;_ICON ⚠️  _LOG sudo"
 alias su="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\";_ICON ⚠️  _LOG su"
 _SCP(){
 local ARG
@@ -576,6 +576,7 @@ cp -r --update=none "$SECOND_LAST_ITEM" "$LAST_ITEM"
 alias cplast=_CP_LAST_ITEM
 _LOG(){
 if [ -t 0 ];then
+local TTY=$(tty)
 local LOGFILE="${TTY//\//_}"
 local LOGDIR="$HOME/.cache/logs"
 \mkdir -p "$LOGDIR"
@@ -686,6 +687,7 @@ tracker daemon -k
 background_startup_tasks(){
 \mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo ~/.local/share/Trash/files "$GOPATH"
 \ln -sf "$HOME/.local/share/Trash/files" "$HOME/Trash"
+local TTY=$(tty)
 \rm -f "~/.cache/logs/${TTY//\//_}"
 \ln -sf "$DOTFILESDIR"/vim ~/.config/vim
 \ln -sf "$DOTFILESDIR"/nvim ~/.config/nvim
