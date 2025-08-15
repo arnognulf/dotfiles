@@ -112,7 +112,7 @@ else
 \echo "always"
 fi
 }
-if _MONORAIL_DUMB_TERMINAL;then
+if [[ $_MONORAIL_DUMB_TERMINAL ]];then
 NO_COLOR=1
 fi
 if type -P nvim >/dev/null;then
@@ -217,7 +217,7 @@ local ORIG_TERM
 ORIG_TERM=$TERM
 local TERM
 TERM=$ORIG_TERM
-_MONORAIL_DUMB_TERMINAL&&export TERM=dumb
+[[ $_MONORAIL_DUMB_TERMINAL ]]&&export TERM=dumb
 case "$*" in
 *'--git-dir='*):;;
 *)_TITLE "🪣  $*"
@@ -575,7 +575,8 @@ cp -r --update=none "$SECOND_LAST_ITEM" "$LAST_ITEM"
 }
 alias cplast=_CP_LAST_ITEM
 _LOG(){
-if [ -t 0 ];then
+# both stdin and stdout needs to be available for eg. `echo string|sudo tee /foo/bar` to work
+if [[ -t 0 ]] && [[ -t 1 ]];then
 local TTY=$(tty)
 local LOGFILE="${TTY//\//_}"
 local LOGDIR="$HOME/.cache/logs"
