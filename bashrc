@@ -90,7 +90,6 @@ export GOPATH=$HOME/.local/share/go
 export VIM=$DOTFILESDIR/vim
 export VIMRUNTIME=$DOTFILESDIR/vim
 } 2>&- >&-
-set -x
 . "$DOTFILESDIR"/monorail/monorail.sh
 {
 . "$DOTFILESDIR"/can-opener/can-opener.inc.sh
