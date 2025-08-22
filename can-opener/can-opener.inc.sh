@@ -421,7 +421,7 @@ qimgv \
 qiv \
 tellico \
 slack;do
-if type -P "$CMD";then
+if type -P "$CMD" >/dev/null;then
 case "$CMD" in
 /usr/*/xscreensaver/xscreensaver-*);;
 /usr/*/xscreensaver/*)eval "alias ${CMD##*/}=\"o ${CMD//}\""

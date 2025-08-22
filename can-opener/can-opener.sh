@@ -127,7 +127,7 @@ function _CAN_OPENER ()
     elif [ -f "$1" ]
     then
         _CAN_OPENER_ALL "$@"
-    elif type -p "${1}" &>/dev/null
+    elif type -p "${1}" 1>/dev/null
     then
     local HELP
     local ARG
