@@ -592,14 +592,18 @@ done
 script -a -q -e -c "bash \"$TEMP\"" "$LOG"
 local RETURN=$?
 {
-\sed -i -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' -e "s/$'\x0d'/\n/g" -e "s/$'\x0a'$'\x0a'/\n/g" "$LOG"
 /bin/rm -f "$TEMP"
+if [[ -z $_BASHRC_RAWLOG ]]
+then
+\sed -i -e 's/\x1b\[[0-9;]*[a-zA-Z]//g' -e "s/$'\x0d'/\n/g" -e "s/$'\x0a'$'\x0a'/\n/g" "$LOG"
+fi
 } &>/dev/null
 return $RETURN
 else
 "$@"
 fi
 }
+alias rawlog="_LOGFILE="rawlog-$(now).log" _BASHRC_RAWLOG=1 _LOG"
 local FILE
 for FILE in /*;do
 eval "$FILE () { echo \"C-comment paste detected. Press CTRL+C to continue\";cat;}"
