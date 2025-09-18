@@ -50,18 +50,18 @@ function _CAN_OPENER_ALL ()
     local MIME
     FILE=$(_LATEST "$@")
         (
-            if [ -h "${FILE}" ]
-            then
-                FILE=$(readlink "${FILE}")
-            fi
+            #if [ -h "${FILE}" ]
+            #then
+            #    FILE=$(readlink "${FILE}")
+            #fi
             
-            MIME=$(command file --mime-type "${FILE}")
+            MIME=$(command file --dereference --mime-type "${FILE}")
             case "${MIME}" in
             *" "application/vnd.apple.keynote|*" "application/vnd.wordperfect|*" "application/rtf|*" "application/vnd.oasis.opendocument.text|*" "application/vnd.openxmlformats-officedocument.*|*" "application/doc|*" "application/ms-doc|*" "application/msword)
             exec loffice --norestore --view "${FILE}" &>/dev/null &
             ;;
             *" "application/x-pie-executable|*" "application/x-sharedlib|*" "application/x-executable|*" "text/x-perl|*" "text/x-shellscript|*" "text/x-script.python|*" "text/x-lisp|*" "text/x-java|*" "text/x-ruby)
-            if [ -x "${FILE}" ]
+            if [[ -x "${FILE}" ]]
             then
                 case "$1" in
                     /usr/*/xscreensaver/*)

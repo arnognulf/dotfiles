@@ -105,6 +105,7 @@ xclipboard \
 x-terminal-emulator \
 86box \
 alacritty \
+foot \
 alleyoop \
 animate \
 aranym \
@@ -420,6 +421,14 @@ pfsview \
 qimgv \
 qiv \
 tellico \
+xgterm \
+xiterm+thai \
+ghostty \
+rio \
+vt52 \
+vt05 \
+vt100 \
+gecon \
 slack;do
 if type -P "$CMD" >/dev/null;then
 case "$CMD" in
