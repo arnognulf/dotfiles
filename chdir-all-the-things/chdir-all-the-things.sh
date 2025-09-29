@@ -43,9 +43,9 @@ function _RECURSE_REVERSE_CD
 
 function _RECURSE_CD
 {
-    if [ "${_CATT_LASTLASTPWD}" = "${PWD}" ]
+    if [ "${_CATT_PENULTIMATEPWD}" = "${PWD}" ]
     then
-        _CATT_LASTLASTPWD="///"
+        _CATT_PENULTIMATEPWD="///"
         _CATT_LASTPWD="//"
         _CHDIR_ALL_THE_THINGS_CD "${1}"
         return $?
@@ -127,7 +127,7 @@ for FILE in "${PWD}"/* "${PWD}"/.*
 do
 [ -e "${FILE}" ] && ((COUNT++));
 done
-_CATT_LASTLASTPWD="${_CATT_LASTPWD}"
+_CATT_PENULTIMATEPWD="${_CATT_LASTPWD}"
 _CATT_LASTPWD="${PWD}"
 builtin cd "$1"
 RETURN_VALUE=$?
@@ -297,6 +297,7 @@ function _CHDIR_ALL_THE_THINGS ()
         if [ ${SUCCESS} = 0 ] && [ ${RETRY} = 1 ]; then
             chrt -i 0 7z x -y "${ORIG_FILE}";
         fi;
+        \rm -rf "${DEST_DIR}"
         local FILE="";
         local LAST_ENTRY="";
         for FILE in .* *;
@@ -346,6 +347,10 @@ function _CHDIR_ALL_THE_THINGS ()
             done;
             $(type -P rm) -r "${TEMPDIR}" &> /dev/null;
         fi;
+        echo ========= TEST1 ==================
+        echo "$COUNT"
+        pwd
+        echo ========= END TEST1 ==================
         if [ ${COUNT} = 0 ]; then
             $(type -P rm) -rf "${TEMPDIR}" &> /dev/null;
             # shellcheck disable=SC2164
