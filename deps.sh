@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo apt install bc 7zip fd-find ripgrep fzf ffmpeg
+sudo apt install bc 7zip fd-find ripgrep fzf ffmpeg bat pandoc chafa
