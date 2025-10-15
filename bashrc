@@ -83,9 +83,10 @@ export HISTFILESIZE=-1
 shopt -s globstar
 export BAT_THEME=GitHub
 PATH=$PATH:~/.local/share/ParaView/bin:~/.local/share/android-studio/bin:~/.local/bin:/usr/share/code-insiders/resources/app/node_modules.asar.unpacked/vscode-ripgrep/bin/
-DOTFILESDIR=$(readlink "$HOME/.bashrc")
-DOTFILESDIR=${DOTFILESDIR%/*}
-[[ -z $DOTFILESDIR ]]&&DOTFILESDIR=$HOME/.local/share/dotfiles
+if [[ -z $XDG_DATA_HOME ]];then
+XDG_DATA_HOME=$HOME/.local/share
+fi
+DOTFILESDIR=$XDG_DATA_HOME/dotfiles
 export GOPATH=$HOME/.local/share/go
 export VIM=$DOTFILESDIR/vim
 export VIMRUNTIME=$DOTFILESDIR/vim
@@ -104,7 +105,11 @@ LC_MESSAGES=C LC_ALL=C tmux detach-client -a
 for CLIENT in 1 2 3;do LC_MESSAGES=C LC_ALL=C tmux -L "$CLIENT" resize-window -A;done
 } >&- 2>&-&)
 }
+if [[ $PROMPT_COMMAND ]];then
 PROMPT_COMMAND="$PROMPT_COMMAND;_DOTFILES_RESIZE_TMUX"
+else
+PROMPT_COMMAND="_DOTFILES_RESIZE_TMUX"
+fi
 _DOTFILES_COLOR(){
 if [[ $NO_COLOR ]];then
 \echo "never"
@@ -121,6 +126,8 @@ alias nvim='_NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
 alias vim='_NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
 else
 EDITOR="vim"
+
+_MONORAIL_DIR=$XDG_DATA_HOME/dotfiles/monorail
 alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
 alias vim='_NO_MEASURE _ICON 📝 $EDITOR -p '
 fi

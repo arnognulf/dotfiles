@@ -345,16 +345,14 @@ function _CHDIR_ALL_THE_THINGS ()
                     ;;
                 esac;
             done;
-            $(type -P rm) -r "${TEMPDIR}" &> /dev/null;
+            \rm -r "${TEMPDIR}" 2>/dev/null
         fi;
-        echo ========= TEST1 ==================
-        echo "$COUNT"
-        pwd
-        echo ========= END TEST1 ==================
         if [ ${COUNT} = 0 ]; then
-            $(type -P rm) -rf "${TEMPDIR}" &> /dev/null;
+            \rm -r "${TEMPDIR}" 2>/dev/null
+local OLD_PATH=$PWD
             # shellcheck disable=SC2164
             _CHDIR_ALL_THE_THINGS_CD "${ORIG_FILE%/*}" &>/dev/null
+\rm -r "$OLD_PATH" 2>/dev/null
             if [ "${CATT_OLDPWD}" = "$(pwd)" ]
             then
                 _NO
