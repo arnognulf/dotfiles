@@ -90,6 +90,7 @@ DOTFILESDIR=$XDG_DATA_HOME/dotfiles
 export GOPATH=$HOME/.local/share/go
 export VIM=$DOTFILESDIR/vim
 export VIMRUNTIME=$DOTFILESDIR/vim
+_MONORAIL_DIR=$XDG_DATA_HOME/dotfiles/monorail
 } 2>&- >&-
 . "$DOTFILESDIR"/monorail/monorail.sh
 {
@@ -127,7 +128,6 @@ alias vim='_NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
 else
 EDITOR="vim"
 
-_MONORAIL_DIR=$XDG_DATA_HOME/dotfiles/monorail
 alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
 alias vim='_NO_MEASURE _ICON 📝 $EDITOR -p '
 fi

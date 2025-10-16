@@ -21,49 +21,71 @@
 # SOFTWARE.
 
 main() {
-    DIR="$1"
-	while true; do
-		local NEWEST_FILE
-		local FILE
-		NEWEST_FILE=
-		local CAN_MOVE=0
-		while [ "${CAN_MOVE}" = 0 ]; do
-			for FILE in "${DIR}"/*; do
-				if [[ -z ${NEWEST_FILE} || ${FILE} -nt ${NEWEST_FILE} ]]; then
-					NEWEST_FILE=${FILE}
-				fi
-				case "${NEWEST_FILE}" in
-				*.part | *.crdownload)
-					if [[ -z $ONCE ]]; then
-						echo -e "waiting for ${NEWEST_FILE} to be completed..."
-						ONCE=1
-					fi
-					;;
-				*)
-					CAN_MOVE=1
-					;;
-				esac
-			done
+	DIR="$1"
+	PATTERN=$2
+	if [[ $PATTERN ]]; then
+		for FILE in ${DIR}/*; do
+			case "$FILE" in
+			${DIR}/*${PATTERN}*)
+				MATCH_FILE="$FILE"
+				break
+				;;
+			esac
 		done
-		case "${NEWEST_FILE}" in
-		*.crdownload | *.part)
-			sleep 1
-			;;
-		*)
-			echo -e "${NEWEST_FILE##*/}"
-			if [[ -w "${DIR}" ]]; then
-				mv "${NEWEST_FILE}" .
+		echo -e "${MATCH_FILE##*/}"
+		if [[ -w "${DIR}" ]]; then
+			mv "${MATCH_FILE}" .
+		else
+			if type -P pv &>/dev/null; then
+				pv "${MATCH_FILE}" >"${MATCH_FILE##*/}"
 			else
-                if type -P pv &>/dev/null;then
-				    pv "${NEWEST_FILE}" >"${NEWEST_FILE##*/}"
-                else
-                    dd status=progress if="${NEWEST_FILE}" of="${NEWEST_FILE##*/}"
-                fi
+				dd status=progress if="${MATCH_FILE}" of="${MATCH_FILE##*/}"
 			fi
-			((COUNT++))
-			return 0
-			;;
-		esac
-	done
+		fi
+	else
+		while true; do
+			local NEWEST_FILE
+			local FILE
+			NEWEST_FILE=
+			local CAN_MOVE=0
+			while [ "${CAN_MOVE}" = 0 ]; do
+				for FILE in "${DIR}"/*; do
+					if [[ -z ${NEWEST_FILE} || ${FILE} -nt ${NEWEST_FILE} ]]; then
+						NEWEST_FILE=${FILE}
+					fi
+					case "${NEWEST_FILE}" in
+					*.part | *.crdownload)
+						if [[ -z $ONCE ]]; then
+							echo -e "waiting for ${NEWEST_FILE} to be completed..."
+							ONCE=1
+						fi
+						;;
+					*)
+						CAN_MOVE=1
+						;;
+					esac
+				done
+			done
+			case "${NEWEST_FILE}" in
+			*.crdownload | *.part)
+				sleep 1
+				;;
+			*)
+				echo -e "${NEWEST_FILE##*/}"
+				if [[ -w "${DIR}" ]]; then
+					mv "${NEWEST_FILE}" .
+				else
+					if type -P pv &>/dev/null; then
+						pv "${NEWEST_FILE}" >"${NEWEST_FILE##*/}"
+					else
+						dd status=progress if="${NEWEST_FILE}" of="${NEWEST_FILE##*/}"
+					fi
+				fi
+				((COUNT++))
+				return 0
+				;;
+			esac
+		done
+	fi
 }
 main "$@"
