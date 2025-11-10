@@ -434,8 +434,8 @@ alias chromium=_CHROME-POLISHER
 alias google-chrome=_CHROME-POLISHER
 alias chrome=_CHROME-POLISHER
 alias dos="bash $DOTFILESDIR/dos/sh-dos.sh"
-alias sudo="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\" >/dev/tty;_ICON ⚠️  _LOG sudo"
-alias su="\printf \"\e]10;#DD2222\a\e]11;#000000\a\e]12;#DD2222\a\";_ICON ⚠️  _LOG su"
+alias sudo="\printf \"\e]10;#FF3333\a\e]11;#333333\a\e]12;#FF3333\a\" >/dev/tty;_ICON ⚠️  _LOG sudo"
+alias su="\printf \"\e]10;#FF3333\a\e]11;#333333\a\e]12;#FF3333\a\";_ICON ⚠️  _LOG su"
 _SCP(){
 local ARG
 local SERVER

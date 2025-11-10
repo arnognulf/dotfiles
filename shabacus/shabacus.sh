@@ -60,10 +60,10 @@ SHABACUS: infix shell decimal calculator
 ========================================
 Precision
 ---------
-Number of decimals can be specified by setting the \`$SHABACUS_DECIMALS\` environment variable.
+Number of decimals can be specified by setting the \`$d\` environment variable.
 Example
 
-SHABACUS_DECIMALS=30 4 * pi
+d=30 4 * pi
 
 "
 _SHABACUS_HELP_CONVERSIONS
@@ -281,7 +281,7 @@ kg|g|lb|oz)
 case "${2}" in
 kg) EXPR="${1}";;
 g) EXPR="${1}*1000";;
-lb) EXPR="${1}/2.205";;
+lb) EXPR="${1}*0.45359237";;
 oz) EXPR="${1}/35.274";;
 esac
 case "${4}" in
@@ -351,7 +351,7 @@ esac
 fi
 case "${EXPR}" in
 *'%'*)
-SHABACUS_DECIMALS=0;
+d=0;
 case "${EXPR}" in
 *[a-z]*|*'.'*|*'/'*)
 echo "FUNCNAME[0]}: modulo operator (%): not supported in decimal mode" >&2 | tee /dev/null >/dev/null; return 1
@@ -363,7 +363,7 @@ function _SHABACUS_cmd ()
 # http://phodd.net/gnu-bc/code/logic.bc
 # https://unix.stackexchange.com/questions/44226/bc-doesnt-support-log-and-factorial-calculation
 # the variables two,three,four are defined as sums of 1, as these cannot be set in base-10 when operating in base-2 (or base-3, or 4)
-COMMAND="scale=${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}}
+COMMAND="scale=${d-${SHABACUS_DEFAULT_DECIMALS}}
 obase=${OBASE-${BASE}}
 ibase=${BASE}
 two=(1+1)
@@ -420,11 +420,11 @@ ${COMMAND}" >&2 | tee /dev/null >/dev/null;
 local HIGHER_PRECISION_RESULT
 case "${RESULT}" in
 *.*)
-SHABACUS_DECIMALS=$((${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}} + 4)) _SHABACUS_cmd
+d=$((${d-${SHABACUS_DEFAULT_DECIMALS}} + 4)) _SHABACUS_cmd
 HIGHER_PRECISION_RESULT=$(echo "${COMMAND}"| BC_LINE_LENGTH=0 BC_ENV_ARGS="" bc -l 2>/dev/null)
-SHABACUS_DECIMALS=$((${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}})) _SHABACUS_cmd
+d=$((${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}})) _SHABACUS_cmd
 local HIGHER_PRECISION_FRACTION=${HIGHER_PRECISION_RESULT#*.}
-EXPR="-(${RESULT})"+${HIGHER_PRECISION_RESULT%.*}.${HIGHER_PRECISION_FRACTION:0:${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}}}+${EXPR}
+EXPR="-(${RESULT})"+${HIGHER_PRECISION_RESULT%.*}.${HIGHER_PRECISION_FRACTION:0:${d-${SHABACUS_DEFAULT_DECIMALS}}}+${EXPR}
 _SHABACUS_cmd
 [ -n "${SHABACUS_TRACE}" ] && echo "shabacus: compensating numerical error: ${EXPR}" >&2 | tee /dev/null >/dev/null;
 RESULT=$(echo "${COMMAND}"| BC_LINE_LENGTH=0 BC_ENV_ARGS="" bc -l 2>/dev/null)
@@ -433,7 +433,7 @@ case "${RESULT}" in
 -*.*9)
 case "${HIGHER_PRECISION_RESULT:7:1}" in
 [5-9])
-EXPR="-1/(10^${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}})+${EXPR}"
+EXPR="-1/(10^${d-${SHABACUS_DEFAULT_DECIMALS}})+${EXPR}"
 _SHABACUS_cmd
 [ -n "${SHABACUS_TRACE}" ] && echo "shabacus: rounding down value: ${EXPR}" >&2 | tee /dev/null >/dev/null;
 RESULT=$(echo "${COMMAND}"| BC_LINE_LENGTH=0 BC_ENV_ARGS="" bc -l 2>/dev/null)
@@ -442,7 +442,7 @@ esac
 *.*9)
 case "${HIGHER_PRECISION_RESULT:6:1}" in
 [5-9])
-EXPR="1/(10^${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}})+${EXPR}"
+EXPR="1/(10^${d-${SHABACUS_DEFAULT_DECIMALS}})+${EXPR}"
 _SHABACUS_cmd
 [ -n "${SHABACUS_TRACE}" ] && echo "shabacus: rounding up value: ${EXPR}" >&2 | tee /dev/null >/dev/null;
 RESULT=$(echo "${COMMAND}"| BC_LINE_LENGTH=0 BC_ENV_ARGS="" bc -l)
@@ -462,7 +462,7 @@ fi
 echo "main(): ${EXPR}" >&2 | tee /dev/null >/dev/null
 return 1
 fi
-[ "${SHABACUS_DECIMALS-${SHABACUS_DEFAULT_DECIMALS}}" = ${SHABACUS_DEFAULT_DECIMALS} ] && RESULT="${RESULT/.0000/}"
+[ "${d-${SHABACUS_DEFAULT_DECIMALS}}" = ${SHABACUS_DEFAULT_DECIMALS} ] && RESULT="${RESULT/.0000/}"
 [ "${RESULT:0:1}" = '-' ] && FORMATTED_RESULT="-"
 [ "${OBASE-${BASE}}" = 2 ] && FORMATTED_RESULT="0b"
 [ "${OBASE-${BASE}}" = 8 ] && FORMATTED_RESULT="0"

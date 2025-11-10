@@ -6,16 +6,16 @@ Uses bc(1) syntax with a couple of replacement macros.
 
 Features
 --------
-* 4 decimals by default
+* 4 decimals by default, omit trailing zeroes.
 * common mathematical operations.
 * conversions of mass, volume, distance, velocity
 * conversions of hexadecimal, octal, binary, and 10-base numbers
-* ability to specify decimals
+* ability to specify decimals by setting `d` environment variable
 * arbitary number of decimals (limited by computer)
 * rounding based on higher precision calculation.
   eg. 1/3 + 1/3 + 1/3 => 1
-* no need to escape/quote wildcard (*)
-* precedence based on spaces: eg. 3+3 / 3 => 2; 3 + 3/3 => 4
+* no need to escape/quote wildcard: `*`
+* precedence based on spaces: eg. `3+3 / 3 => 2; 3 + 3/3 => 4`
 
 Limitations
 -----------
@@ -59,11 +59,11 @@ Does not work with the version of bash shipped in OSX.
     $ SHABACUS_TRACE=1 1+2
     scale=4;obase=10;ibase=10;pi=4*a(1);(1+2)
     3
-    $ SHABACUS_DECIMALS=64 pi
+    $ d=64 pi
     3.1415926535897932384626433832795028841971693993751058209749445923
     $ lg 64
     6
-    $ 100!
-    93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000
+    $ 50!
+    30414093201713378043612608166064768844377641568960512000000000000 
     $ 1 / 3 * 3
     1

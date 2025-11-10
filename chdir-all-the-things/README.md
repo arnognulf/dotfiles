@@ -1,49 +1,27 @@
-CHDIR ALL THE THINGS!
-=====================
+![The All the Things meme, with childish drawing of an excited person. Text says: chdir(1) ALL THE THINGS!](chdir_all_the_things.png)
 
-Usage: 
+chdir(1) ALL THE THINGS
+=======================
+This script tries to take the concept of changing directory, but overloads the directory changing with a couple of handy features.
 
-c <directory>
--------------
-cd into a directory
 
-c ..
-----
-Recurse backwards all single subdirectories if no other files exists.
-
-c <archive>
------------
-Create a directory for the archive, cd into it and unpack it in the root of that directory.
-This means that it will not matter if archive was compressed with a subfolder or not.
-If a directory part is included as part of the archive argument, CHDIR ALL THE THINGS! will not directly
-decompress if file is of mime type application/
-However, if no directory part is included, it will directly decompress.
-This is an extra safety measure against eg. exe files, that mostly aren't expected to be decompressed.
-
-The archive will be disposed in the xdg wastebasket unless -k is given as argument.
-
-c <git-repo>
-------------
-Do a shallow git clone and cd into it's working directory
-
-c <file>
+Examples
 --------
-Go to directory containing file
+`c path/to/directory` chdir into a directory, remove old directory if empty, list the contents.
 
-c tmp
------
-Create temp dir with tab compatible prefix + ISO8601isch date + three random words from dict
+`c ..` chdir to parent directory, remove directory if empty, list contents of parent directory.
 
-c <non-existant dir>
---------------------
-Create directory with name, and enter.
-If no files are created in the directory, it will be removed once CHDIR ALL THE THINGS! away from the directory.
-If basename is similar to already existing dir, the directory will not be created.
+`c path/to/file` chdir into the same directory as the file is contained, list the contents.
 
-c <file1> <file2> <file3>
--------------------------
-Decompress multiple files on command line, but do not chdir into them.
+`c file.zip` create a folder with the basename of the compressed archive, remove the archive, cd into it, and list the contents.
 
-c //WORKSPACE/windows_share/dir
--------------------------------
-Open Windows share
+`c file.tar.gz` create a folder with the basename of the compressed archive, remove the archive, cd into it, and list the contents.
+
+`c file1.zip file2.zip file3.zip` decompress the multiple archives into separate folders, do not chdir into them. 
+
+`c tmp` create a temporary folder with a temporary name, using first letters as unique in the folder such that they are easy to tab, secondary, add date, third, add three random words from dictonary (somtimes NSFW!) so folder can be easily remembered by a human. Eg. `a_tmp_2025-10-23_19-33-21_intercom-gazebo-repetitious`
+
+`c my folder` create a new folder with all arguments treated as one directory name, cd into it.
+
+`c https://github.com/arnognulf/dotfiles` do a shallow clone of git repository, chdir into it, and list the contents.
+
