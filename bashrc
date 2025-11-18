@@ -182,6 +182,15 @@ alias python='_ICON 🐍 _LOG python'
 alias cat="_ICON 🐱 _MOAR cat"
 alias stress-ng="_ICON 🔥 stress-ng"
 alias delta='_ICON Δ _LOW_PRIO delta --light'
+alias apple2-vt100="o /usr/local/libexec/xscreensaver/apple2 -fast -program $SHELL -text"
+alias vt102="o xterm -ti vt100 -tn vt100"
+#alias vt52="o xterm -ti vt100 -tn vt100"
+alias vt52="o vt52 $SHELL"
+alias gecon="o gecon $SHELL"
+alias dp3300="o dp3300 $SHELL"
+
+alias tek4014="o xterm -t"
+
 _DONT_COPY_THAT_FLOPPY(){
 if [ "${#@}" = 2 ];then
 if [[ -d $2 ]];then
