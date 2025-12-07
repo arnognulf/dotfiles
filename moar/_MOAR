@@ -28,6 +28,18 @@
 # * Pipes are not affected by moar (except for conversion)
 # * Moar-ified commands can be disabled by prepending backslash: '\' : eg. \grep
 
+_MOARPAGER ()
+{
+if [[ $NO_COLOR ]];then
+command more "$@"
+else
+command less -d -Q -R -X -F -S "$@"
+fi
+}
+_MOARPAGERFOLLOW ()
+{
+command less -d -Q -R -X -F -S +F "$@"
+}
 _MOAR() {
     export PAGER=""
 	if [ "${#@}" = 0 ]; then yes 'MOAR!'; fi
@@ -54,13 +66,18 @@ _MOAR() {
 		shift
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
 			if [[ $NO_COLOR ]]; then
-				command "${CMD}" --color=no "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				command "${CMD}" --color=never "$@" 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 			else
-				command "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				command "${CMD}" --color=always "$@" 2>${_MOAR_STDERR_FILE} |_MOARPAGER
 			fi
 			RETURN=$?
 		else
-			exec -a "$1" "${CMD}" "$@"
+			if [[ $NO_COLOR ]]; then
+		     	exec -a "$1" "${CMD}" --color=never "$@"
+			else
+		     	exec -a "$1" "${CMD}" "$@"
+			fi
+
 			RETURN=$?
 		fi
 		;;
@@ -69,9 +86,9 @@ _MOAR() {
 		shift
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
 			if [[ $NO_COLOR ]]; then
-				command chrt -i 0 "${CMD}" --color=no "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				command chrt -i 0 "${CMD}" --color=no "$@" 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 			else
-				command chrt -i 0 "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				command chrt -i 0 "${CMD}" --color=yes "$@" 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 			fi
 			RETURN=$?
 		else
@@ -83,10 +100,10 @@ _MOAR() {
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
 			if [ "$1" = "-f" ]; then
 				shift 2
-				command less -d -Q -R -X -F -S +F "$@"
+				_MOARPAGERFOLLOW
 				RETURN=$?
 			else
-				exec -a "$1" chrt -i 0 "$@" | less -d -Q -R -X -F -S
+				exec -a "$1" chrt -i 0 "$@" | _MOARPAGER 
 			fi
 		else
 			command chrt -i 0 "$@"
@@ -97,7 +114,7 @@ _MOAR() {
 		case "${2}" in
 		search | list)
 			if [ "${_MOAR_STDOUT}" = 1 ]; then
-				command chrt -i 0 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} | tail -n +2 | command less -d -Q -R -X -F -S
+				command chrt -i 0 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} | tail -n +2 | _MOARPAGER
 				RETURN=$?
 			else
 				exec -a "$1" chrt -i 0 "$@"
@@ -114,7 +131,7 @@ _MOAR() {
 		case "${2}" in
 		list)
 			if [ "${_MOAR_STDOUT}" = 1 ]; then
-				command chrt -i 0 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} | tail -n +2 | command less -d -Q -R -X -F -S
+				command chrt -i 0 socat EXEC:"$*",pty stdout 2>${_MOAR_STDERR_FILE} | tail -n +2 | _MOARPAGER
 				RETURN=$?
 			else
 				exec -a "$1" chrt -i 0 "$@"
@@ -123,7 +140,7 @@ _MOAR() {
 			;;
 		search)
 			if [ "${_MOAR_STDOUT}" = 1 ]; then
-				command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 				RETURN=$?
 			else
 				exec -a "$1" chrt -i 0 "$@"
@@ -142,9 +159,9 @@ _MOAR() {
 			shift
 			if [ "${_MOAR_STDOUT}" = 1 ]; then
 				if [[ $NO_COLOR ]]; then
-					command git -c color.ui=never "${@}" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+					command git -c color.ui=never "${@}" 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 				else
-					command git -c color.ui=always "${@}" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+					command git -c color.ui=always "${@}" 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 				fi
 				RETURN=$?
 			else
@@ -170,7 +187,7 @@ _MOAR() {
 		;;
 	find | od | hexdump)
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
-			command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 			RETURN=$?
 		else
 			exec -a "$1" chrt -i 0 "$@"
@@ -179,7 +196,7 @@ _MOAR() {
 		;;
 	declare)
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
-			command "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			command "$@" 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 			RETURN=$?
 		else
 			exec -a "$1" "$@"
@@ -190,9 +207,9 @@ _MOAR() {
 	rg)
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
 			if [[ $NO_COLOR ]]; then
-				command chrt -i 0 "$@" --color=never 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				command chrt -i 0 "$@" --color=never 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 			else
-				command chrt -i 0 "$@" --color=always 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				command chrt -i 0 "$@" --color=always 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 			fi
 			RETURN=$?
 		else
@@ -203,9 +220,9 @@ _MOAR() {
 	systemctl)
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
 			if [[ $NO_COLOR ]]; then
-				command chrt -i 0 "$@" --color=never --no-pager 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				command chrt -i 0 "$@" --color=never --no-pager 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 			else
-				command chrt -i 0 "$@" --no-pager 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				command chrt -i 0 "$@" --no-pager 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 			fi
 			RETURN=$?
 		else
@@ -217,9 +234,9 @@ _MOAR() {
 	rga)
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
 			if [[ $NO_COLOR ]]; then
-				command chrt -i 0 "$@" --color=never 2>/dev/null | command less -d -Q -R -X -F -S
+				command chrt -i 0 "$@" --color=never 2>/dev/null | _MOARPAGER
 			else
-				command chrt -i 0 "$@" --color=always 2>/dev/null | command less -d -Q -R -X -F -S
+				command chrt -i 0 "$@" --color=always 2>/dev/null | _MOARPAGER
 			fi
 			RETURN=$?
 		else
@@ -231,9 +248,9 @@ _MOAR() {
 	fd | fdfind)
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
 			if [[ $NO_COLOR ]]; then
-				command chrt -i 0 "$@" --color never 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				command chrt -i 0 "$@" --color never 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 			else
-				command chrt -i 0 "$@" --color always 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+				command chrt -i 0 "$@" --color always 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 			fi
 			RETURN=$?
 		else
@@ -243,7 +260,7 @@ _MOAR() {
 		;;
 	*)
 		if [ "${_MOAR_STDOUT}" = 1 ]; then
-			command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | command less -d -Q -R -X -F -S
+			command chrt -i 0 "$@" 2>${_MOAR_STDERR_FILE} | _MOARPAGER
 			RETURN=$?
 		else
 			exec -a "$1" chrt -i 0 "$@"
@@ -256,7 +273,7 @@ _MOAR() {
 		STDERR_LINES=$(wc -l "${_MOAR_STDERR_FILE}")
 		STDERR_LINES=${STDERR_LINES% *}
 		if [[ ${STDERR_LINES} -gt ${LINES} ]]; then
-			command less -d -Q -R -X -F -S "${_MOAR_STDERR_FILE}"
+			_MOARPAGER "${_MOAR_STDERR_FILE}"
 		else
 			exec -a "$1" cat "${_MOAR_STDERR_FILE}"
 		fi

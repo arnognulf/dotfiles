@@ -90,9 +90,11 @@ DOTFILESDIR=$XDG_DATA_HOME/dotfiles
 export GOPATH=$HOME/.local/share/go
 export VIM=$DOTFILESDIR/vim
 export VIMRUNTIME=$DOTFILESDIR/vim
-_MONORAIL_DIR=$XDG_DATA_HOME/dotfiles/monorail
+_MR_DIR=$XDG_DATA_HOME/dotfiles/monorail
 } 2>&- >&-
+declare >~/vars.pre
 . "$DOTFILESDIR"/monorail/monorail.sh
+declare >~/vars.post
 {
 . "$DOTFILESDIR"/can-opener/can-opener.inc.sh
 . "$DOTFILESDIR"/shabacus/shabacus.inc.sh
@@ -148,7 +150,7 @@ export XDG_VIDEOS_DIR="$HOME/Videos"
 . ~/.config/user-dirs.dirs
 export EDITOR
 _EDITOR(){
-_MEASURE=0
+_MR_MEASURE=0
 local FILE
 for FILE in "$@";do
 case "${FILE,,}" in
@@ -186,6 +188,8 @@ alias apple2-vt100="o /usr/local/libexec/xscreensaver/apple2 -fast -program $SHE
 alias vt102="o xterm -ti vt100 -tn vt100"
 #alias vt52="o xterm -ti vt100 -tn vt100"
 alias vt52="o vt52 $SHELL"
+alias vt05="o vt05 $SHELL"
+alias vt50="o vt50 $SHELL"
 alias gecon="o gecon $SHELL"
 alias dp3300="o dp3300 $SHELL"
 
@@ -252,10 +256,10 @@ f=$(git status --short|grep "^ "|fzf|cut -c4-1024|sed 's/"//g')
 git "$@" "$f"
 fi
 ;;
-log|show|diff)_MEASURE=0
+log|show|diff)_MR_MEASURE=0
 \git "$@"
 ;;
-*)_MEASURE=0
+*)_MR_MEASURE=0
 _MOAR git "$@"
 esac
 }
@@ -443,6 +447,7 @@ alias chromium=_CHROME-POLISHER
 alias google-chrome=_CHROME-POLISHER
 alias chrome=_CHROME-POLISHER
 alias dos="bash $DOTFILESDIR/dos/sh-dos.sh"
+alias bullsh="bash $DOTFILESDIR/dos/bull.sh"
 alias sudo="\printf \"\e]10;#FF3333\a\e]11;#333333\a\e]12;#FF3333\a\" >/dev/tty;_ICON ⚠️  _LOG sudo"
 alias su="\printf \"\e]10;#FF3333\a\e]11;#333333\a\e]12;#FF3333\a\";_ICON ⚠️  _LOG su"
 _SCP(){

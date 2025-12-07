@@ -96,6 +96,9 @@ xmag \
 xournal \
 xmore \
 xterm \
+zutty \
+pterm \
+st \
 rxvt \
 rxvt-unicode \
 mlterm \

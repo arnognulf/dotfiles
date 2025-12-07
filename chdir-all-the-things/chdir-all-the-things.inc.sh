@@ -97,7 +97,11 @@ fi
 						hide+=("--hide=${line}")
 					done <.hidden
 				fi
-				_MOAR ls "${hide[@]}" --color=$(_DOTFILES_COLOR) "$@"
+                if [[ $NO_COLOR ]];then
+				_MOAR ls "${hide[@]}" --color=never "$@"
+                else
+				_MOAR ls "${hide[@]}" --color=always "$@"
+                fi
 				;;
 			esac
 		}

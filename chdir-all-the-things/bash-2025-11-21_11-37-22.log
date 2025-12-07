@@ -1,0 +1,83 @@
+bash
+Script started on 2025-11-21 11:37:22+01:00 [COMMAND="bash "/tmp/tmp.B3WRZUQpnx"" TERM="dumb" TTY="/dev/pts/6" COLUMNS="72" LINES="20"]
+-----------------------------------------------------------------------
+ chdir-all-the-things (master) ! ls
+BaggageClaim.sh  bash-2025-11-21_11-37-22.log  chdir-all-the-things.sh[m
+README.md        chdir-all-the-things.inc.sh   chdir_all_the_things.png[m
+-----------------------------------------------------------------------
+ chdir-all-the-things (master) ! exit    . foo.sh
+bash: foo.sh: No such file or directory
+-----------------------------------------------------------------------
+ chdir-all-the-things (master) ! . foo.sh
+bash: foo.sh: No such file or directory
+-----------------------------------------------------------------------
+ chdir-all-the-things (master) ! ls
+BaggageClaim.sh  bash-2025-11-21_11-37-22.log  chdir-all-the-things.sh[m
+README.md        chdir-all-the-things.inc.sh   chdir_all_the_things.png[m
+-----------------------------------------------------------------------
+ chdir-all-the-things (master) ! ls
+BaggageClaim.sh  bash-2025-11-21_11-37-22.log  chdir-all-the-things.sh[m
+README.md        chdir-all-the-things.inc.sh   chdir_all_the_things.png[m
+-----------------------------------------------------------------------
+ chdir-all-the-things (master) ! cd ..
+-----------------------------------------------------------------------
+ dotfiles (master) ! cd monorail/
+-----------------------------------------------------------------------
+ monorail (master) ! ls
+FAST_SHELL_GUIDELINES.md                    iTerm2-Color-Schemes[m
+README.md                                   images[m
+Scheme Licenses - iTerm2-Color-Schemes.csv  monorail.compat.sh[m
+bash-2025-11-14_10-09-31.log                monorail.sh[m
+bash-2025-11-19_14-45-34.log                monorail.sh.bak[m
+colors                                      monorail.vhs[m
+default_commands.sh                         scripts[m
+foo.sh                                      validate.sh[m
+gradients[m
+-----------------------------------------------------------------------
+ monorail (master) ! . foo.sh 
+NO_COLOR=1
+alias ls='_LS_HIDDEN -v -C -w${COLUMNS}'
+WARNING: terminal is not fully functional
+Press RETURN to continue 
+_LS_HIDDEN () [m
+{ [m
+    case "${PWD}" in [m
+        ${HOME}/Network/* | /run/user/*/gvfs/* | /mnt/* | /media/*)[m
+            _MOAR ls -C "$@"[m
+        ;;[m
+        *)[m
+            local hide=();[m
+            if [ -f .hidden ]; then[m
+                while IFS="[m
+" read -r line; do[m
+                    hide+=("--hide=${line}");[m
+                done < .hidden;[m
+            fi;[m
+            if [[ -n $NO_COLOR ]]; then[m
+                _MOAR ls "${hide[@]}" --color=no "$@";[m
+            else[m
+                _MOAR ls "${hide[@]}" --color=yes "$@";[m
+            fi[m
+:        ;;[m
+    esac[m
+}[m
+(END)(END)-----------------------------------------------------------------------
+ monorail (master) ! ls
+FAST_SHELL_GUIDELINES.md                    iTerm2-Color-Schemes[m
+README.md                                   images[m
+Scheme Licenses - iTerm2-Color-Schemes.csv  monorail.compat.sh[m
+bash-2025-11-14_10-09-31.log                monorail.sh[m
+bash-2025-11-19_14-45-34.log                monorail.sh.bak[m
+colors                                      monorail.vhs[m
+default_commands.sh                         scripts[m
+foo.sh                                      validate.sh[m
+gradients[m
+-----------------------------------------------------------------------
+ monorail (master) ! exec bash
+-----------------------------------------------------------------------
+ monorail (master) ! ls
+FAST_SHELL_GUIDELINES.md                    iTerm2-Color-Schemes[m
+README.md                                   images[m
+Scheme Licenses - iTerm2-Color-Schemes.csv  monorail.compat.sh[m
+bash-2025-11-14_10-09-31.log                monorail.sh[m
+bash-2025-11-19_14-45-34.log                monorail

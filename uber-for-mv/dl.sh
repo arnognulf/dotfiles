@@ -30,6 +30,9 @@ main() {
 				MATCH_FILE="$FILE"
 				break
 				;;
+            *)
+                echo "COMPUTER SAYS NO"
+                return 1
 			esac
 		done
 		echo -e "${MATCH_FILE##*/}"
@@ -71,6 +74,7 @@ main() {
 				sleep 1
 				;;
 			*)
+                [[ -e "${NEWEST_FILE}" ]] || { echo "COMPUTER SAYS NO"; exit 1;}
 				echo -e "${NEWEST_FILE##*/}"
 				if [[ -w "${DIR}" ]]; then
 					mv "${NEWEST_FILE}" .
