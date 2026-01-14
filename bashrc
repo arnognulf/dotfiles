@@ -91,10 +91,9 @@ export GOPATH=$HOME/.local/share/go
 export VIM=$DOTFILESDIR/vim
 export VIMRUNTIME=$DOTFILESDIR/vim
 _MR_DIR=$XDG_DATA_HOME/dotfiles/monorail
+_MONORAIL_DIR=$XDG_DATA_HOME/dotfiles/monorail
 } 2>&- >&-
-declare >~/vars.pre
 . "$DOTFILESDIR"/monorail/monorail.sh
-declare >~/vars.post
 {
 . "$DOTFILESDIR"/can-opener/can-opener.inc.sh
 . "$DOTFILESDIR"/shabacus/shabacus.inc.sh
@@ -102,6 +101,8 @@ declare >~/vars.post
 . "$DOTFILESDIR"/fuuuu/fuuuu.sh
 . "$DOTFILESDIR"/stawkastic/stawkastic.sh
 . "$DOTFILESDIR"/quacklook/quacklook.inc.sh
+ignored_command ..
+ignored_command c
 _DOTFILES_RESIZE_TMUX(){
 ([[ "$TMUX" ]]&&{
 LC_MESSAGES=C LC_ALL=C tmux detach-client -a

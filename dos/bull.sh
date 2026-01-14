@@ -12,6 +12,14 @@ function ver() {
 	printf "\nSH-DOS version 6.22\n\n\n"
 }
 
+function copy() {
+    cp "$@"
+}
+
+function Copy-Item() {
+    cp "$@"
+}
+
 function rem() {
 	return 0
 }

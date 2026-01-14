@@ -23,19 +23,20 @@
 main() {
 	DIR="$1"
 	PATTERN=$2
+    echo "dir: $DIR"
 	if [[ $PATTERN ]]; then
 		for FILE in ${DIR}/*; do
 			case "$FILE" in
 			${DIR}/*${PATTERN}*)
 				MATCH_FILE="$FILE"
 				break
-				;;
-            *)
-                echo "COMPUTER SAYS NO"
-                return 1
 			esac
 		done
-		echo -e "${MATCH_FILE##*/}"
+        if [[ -z "$MATCH_FILE" ]];then
+                echo "COMPUTER SAYS NO"
+                return 1
+        fi
+		echo -e "file: ${MATCH_FILE##*/}"
 		if [[ -w "${DIR}" ]]; then
 			mv "${MATCH_FILE}" .
 		else
