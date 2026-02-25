@@ -44,12 +44,6 @@ fonts.conf - font substitutions
 [moar](moar/README.md) - less for the lazy
 
 
-git-prompt
-
-
-bash-preexec - https://github.com/rcaloras/bash-preexec
-
-
 Functions
 =========
 Conventions
@@ -172,12 +166,12 @@ _SPINNER_START(): print an ascii spinner
 
 _SPINNER_STOP(): stop the ascii spinner
 
-Prompt
-======
+Monorail prompt
+===============
 Beautiful gradient line as prompt with git prompt, timing statistics, tab icon, and magic shellball answers when pressing enter multiple times.
 
 
-Read more: [prompt/README.md](prompt/README.md)
+Read more: [monorail/README.md](monorail/README.md)
 
 Shabacus
 ========

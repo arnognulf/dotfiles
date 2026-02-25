@@ -126,12 +126,12 @@ NO_COLOR=1
 fi
 if type -P nvim >/dev/null;then
 EDITOR="nvim"
-alias nvim='_NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
-alias vim='_NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
+alias nvim='_NO_MEASURE _ICON 📝 $EDITOR -N -u "${VIM}"/nvimrc -p '
+alias vim='_NO_MEASURE _ICON 📝 $EDITOR -N -u "${VIM}"/nvimrc -p '
 else
 EDITOR="vim"
 
-alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 $EDITOR -u "${VIM}"/nvimrc -p '
+alias nvim='XDG_DATA_HOME="${VIM}" _NO_MEASURE _ICON 📝 $EDITOR -N -u "${VIM}"/nvimrc -p '
 alias vim='_NO_MEASURE _ICON 📝 $EDITOR -p '
 fi
 alias ivm=$EDITOR
@@ -186,14 +186,13 @@ alias cat="_ICON 🐱 _MOAR cat"
 alias stress-ng="_ICON 🔥 stress-ng"
 alias delta='_ICON Δ _LOW_PRIO delta --light'
 alias apple2-vt100="o /usr/local/libexec/xscreensaver/apple2 -fast -program $SHELL -text"
-alias vt102="o xterm -ti vt100 -tn vt100"
-#alias vt52="o xterm -ti vt100 -tn vt100"
-alias vt52="o vt52 $SHELL"
+alias vt100-xterm="o xterm -ti vt100 -tn vt100"
+alias vt52-xterm="o xterm -ti vt52 -tn vt52"
+alias vt52-terminal-simulator="o vt52 $SHELL"
 alias vt05="o vt05 $SHELL"
 alias vt50="o vt50 $SHELL"
 alias gecon="o gecon $SHELL"
 alias dp3300="o dp3300 $SHELL"
-
 alias tek4014="o xterm -t"
 
 _DONT_COPY_THAT_FLOPPY(){
@@ -712,8 +711,8 @@ tracker daemon -k
 /bin/rm -rf ~/.cache/tracker* ~/.local/share/tracker*
 }
 background_startup_tasks(){
-\mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo ~/.local/share/Trash/files "$GOPATH"
-\ln -sf "$HOME/.local/share/Trash/files" "$HOME/Trash"
+\mkdir -p ~/.cache/vim/backup/ ~/.cache/vim/swp/ ~/.cache/vim/undo/ ~/.local/share/Trash/files/ "$GOPATH"
+\ln -sf "$HOME/.local/share/Trash/files/" "$HOME/Trash"
 local TTY=$(tty)
 \rm -f "~/.cache/logs/${TTY//\//_}"
 \ln -sf "$DOTFILESDIR"/vim ~/.config/vim

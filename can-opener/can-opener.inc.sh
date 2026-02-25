@@ -422,6 +422,7 @@ imv \
 pfsglview \
 pfsview \
 qimgv \
+easyeffects \
 qiv \
 tellico \
 xgterm \
