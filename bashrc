@@ -101,6 +101,7 @@ _MONORAIL_DIR=$XDG_DATA_HOME/dotfiles/monorail
 . "$DOTFILESDIR"/fuuuu/fuuuu.sh
 . "$DOTFILESDIR"/stawkastic/stawkastic.sh
 . "$DOTFILESDIR"/quacklook/quacklook.inc.sh
+. "$DOTFILESDIR"/litterbox/litterbox.sh
 ignored_command ..
 ignored_command c
 _DOTFILES_RESIZE_TMUX(){
