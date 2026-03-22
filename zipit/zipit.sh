@@ -39,7 +39,7 @@ function _SHOVEIT
             then
                 ( exec nautilus "${PWD}" &>/dev/null & )
             else
-                ( exec nautilus -s "${FILE}" &>/dev/null & )
+		[[ ! -e $FILE ]] && ( exec nautilus -s "${FILE}" &>/dev/null & )
             fi
         elif [ -n "${SSH_CLIENT}" ]
         then
