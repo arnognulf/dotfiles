@@ -93,7 +93,7 @@ export VIMRUNTIME=$DOTFILESDIR/vim
 _MR_DIR=$XDG_DATA_HOME/dotfiles/monorail
 _MONORAIL_DIR=$XDG_DATA_HOME/dotfiles/monorail
 } 2>&- >&-
-. "$DOTFILESDIR"/monorail/monorail.sh
+. "$DOTFILESDIR"/monorail/monorail.bash
 {
 . "$DOTFILESDIR"/can-opener/can-opener.inc.sh
 . "$DOTFILESDIR"/shabacus/shabacus.inc.sh
@@ -229,7 +229,7 @@ alias powerpoint='o loimpress --norestore --view'
 alias visio='o lodraw --norestore --view'
 alias scrcpy='_RETRY scrcpy'
 alias adb='_NO_MEASURE _ICON 🤖 _RETRY adb'
-alias chrome='o google-chrome-beta ${WAYLAND_OPTS}'
+alias chrome='o choom -n +1000 -- chromium ${WAYLAND_OPTS}'
 alias code-insiders='o code-insiders'
 alias code='o code-insiders'
 _GIT(){
@@ -411,14 +411,15 @@ alias xargs="xargs -d'\n'"
 alias mosh="MOSH_TITLE_NOPREFIX=1 _NO_MEASURE mosh"
 alias tmp=_TMP_ALL_THE_THINGS
 alias grep="_ICON 🔎 _MOAR grep -a"
-alias ica="o google-chrome-beta  $WAYLAND_OPTS -user-data-dir=$HOME/.config/ica --no-default-browser-check --no-first-run --app=https://ica.se"
-alias coop="o google-chrome-beta  $WAYLAND_OPTS -user-data-dir=$HOME/.config/coop --no-default-browser-check --no-first-run --app=https://coop.se"
-alias citygross="o google-chrome-beta  $WAYLAND_OPTS -user-data-dir=$HOME/.config/citygross --no-default-browser-check --no-first-run --app=https://citygross.se"
-alias willys="o google-chrome-beta  $WAYLAND_OPTS -user-data-dir=$HOME/.config/willys --no-default-browser-check --no-first-run --app=https://willys.se"
-alias hbo="google-chrome-beta $WAYLAND_OPTS -user-data-dir=$HOME/.config/hbo --no-default-browser-check --no-first-run --app=https://www.hbomax.com"
-alias dn="google-chrome-beta $WAYLAND_OPTS -user-data-dir=$HOME/.config/dn --no-default-browser-check --no-first-run --app=https://dn.se"
-alias gmail="google-chrome-beta $WAYLAND_OPTS -user-data-dir=$HOME/.config/gmail --no-default-browser-check --no-first-run --app=https://mail.google.com"
-alias facebook="google-chrome-beta $WAYLAND_OPTS -user-data-dir=$HOME/.config/facebook --no-default-browser-check --no-first-run --app=https://facebook.com"
+alias ica="o choom -n +1000 -- chromium  $WAYLAND_OPTS -user-data-dir=$HOME/.config/ica --no-default-browser-check --no-first-run --app=https://ica.se"
+alias coop="o choom -n +1000 -- google-chrome-beta  $WAYLAND_OPTS -user-data-dir=$HOME/.config/coop --no-default-browser-check --no-first-run --app=https://coop.se"
+alias citygross="o choom -n +1000 -- chromium  $WAYLAND_OPTS -user-data-dir=$HOME/.config/citygross --no-default-browser-check --no-first-run --app=https://citygross.se"
+i
+alias willys="o choom -n +1000 -- chromium  $WAYLAND_OPTS -user-data-dir=$HOME/.config/willys --no-default-browser-check --no-first-run --app=https://willys.se"
+alias hbo="o choom -n +1000 -- chromium $WAYLAND_OPTS -user-data-dir=$HOME/.config/hbo --no-default-browser-check --no-first-run --app=https://www.hbomax.com"
+alias dn="o choom -n +1000 -- chromium $WAYLAND_OPTS -user-data-dir=$HOME/.config/dn --no-default-browser-check --no-first-run --app=https://dn.se"
+alias gmail="o choom -n +1000 -- chromium $WAYLAND_OPTS -user-data-dir=$HOME/.config/gmail --no-default-browser-check --no-first-run --app=https://mail.google.com"
+alias facebook="o choom -n +1000 -- chromium $WAYLAND_OPTS -user-data-dir=$HOME/.config/facebook --no-default-browser-check --no-first-run --app=https://facebook.com"
 alias lwn="google-chrome-beta $WAYLAND_OPTS -user-data-dir=$HOME/.config/lwn --no-default-browser-check --no-first-run --app=https://lwn.net"
 alias linkedin="google-chrome-beta $WAYLAND_OPTS -user-data-dir=$HOME/.config/linkedin --no-default-browser-check --no-first-run --app=https://linkedin.com"
 alias newsy="_CHROME-POLISHER-tmp newsy https://news.ycombinator.com"
@@ -441,7 +442,7 @@ local DIR="/run/user/$UID/_CHROME-POLISHER-$USER/$1"
 pidof chrome &>/dev/null||/bin/rm -rf "$DIR"
 \mkdir -p $DIR
 shift
-o google-chrome-beta $WAYLAND_OPTS --disable-notifications --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="$DIR" --app="$*"
+o choom -n +1000 google-chrome-beta $WAYLAND_OPTS --disable-notifications --disable-features=TranslateUI --no-default-browser-check --no-first-run -user-data-dir="$DIR" --app="$*"
 }
 alias chromium=_CHROME-POLISHER
 alias google-chrome=_CHROME-POLISHER
