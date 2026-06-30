@@ -1,6 +1,6 @@
 Litterbox
 =========
-Simple shell functions using `bubblewrap` to sandbox apps.
+Simple auditable shell functions using `bubblewrap` to sandbox apps.
 
 _LITTERBOX
 ----------
@@ -8,8 +8,8 @@ _LITTERBOX
 * only r/w /tmp
 * no net
 
-_LITTERBOX_READONLY
--------------------
+_LITTERBOX_RO
+-------------
 * full readonly view of filesystem
 * only r/w /tmp
 * no net
@@ -26,6 +26,13 @@ _LITTERBOX_RWCWD
 * r/w /tmp
 * r/w current working directory (not home!)
 * no net
+
+_LITTERBOX_RWCWD_NET
+--------------------
+* full readonly view of filesystem
+* r/w /tmp
+* r/w current working directory (not home!)
+* network available
 
 Credits
 -------

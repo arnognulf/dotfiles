@@ -10,6 +10,8 @@ if [[ "$TMUX" ]];then
 tmux set -g status off
 tmux set-option -g set-titles-string "#T"
 tmux set-option -g set-titles on
+tmux set -as terminal-overrides ",xterm*:Tc"
+tmux set -as terminal-overrides ",alacritty*:Tc"
 tmux bind -n S-Pageup copy-mode -u
 tmux bind -n S-Up copy-mode -u
 tmux set-window-option -g mode-keys vi

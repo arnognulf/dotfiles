@@ -20,6 +20,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+_SANDBOX_RWCWD ()
+{
+if [ -z "$1" ];then
+echo '_SANDBOX_RWCWD: full readonly view of filesystem, r/w /tmp, r/w current working directory (not home!), no net'
+return 1
+fi
+if [[ "$PWD" = "$HOME" ]];then
+echo "_LITTERBOX_RWCWD: running in \$HOME not allowed"
+return 1
+fi
+bwrap --ro-bind / / --bind "$PWD" "$PWD" --proc /proc --dev /dev --tmpfs /tmp \
+      --unshare-all --die-with-parent \
+      "$@"
+}
+
 function _RECURSE_REVERSE_CD
 {
     local COUNT=0
@@ -282,12 +297,25 @@ function _CHDIR_ALL_THE_THINGS ()
         type -p unzip &>/dev/null || { \echo "missing unzip" 2>&1| \tee >/dev/null;}
         type -p unar &>/dev/null || { \echo "missing unar" 2>&1| \tee >/dev/null;}
         type -p 7z &>/dev/null || { \echo "missing 7z" 2>&1| \tee >/dev/null;}
-        chrt -i 0 tar xf "${ORIG_FILE}" &>/dev/null || chrt -i 0 unzip -X -o "${ORIG_FILE}" &>/dev/null || chrt -i 0 unsquashfs -no-xattrs "${ORIG_FILE}" &>/dev/null || chrt -i 0 7z x -pDUMMY_PASSWORD -y "${ORIG_FILE}" &>/dev/null || chrt -i 0 unar -force-rename -no-directory -password DUMMY_PASSWORD "${ORIG_FILE}" &>/dev/null || { chrt -i 0 simg2img "${ORIG_FILE}" "${ORIG_FILE}.temp" &>/dev/null && chrt -i 0 7z x "${ORIG_FILE}.temp" &>/dev/null;} || { chrt -i 0 zstd -d "${ORIG_FILE}" -o "${ORIG_FILE}".temp &>/dev/null && chrt -i 0 7z x ${ORIG_FILE}.temp;   } ||SUCCESS=0;
+        _SANDBOX_RWCWD chrt -i 0 tar xf "${ORIG_FILE}" &>/dev/null \
+|| _SANDBOX_RWCWD chrt -i 0 unzip -X -o "${ORIG_FILE}" &>/dev/null \
+|| _SANDBOX_RWCWD chrt -i 0 unsquashfs -no-xattrs "${ORIG_FILE}" &>/dev/null \
+|| _SANDBOX_RWCWD chrt -i 0 7z x -pDUMMY_PASSWORD -y "${ORIG_FILE}" &>/dev/null \
+|| _SANDBOX_RWCWD chrt -i 0 unar -force-rename -no-directory -password DUMMY_PASSWORD "${ORIG_FILE}" &>/dev/null \
+|| \
+{ \
+_SANDBOX_RWCWD chrt -i 0 simg2img "${ORIG_FILE}" "${ORIG_FILE}.temp" &>/dev/null \
+&& _SANDBOX_RWCWD chrt -i 0 7z x "${ORIG_FILE}.temp" &>/dev/null;\
+} \
+|| \
+{ _SANDBOX_RWCWD chrt -i 0 zstd -d "${ORIG_FILE}" -o "${ORIG_FILE}".temp &>/dev/null \
+&& _SANDBOX_RWCWD chrt -i 0 7z x ${ORIG_FILE}.temp;   \
+} ||SUCCESS=0;
         [ -f "${ORIG_FILE}.temp" ] && \rm -f "${ORIG_FILE}.temp"  &>/dev/null
 	_SPINNER_STOP
         if [ ${SUCCESS} = 0 ]
         then
-            if pdftk "${ORIG_FILE}" unpack_files &>/dev/null
+            if _SANDBOX_RWCWD pdftk "${ORIG_FILE}" unpack_files &>/dev/null
             then
                 SUCCESS=1
             else
@@ -295,7 +323,7 @@ function _CHDIR_ALL_THE_THINGS ()
             fi
         fi
         if [ ${SUCCESS} = 0 ] && [ ${RETRY} = 1 ]; then
-            chrt -i 0 7z x -y "${ORIG_FILE}";
+            _SANDBOX_RWCWD chrt -i 0 7z x -y "${ORIG_FILE}";
         fi;
         \rm -rf "${DEST_DIR}"
         local FILE="";
@@ -313,7 +341,7 @@ function _CHDIR_ALL_THE_THINGS ()
         done;
         case "${LAST_ENTRY,,}" in 
             *.tar)
-                7z x -pDUMMY_PASSWORD -y "${LAST_ENTRY}" &> /dev/null || 7z x -y "${LAST_ENTRY}";
+                _SANDBOX_RWCWD 7z x -pDUMMY_PASSWORD -y "${LAST_ENTRY}" &> /dev/null || 7z x -y "${LAST_ENTRY}";
                 rm -f "${LAST_ENTRY}" &> /dev/null
             ;;
         esac;
