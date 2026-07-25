@@ -2,6 +2,7 @@
 _dotfiles_main(){
 {
 unset "PROMPT_COMMAND[*]"
+unset PROMPT_COMMAND
 if [[ $TERM == dumb ]]||[[ $TERM == vt50 ]];then
 stty iuclc
 fi
@@ -95,7 +96,11 @@ export VIMRUNTIME=$DOTFILESDIR/vim
 _MR_DIR=$XDG_DATA_HOME/dotfiles/monorail
 _MONORAIL_DIR=$XDG_DATA_HOME/dotfiles/monorail
 } 2>&- >&-
+#rm -f ~/before.env
 . "$DOTFILESDIR"/monorail/monorail.bash
+PROMPT_COMMAND+=(_DOTFILES_RESIZE_TMUX)
+#rm -f ~/after.env
+#declare >~/after.env
 {
 . "$DOTFILESDIR"/can-opener/can-opener.inc.sh
 . "$DOTFILESDIR"/shabacus/shabacus.inc.sh
@@ -112,10 +117,6 @@ LC_MESSAGES=C LC_ALL=C tmux detach-client -a
 for CLIENT in 1 2 3;do LC_MESSAGES=C LC_ALL=C tmux -L "$CLIENT" resize-window -A;done
 } >&- 2>&-&)
 }
-if [[ $PROMPT_COMMAND ]];then
-declare -a PROMPT_COMMAND
-PROMPT_COMMAND+="_DOTFILES_RESIZE_TMUX"
-fi
 _DOTFILES_COLOR(){
 if [[ $NO_COLOR ]];then
 \echo "never"
