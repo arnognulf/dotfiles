@@ -1,7 +1,7 @@
 #!/bin/bash
 _dotfiles_main(){
 {
-unset PROMPT_COMMAND
+unset "PROMPT_COMMAND[*]"
 if [[ $TERM == dumb ]]||[[ $TERM == vt50 ]];then
 stty iuclc
 fi
@@ -113,9 +113,8 @@ for CLIENT in 1 2 3;do LC_MESSAGES=C LC_ALL=C tmux -L "$CLIENT" resize-window -A
 } >&- 2>&-&)
 }
 if [[ $PROMPT_COMMAND ]];then
-PROMPT_COMMAND="$PROMPT_COMMAND;_DOTFILES_RESIZE_TMUX"
-else
-PROMPT_COMMAND="_DOTFILES_RESIZE_TMUX"
+declare -a PROMPT_COMMAND
+PROMPT_COMMAND+="_DOTFILES_RESIZE_TMUX"
 fi
 _DOTFILES_COLOR(){
 if [[ $NO_COLOR ]];then
