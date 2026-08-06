@@ -170,7 +170,11 @@ function _QUACKLOOK_DECODE_DOC
         return 0
         ;;
         *": iso-8859-1")
-        \iconv -f CP437 -t UTF-8 "${1}" | \pv --force -q -L 300
+if type -P pv &>/dev/null;then
+        iconv -f CP437 -t UTF-8 "${1}" | pv --force -q -L 300
+else
+        iconv -f CP437 -t UTF-8 "${1}"
+fi
         return 0
         esac #end case3
         esac
@@ -328,7 +332,11 @@ function _QUACKLOOK_DECODE
             reset
             ;;
             *)
-            \iconv -f CP437 -t UTF-8 "${FILE}"|pv -q -L 300 --force
+if type -P pv &>/dev/null
+            iconv -f CP437 -t UTF-8 "${FILE}"|pv -q -L 300 --force
+else
+            iconv -f CP437 -t UTF-8 "${FILE}"
+fi
             esac
             ;;
             *" "application/pdf)
