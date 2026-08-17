@@ -332,7 +332,7 @@ function _QUACKLOOK_DECODE
             reset
             ;;
             *)
-if type -P pv &>/dev/null
+if type -P pv &>/dev/null;then
             iconv -f CP437 -t UTF-8 "${FILE}"|pv -q -L 300 --force
 else
             iconv -f CP437 -t UTF-8 "${FILE}"
