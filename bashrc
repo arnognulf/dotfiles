@@ -188,6 +188,7 @@ alias cat="_ICON 🐱 _MOAR cat"
 alias stress-ng="_ICON 🔥 stress-ng"
 alias delta='_ICON Δ _LOW_PRIO delta --light'
 alias apple2-vt100="o /usr/local/libexec/xscreensaver/apple2 -fast -program $SHELL -text"
+alias xterm="o xterm -fs 16 -fa Monospace"
 alias vt100-xterm="o xterm -fs 16 -fa Monospace -ti vt100 -tn vt100"
 alias vt220-xterm="o xterm -fs 16 -fa Monospace -ti vt220 -tn vt220"
 alias compat-xterm="MONORAIL_COMPAT=1 o xterm -fs 16 -fa Monospace"
