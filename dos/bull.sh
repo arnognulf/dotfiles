@@ -13,11 +13,11 @@ function ver() {
 }
 
 function copy() {
-    cp "$@"
+	cp "$@"
 }
 
 function Copy-Item() {
-    cp "$@"
+	cp "$@"
 }
 
 function rem() {
@@ -27,7 +27,14 @@ function rem() {
 function cd() {
 
 	if [ "$1" = "" ]; then
-		echo "C:${PWD//\//\\}"
+		case $(stat -f -c %T .) in
+		smb*)
+			echo "\\${PWD//\//\\}"
+			;;
+		*)
+			echo "C:${PWD//\//\\}"
+			;;
+		esac
 	else
 		builtin cd "${@}" 2>/dev/null || {
 			echo -e "Invalid directory\n"
@@ -115,7 +122,14 @@ while true; do
 	PWD_BACKSLASH="${PWD//\//\\}"
 	printf $'\e'"]0;🐂  Bull.sh"$'\a'
 	printf $'\e'"]10;#eeeeee"$'\a'$'\e'"]11;#654321"$'\a'$'\e'"]12;#ffffff"$'\a'
-	read -p "BS C:${PWD_BACKSLASH}> " -e -r CMD
+	case $(stat -f -c %T .) in
+	smb*)
+		read -p "BS \\${PWD_BACKSLASH}> " -e -r CMD
+		;;
+	*)
+		read -p "BS C:${PWD_BACKSLASH}> " -e -r CMD
+		;;
+	esac
 	CMD0=${CMD%% *}
 	CMDLOW=${CMD0,,}
 	if builtin type -a ${CMDLOW} &>/dev/null; then
